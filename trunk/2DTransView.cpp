@@ -23,6 +23,19 @@ typedef struct DisplayList {
 	int	R, G, B;                    // 색상 정보
 	int	nNodes;                     // 노드 갯수
 	vector<double> XPos, YPos;      // X, Y 노드 좌표 벡터
+
+	DisplayList() {					// 구조체 생성자
+		this->R = 0;
+		this->G = 0;
+		this->B = 0;
+		this->nNodes = 0;
+	}
+
+	void SetRGB(int Red, int Green, int Blue) {	// 색상을 지정하는 부분
+		this->R = Red;
+		this->G = Green;
+		this->B = Blue;
+	}
 } DisplayList;
 
 // 점 데이터 저장을 위한 구조체를 선언함
@@ -222,8 +235,11 @@ void CMy2DTransView::OnFileOpen() {
 	m_FileOpenDialog.m_ofn.lpstrTitle = _T("데이터 파일 열기");
 
 	if( m_FileOpenDialog.DoModal() == IDOK ) {
-		CWnd* pWnd = AfxGetMainWnd();
-		pWnd->SetWindowText( (LPCTSTR)m_FileOpenDialog.GetFileTitle() );
+		CString str;
+		str.Format( _T("%s - 2DTrans"), m_FileOpenDialog.GetFileName() );
+		
+		CMainFrame* pWnd = (CMainFrame*)AfxGetMainWnd();
+		pWnd->SetWindowText( str );
 		FileRead( m_FileOpenDialog.GetPathName() );
 	} 
 	
@@ -233,9 +249,8 @@ void CMy2DTransView::OnFileOpen() {
 }
 
 void CMy2DTransView::FileRead(CString FileName) {
-    int i, cnt=0;
 	TCHAR str[100] = {L'\0'};
-    int red = 0, green = 0, blue = 0;       // 기본 색상은 검은색으로 지정
+    int col_flag, red = 0, green = 0, blue = 0;       // 기본 색상은 검은색으로 지정
     MinX = 1.0E6;  MinY = 1.0E6;
     MaxX = 1.0E-6; MaxY = 1.0E-6;
     double x = 0., y = 0.;
@@ -258,20 +273,23 @@ void CMy2DTransView::FileRead(CString FileName) {
 			
 		// 첫줄에 "COLOR"가 있다면 R, G, B값을 읽어들임
 		if (str[0] == 'C') {
-			_stscanf_s (_tcschr(str, '/')+1, _T("%d %d %d"), &red, &green, &blue);
+			_stscanf_s ( _tcschr(str, '/')+1, _T("%d %d %d"), &red, &green, &blue );
+			tmp.SetRGB(red, green, blue);
+			col_flag = 1;
 		}
-		// 만약 COLOR가 없다면 이전에 읽어들인 색(혹은 기본색인 흑색)이 할당되거나
-		// 두번째 줄로 넘어가면서 이전에 앞서 읽어들인 색 정보가 할당된다
 		else if (str[0] == 'P') {
-			tmp.R = red;
-			tmp.G = green;
-			tmp.B = blue;
+			// 만약 COLOR가 없다면 기본색인 흑색이 할당된다
+			if (col_flag == 1) {
+				tmp.SetRGB(red, green, blue);
+			}
 
-			// "POLYGON /" 이후에는 노드의 갯수가 대입된다.
+			// "POLYGON /" 이후에는 노드의 갯수가 대입된다
 			_stscanf_s (_tcschr(str, '/')+1, _T("%d"), &tmp.nNodes);
+			tmp.XPos.reserve(tmp.nNodes);
+			tmp.YPos.reserve(tmp.nNodes);
 
 			// 점 데이터를 읽어들이는 부분
-			for (i = 0; i < tmp.nNodes; ++i) {
+			for (int i = 0; i < tmp.nNodes; ++i) {
 				_ftscanf_s(fp, _T("%lf %lf"), &x, &y);
 				tmp.XPos.push_back(x);
 				tmp.YPos.push_back(y);
@@ -283,7 +301,7 @@ void CMy2DTransView::FileRead(CString FileName) {
 			}
 			// tmp를 DList의 마지막 원소로 삽입
 			DList.push_back(tmp);
-			nElements++;
+			col_flag = 0;
 		}
 	}
 	
@@ -292,6 +310,8 @@ void CMy2DTransView::FileRead(CString FileName) {
 
 	// 파일을 닫음
 	fclose(fp);
+
+	// 초기 데이터의 스케일링을 위해 
     
 	// 읽어들인 데이터로부터 document의 내용을 반영
 	CWnd* pWnd = AfxGetMainWnd();
@@ -317,15 +337,15 @@ void CMy2DTransView::DrawLines() {
 
 			// i번째 element의 점 데이터를 이용해서 선을 그림
 			for(int i = 0; i < iterPos->nNodes - 1; i++) {
-				dc.MoveTo( (int)(iterPos->XPos.at(i))  , (int)(iterPos->YPos.at(i))   );
-				dc.LineTo( (int)(iterPos->XPos.at(i+1)), (int)(iterPos->YPos.at(i+1)) );
+				dc.MoveTo( (int)(iterPos->XPos[i])  , (int)(iterPos->YPos[i])   );
+				dc.LineTo( (int)(iterPos->XPos[i+1]), (int)(iterPos->YPos[i+1]) );
 			}
 
 			// nElements가 2인 경우에는 이 동작이 필요 없음
 			if (iterPos->nNodes != 2) {
-				dc.MoveTo( (int)(iterPos->XPos.at(iterPos->nNodes - 1)),
-					(int)(iterPos->YPos.at(iterPos->nNodes - 1)) );
-				dc.LineTo( (int)(iterPos->XPos.at(0)), (int)(iterPos->YPos.at(0)) );
+				dc.MoveTo( (int)(iterPos->XPos[iterPos->nNodes - 1]),
+					(int)(iterPos->YPos[iterPos->nNodes - 1]) );
+				dc.LineTo( (int)(iterPos->XPos[0]), (int)(iterPos->YPos[0]) );
 			}
 		}
 	}
@@ -352,7 +372,12 @@ void CMy2DTransView::OnFileNew() {
 	tempList.clear();
 	DList.clear();
 
-	
+	CString str;
+	str.Format( _T("제목 없음 - 2DTrans") );
+		
+	CMainFrame* pWnd = (CMainFrame*)AfxGetMainWnd();
+	pWnd->SetWindowText( str );
+
 	RedrawWindow();							// 내용을 다시 그리도록 함 (OnDraw 호출)
 }
 
