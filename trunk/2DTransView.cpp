@@ -1,4 +1,4 @@
-// 2DTransView.cpp : CMy2DTransView Å¬·¡½ºÀÇ ±¸Çö
+// 2DTransView.cpp : CMy2DTransView í´ë˜ìŠ¤ì˜ êµ¬í˜„
 #include "stdafx.h"
 #include "2DTrans.h"
 
@@ -6,7 +6,7 @@
 #include "2DTransDoc.h"
 #include "2DTransView.h"
 
-// Á¡ µ¥ÀÌÅÍ¸¦ ÀúÀåÇÏ±â À§ÇÑ STL ÅÛÇÃ¸´ ¶óÀÌºê·¯¸® »ç¿ë
+// ì  ë°ì´í„°ë¥¼ ì €ì¥í•˜ê¸° ìœ„í•œ STL í…œí”Œë¦¿ ë¼ì´ë¸ŒëŸ¬ë¦¬ ì‚¬ìš©
 #include <vector>
 #include <algorithm>
 using namespace std;
@@ -15,37 +15,37 @@ using namespace std;
 #define new DEBUG_NEW
 #endif
 
-// Á¡ µ¥ÀÌÅÍ¸¦ ÀúÀåÇÏ±â À§ÇÑ ±¸Á¶Ã¼
-// R, G, B : »ö»ó µ¥ÀÌÅÍ
-// nNodes : Çü»óÀÇ ³ëµå °¹¼ö
-// *Xpos, *Ypos : µ¥ÀÌÅÍÀÇ x, yÁÂÇ¥
+// ì  ë°ì´í„°ë¥¼ ì €ì¥í•˜ê¸° ìœ„í•œ êµ¬ì¡°ì²´
+// R, G, B : ìƒ‰ìƒ ë°ì´í„°
+// nNodes : í˜•ìƒì˜ ë…¸ë“œ ê°¯ìˆ˜
+// *Xpos, *Ypos : ë°ì´í„°ì˜ x, yì¢Œí‘œ
 typedef struct DisplayList {
-	int	R, G, B;                    // »ö»ó Á¤º¸
-	int	nNodes;                     // ³ëµå °¹¼ö
-	vector<double> XPos, YPos;      // X, Y ³ëµå ÁÂÇ¥ º¤ÅÍ
+	int	R, G, B;                    // ìƒ‰ìƒ ì •ë³´
+	int	nNodes;                     // ë…¸ë“œ ê°¯ìˆ˜
+	vector<double> XPos, YPos;      // X, Y ë…¸ë“œ ì¢Œí‘œ ë²¡í„°
 
-	DisplayList() {					// ±¸Á¶Ã¼ »ı¼ºÀÚ
+	DisplayList() {					// êµ¬ì¡°ì²´ ìƒì„±ì
 		this->R = 0;
 		this->G = 0;
 		this->B = 0;
 		this->nNodes = 0;
 	}
 
-	void SetRGB(int Red, int Green, int Blue) {	// »ö»óÀ» ÁöÁ¤ÇÏ´Â ºÎºĞ
+	void SetRGB(int Red, int Green, int Blue) {	// ìƒ‰ìƒì„ ì§€ì •í•˜ëŠ” ë¶€ë¶„
 		this->R = Red;
 		this->G = Green;
 		this->B = Blue;
 	}
 } DisplayList;
 
-// Á¡ µ¥ÀÌÅÍ ÀúÀåÀ» À§ÇÑ ±¸Á¶Ã¼¸¦ ¼±¾ğÇÔ
+// ì  ë°ì´í„° ì €ì¥ì„ ìœ„í•œ êµ¬ì¡°ì²´ë¥¼ ì„ ì–¸í•¨
 vector<DisplayList> DList, tempList;
 
-// º¯¼ö ¼³Á¤
-int cen_x, cen_y;                   // ºä ¿µ¿ªÀÇ Áß½ÉÁ¡ ÁÂÇ¥
-double MaxX, MaxY, MinX, MinY;		// µ¥ÀÌÅÍ·ÎºÎÅÍ ÃÖ´ë ÃÖ¼Ò°ªÀ» ÀĞ¾îµéÀÓ
-double ScaleX, ScaleY;				// X, Y ¹æÇâÀ¸·ÎÀÇ scale factor
-int nElements;                      // ÀüÃ¼ µµÇüÀÇ °¹¼ö
+// ë³€ìˆ˜ ì„¤ì •
+int cen_x, cen_y;                   // ë·° ì˜ì—­ì˜ ì¤‘ì‹¬ì  ì¢Œí‘œ
+double MaxX, MaxY, MinX, MinY;		// ë°ì´í„°ë¡œë¶€í„° ìµœëŒ€ ìµœì†Œê°’ì„ ì½ì–´ë“¤ì„
+double ScaleX, ScaleY;				// X, Y ë°©í–¥ìœ¼ë¡œì˜ scale factor
+int nElements;                      // ì „ì²´ ë„í˜•ì˜ ê°¯ìˆ˜
 int nflag, m_option;
 CPoint anchor, last;							// Mouse location points
 double Scale, wsx, wsy, CenX, CenY;
@@ -55,21 +55,21 @@ double Scale, wsx, wsy, CenX, CenY;
 IMPLEMENT_DYNCREATE(CMy2DTransView, CView)
 
 BEGIN_MESSAGE_MAP(CMy2DTransView, CView)
-	// Ç¥ÁØ ÀÎ¼â ¸í·ÉÀÔ´Ï´Ù.
+	// í‘œì¤€ ì¸ì‡„ ëª…ë ¹ì…ë‹ˆë‹¤.
 	ON_COMMAND(ID_FILE_NEW, &CMy2DTransView::OnFileNew)
 	ON_COMMAND(ID_FILE_PRINT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CMy2DTransView::OnFilePrintPreview)
 	
-	// ¸¶¿ì½º ¸í·É¿¡ µû¸¥ ¸Ş½ÃÁö ¸Ê
+	// ë§ˆìš°ìŠ¤ ëª…ë ¹ì— ë”°ë¥¸ ë©”ì‹œì§€ ë§µ
 	ON_WM_RBUTTONUP()
 	ON_WM_MOUSEMOVE()
 END_MESSAGE_MAP()
 
-// CMy2DTransView »ı¼º/¼Ò¸ê
+// CMy2DTransView ìƒì„±/ì†Œë©¸
 CMy2DTransView::CMy2DTransView()
 {
-	// TODO: ¿©±â¿¡ »ı¼º ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ìƒì„± ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	nflag = 0;
 	nElements = 0;
 }
@@ -80,13 +80,13 @@ CMy2DTransView::~CMy2DTransView()
 
 BOOL CMy2DTransView::PreCreateWindow(CREATESTRUCT& cs)
 {
-	// TODO: CREATESTRUCT cs¸¦ ¼öÁ¤ÇÏ¿© ¿©±â¿¡¼­
-	//  Window Å¬·¡½º ¶Ç´Â ½ºÅ¸ÀÏÀ» ¼öÁ¤ÇÕ´Ï´Ù.
+	// TODO: CREATESTRUCT csë¥¼ ìˆ˜ì •í•˜ì—¬ ì—¬ê¸°ì—ì„œ
+	//  Window í´ë˜ìŠ¤ ë˜ëŠ” ìŠ¤íƒ€ì¼ì„ ìˆ˜ì •í•©ë‹ˆë‹¤.
 
 	return CView::PreCreateWindow(cs);
 }
 
-// CMy2DTransView ±×¸®±â
+// CMy2DTransView ê·¸ë¦¬ê¸°
 
 void CMy2DTransView::OnDraw(CDC* pDC)
 {
@@ -95,52 +95,52 @@ void CMy2DTransView::OnDraw(CDC* pDC)
 	if (!pDoc)
 		return;
 
-	// TODO: ¿©±â¿¡ ¿ø½Ã µ¥ÀÌÅÍ¿¡ ´ëÇÑ ±×¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
-	// client ¿µ¿ª ¼³Á¤
+	// TODO: ì—¬ê¸°ì— ì›ì‹œ ë°ì´í„°ì— ëŒ€í•œ ê·¸ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
+	// client ì˜ì—­ ì„¤ì •
     CRect rcClient;
 	GetClientRect(rcClient);
  
-	COLORREF crBack = RGB(255, 255, 255);	// ¹ÙÅÁ È­¸éÀÇ »ö ÁöÁ¤.
+	COLORREF crBack = RGB(255, 255, 255);	// ë°”íƒ• í™”ë©´ì˜ ìƒ‰ ì§€ì •.
     CBrush jbrBack;
-	jbrBack.CreateSolidBrush(crBack);		// ÁöÁ¤µÈ »öÀ¸·Î ºê·¯½Ã »ı¼º.
-	pDC->FillRect(rcClient, &jbrBack);		// ºê·¯½Ã·Î Å¬¶óÀÌ¾ğÆ® ¿µ¿ªÀ» Ã¤¿ò.
-    pDC->SetBkColor(crBack);				// ÁöÁ¤µÈ ¹ÙÅÁÈ­¸é »öÀ¸·Î µ¤À½.
+	jbrBack.CreateSolidBrush(crBack);		// ì§€ì •ëœ ìƒ‰ìœ¼ë¡œ ë¸ŒëŸ¬ì‹œ ìƒì„±.
+	pDC->FillRect(rcClient, &jbrBack);		// ë¸ŒëŸ¬ì‹œë¡œ í´ë¼ì´ì–¸íŠ¸ ì˜ì—­ì„ ì±„ì›€.
+    pDC->SetBkColor(crBack);				// ì§€ì •ëœ ë°”íƒ•í™”ë©´ ìƒ‰ìœ¼ë¡œ ë®ìŒ.
 	
 	//**************************************************************************//
-	// Á¡ µ¥ÀÌÅÍÀÇ ÃÖ´ë ÃÖ¼Ò°ªÀ» ÀĞ¾îµé¿© ½ºÄÉÀÏ¸µÀ» ÇÏ´Â ºÎºĞ                          //
+	// ì  ë°ì´í„°ì˜ ìµœëŒ€ ìµœì†Œê°’ì„ ì½ì–´ë“¤ì—¬ ìŠ¤ì¼€ì¼ë§ì„ í•˜ëŠ” ë¶€ë¶„                          //
 	//**************************************************************************//
 
-	// nElements°¡ 0ÀÌ ¾Æ´Ò °æ¿ì¿¡¸¸
+	// nElementsê°€ 0ì´ ì•„ë‹ ê²½ìš°ì—ë§Œ
 	if (nElements != 0) {
-       	int WIDTH = rcClient.Width();				// Å¬¶óÀÌ¾ğÆ® ¿µ¿ªÀÇ ÆøÀ» ÀĞ¾î¿È
-	    int HEIGHT = rcClient.Height();				// Å¬¶óÀÌ¾ğÆ® ¿µ¿ªÀÇ ³ôÀÌ¸¦ ÀĞ¾î¿È
-	    cen_x = (int)(WIDTH/2);						// Å¬¶óÀÌ¾ğÆ® ¿µ¿ªÀÇ Áß¾ÓÁ¡ x ÁÂÇ¥
-	    cen_y = (int)(HEIGHT/2);					// Å¬¶óÀÌ¾ğÆ® ¿µ¿ªÀÇ Áß¾ÓÁ¡ y ÁÂÇ¥
+       	int WIDTH = rcClient.Width();				// í´ë¼ì´ì–¸íŠ¸ ì˜ì—­ì˜ í­ì„ ì½ì–´ì˜´
+	    int HEIGHT = rcClient.Height();				// í´ë¼ì´ì–¸íŠ¸ ì˜ì—­ì˜ ë†’ì´ë¥¼ ì½ì–´ì˜´
+	    cen_x = (int)(WIDTH/2);						// í´ë¼ì´ì–¸íŠ¸ ì˜ì—­ì˜ ì¤‘ì•™ì  x ì¢Œí‘œ
+	    cen_y = (int)(HEIGHT/2);					// í´ë¼ì´ì–¸íŠ¸ ì˜ì—­ì˜ ì¤‘ì•™ì  y ì¢Œí‘œ
 
-		/* ÀĞ¾îµéÀÎ µ¥ÀÌÅÍ·ÎºÎÅÍ Áß½ÉÁ¡À» °è»ê */
+		/* ì½ì–´ë“¤ì¸ ë°ì´í„°ë¡œë¶€í„° ì¤‘ì‹¬ì ì„ ê³„ì‚° */
         wsx = (MaxX - MinX) / 2;
 		wsy = (MaxY - MinY) / 2;
 		CenX = MinX + wsx;
 		CenY = MinY + wsy;
 
-		// ½ºÄÉÀÏÀ» °è»êÇÔ. ÀÛÀºÂÊÀ» ÃëÇØÁØ´Ù min(x, y)¸¦ »ç¿ëÇÔ
+		// ìŠ¤ì¼€ì¼ì„ ê³„ì‚°í•¨. ì‘ì€ìª½ì„ ì·¨í•´ì¤€ë‹¤ min(x, y)ë¥¼ ì‚¬ìš©í•¨
 		Scale = (double)(0.9 * min(WIDTH/(wsx*2), HEIGHT/(wsy*2)));
 
-		/* °è»êÇÑ Áß½ÉÁ¡À» ½ºÄÉÀÏ¿¡ ¸ÂÃß¾î º¯È¯ */
+		/* ê³„ì‚°í•œ ì¤‘ì‹¬ì ì„ ìŠ¤ì¼€ì¼ì— ë§ì¶”ì–´ ë³€í™˜ */
 		CenX = CenX * Scale;
 		CenY = CenY * Scale;
 
 		//**************************************************************************//
-        // DList¸¦ tempList·Î º¹»çÇÏ´Â ºÎºĞ
+        // DListë¥¼ tempListë¡œ ë³µì‚¬í•˜ëŠ” ë¶€ë¶„
     	//**************************************************************************//
-		// tempList¸¦ ÃÊ±âÈ­ÇÏ°í DList·ÎºÎÅÍ µ¥ÀÌÅÍ¸¦ º¹»çÇÔ
+		// tempListë¥¼ ì´ˆê¸°í™”í•˜ê³  DListë¡œë¶€í„° ë°ì´í„°ë¥¼ ë³µì‚¬í•¨
 		tempList.clear();
 		tempList.assign(DList.begin(), DList.end());
 
 
-		// °è»êµÈ ½ºÄÉÀÏ·Î Á¡ µ¥ÀÌÅÍ¸¦ ´Ù½Ã °è»ê
+		// ê³„ì‚°ëœ ìŠ¤ì¼€ì¼ë¡œ ì  ë°ì´í„°ë¥¼ ë‹¤ì‹œ ê³„ì‚°
 		for(vector<DisplayList>::iterator j = tempList.begin(); j != tempList.end(); ++j) {
-			// X ÁÂÇ¥ °è»ê
+			// X ì¢Œí‘œ ê³„ì‚°
 			for(int i = 0; i < j->nNodes; ++i) {
 //				j->XPos.at(i) = WIDTH  - ( CenX - j->XPos.at(i) ) * 0.2 * Scale;
 //				j->YPos.at(i) = HEIGHT - ( j->YPos.at(i) - CenY ) * 0.2 * Scale;
@@ -160,7 +160,7 @@ void CMy2DTransView::OnDraw(CDC* pDC)
 }
 
 
-// CMy2DTransView ÀÎ¼â
+// CMy2DTransView ì¸ì‡„
 void CMy2DTransView::OnFilePrintPreview()
 {
 	AFXPrintPreview(this);
@@ -168,26 +168,26 @@ void CMy2DTransView::OnFilePrintPreview()
 
 BOOL CMy2DTransView::OnPreparePrinting(CPrintInfo* pInfo)
 {
-	// ±âº»ÀûÀÎ ÁØºñ
+	// ê¸°ë³¸ì ì¸ ì¤€ë¹„
 	return DoPreparePrinting(pInfo);
 }
 
 void CMy2DTransView::OnBeginPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 {
-	// TODO: ÀÎ¼âÇÏ±â Àü¿¡ Ãß°¡ ÃÊ±âÈ­ ÀÛ¾÷À» Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì¸ì‡„í•˜ê¸° ì „ì— ì¶”ê°€ ì´ˆê¸°í™” ì‘ì—…ì„ ì¶”ê°€í•©ë‹ˆë‹¤.
 }
 
 void CMy2DTransView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 {
-	// TODO: ÀÎ¼â ÈÄ Á¤¸® ÀÛ¾÷À» Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì¸ì‡„ í›„ ì •ë¦¬ ì‘ì—…ì„ ì¶”ê°€í•©ë‹ˆë‹¤.
 }
 
 void CMy2DTransView::OnMouseMove(UINT nFlags, CPoint point) {
-	// TODO: ¸¶¿ì½º ÀÌµ¿½Ã »óÅÂ Ç¥½ÃÁÙ¿¡ ÁÂÇ¥¸¦ Ãâ·ÂÇÕ´Ï´Ù.
+	// TODO: ë§ˆìš°ìŠ¤ ì´ë™ì‹œ ìƒíƒœ í‘œì‹œì¤„ì— ì¢Œí‘œë¥¼ ì¶œë ¥í•©ë‹ˆë‹¤.
 	CMainFrame* pmf = (CMainFrame*)AfxGetMainWnd();
 	CString status;
 
-	status.Format(_T("X ÁÂÇ¥ : %ld / Y ÁÂÇ¥ : %ld"), point.x, point.y);
+	status.Format(_T("X ì¢Œí‘œ : %ld / Y ì¢Œí‘œ : %ld"), point.x, point.y);
 	pmf->m_wndStatusBar.GetElement(0)->SetText(status);
 	pmf->m_wndStatusBar.RecalcLayout();	
 	pmf->m_wndStatusBar.RedrawWindow();
@@ -205,7 +205,7 @@ void CMy2DTransView::OnContextMenu(CWnd* pWnd, CPoint point)
 }
 
 
-// CMy2DTransView Áø´Ü
+// CMy2DTransView ì§„ë‹¨
 #ifdef _DEBUG
 void CMy2DTransView::AssertValid() const
 {
@@ -217,7 +217,7 @@ void CMy2DTransView::Dump(CDumpContext& dc) const
 	CView::Dump(dc);
 }
 
-CMy2DTransDoc* CMy2DTransView::GetDocument() const // µğ¹ö±×µÇÁö ¾ÊÀº ¹öÀüÀº ÀÎ¶óÀÎÀ¸·Î ÁöÁ¤µË´Ï´Ù.
+CMy2DTransDoc* CMy2DTransView::GetDocument() const // ë””ë²„ê·¸ë˜ì§€ ì•Šì€ ë²„ì „ì€ ì¸ë¼ì¸ìœ¼ë¡œ ì§€ì •ë©ë‹ˆë‹¤.
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CMy2DTransDoc)));
 	return (CMy2DTransDoc*)m_pDocument;
@@ -225,14 +225,14 @@ CMy2DTransDoc* CMy2DTransView::GetDocument() const // µğ¹ö±×µÇÁö ¾ÊÀº ¹öÀüÀº ÀÎ¶
 #endif //_DEBUG
 
 
-// CMy2DTransView ¸Ş½ÃÁö Ã³¸®±â
-// 1. ÆÄÀÏÀ» ¿­ °æ¿ì ¸Ş¼¼Áö Ã³¸®
+// CMy2DTransView ë©”ì‹œì§€ ì²˜ë¦¬ê¸°
+// 1. íŒŒì¼ì„ ì—´ ê²½ìš° ë©”ì„¸ì§€ ì²˜ë¦¬
 void CMy2DTransView::OnFileOpen() {
     // TODO: Add your command handler code here
 	TCHAR szFilter[] = _T("DAT File (.dat)|*.dat|OUT File (.out)|*.out|All File (.*)|*.*||");
 
 	CFileDialog m_FileOpenDialog(TRUE, NULL, NULL, OFN_HIDEREADONLY | OFN_EXPLORER, szFilter);
-	m_FileOpenDialog.m_ofn.lpstrTitle = _T("µ¥ÀÌÅÍ ÆÄÀÏ ¿­±â");
+	m_FileOpenDialog.m_ofn.lpstrTitle = _T("ë°ì´í„° íŒŒì¼ ì—´ê¸°");
 
 	if( m_FileOpenDialog.DoModal() == IDOK ) {
 		CString str;
@@ -244,51 +244,51 @@ void CMy2DTransView::OnFileOpen() {
 	} 
 	
 	if( m_FileOpenDialog.GetFileName() == _T("\0") ) {
-		AfxMessageBox( _T("ÆÄÀÏÀ» ¼±ÅÃÇÏÁö ¾ÊÀ¸¼Ì½À´Ï´Ù") );
+		AfxMessageBox( _T("íŒŒì¼ì„ ì„ íƒí•˜ì§€ ì•Šìœ¼ì…¨ìŠµë‹ˆë‹¤") );
 	}
 }
 
 void CMy2DTransView::FileRead(CString FileName) {
 	TCHAR str[100] = {L'\0'};
-    int col_flag, red = 0, green = 0, blue = 0;       // ±âº» »ö»óÀº °ËÀº»öÀ¸·Î ÁöÁ¤
+    int col_flag, red = 0, green = 0, blue = 0;       // ê¸°ë³¸ ìƒ‰ìƒì€ ê²€ì€ìƒ‰ìœ¼ë¡œ ì§€ì •
     MinX = 1.0E6;  MinY = 1.0E6;
     MaxX = 1.0E-6; MaxY = 1.0E-6;
     double x = 0., y = 0.;
 
-    // DList ¿ø¼ÒÀÇ °¹¼ö°¡ 0ÀÌ ¾Æ´Ò °æ¿ì ¸ğµç ¿ø¼Ò¸¦ »èÁ¦ÇÏµµ·Ï ÇØ¾ßÇÔ
+    // DList ì›ì†Œì˜ ê°¯ìˆ˜ê°€ 0ì´ ì•„ë‹ ê²½ìš° ëª¨ë“  ì›ì†Œë¥¼ ì‚­ì œí•˜ë„ë¡ í•´ì•¼í•¨
     if(!DList.empty()) { DList.clear(); }
 
-    // ÆÄÀÏ Æ÷ÀÎÅÍ¸¦ ¿¬´Ù
+    // íŒŒì¼ í¬ì¸í„°ë¥¼ ì—°ë‹¤
     FILE *fp;
 
-    // ÆÄÀÏ¿¡ ´ëÇÑ ÀĞ±â ¸ğµå°¡ ½ÇÆĞÇÒ °æ¿ì ¸Ş¼¼Áö Ãâ·Â
+    // íŒŒì¼ì— ëŒ€í•œ ì½ê¸° ëª¨ë“œê°€ ì‹¤íŒ¨í•  ê²½ìš° ë©”ì„¸ì§€ ì¶œë ¥
     if ( _tfopen_s(&fp, (LPCTSTR)FileName, _T("r")) != NULL) {
-        AfxMessageBox(_T("¼±ÅÃÇÑ ÆÄÀÏÀ» ÀĞ±â ¸ğµå·Î ¿­¼ö ¾ø½À´Ï´Ù.\n´Ù¸¥ ÇÁ·Î±×·¥¿¡¼­ »ç¿ëÁßÀÌÁö ¾ÊÀºÁö È®ÀÎÇÏ½Ã±â ¹Ù¶ø´Ï´Ù."));
+        AfxMessageBox(_T("ì„ íƒí•œ íŒŒì¼ì„ ì½ê¸° ëª¨ë“œë¡œ ì—´ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\në‹¤ë¥¸ í”„ë¡œê·¸ë¨ì—ì„œ ì‚¬ìš©ì¤‘ì´ì§€ ì•Šì€ì§€ í™•ì¸í•˜ì‹œê¸° ë°”ëë‹ˆë‹¤."));
 		return;
     }
 
-    // ÆÄÀÏ ±¸Á¶¸¦ parsing ÇÏ´Â ºÎºĞ
+    // íŒŒì¼ êµ¬ì¡°ë¥¼ parsing í•˜ëŠ” ë¶€ë¶„
 	while (_fgetts(str, 100, fp) != NULL) {
-		DisplayList tmp;                        // ÀÓ½Ã ¸®½ºÆ®
+		DisplayList tmp;                        // ì„ì‹œ ë¦¬ìŠ¤íŠ¸
 			
-		// Ã¹ÁÙ¿¡ "COLOR"°¡ ÀÖ´Ù¸é R, G, B°ªÀ» ÀĞ¾îµéÀÓ
+		// ì²«ì¤„ì— "COLOR"ê°€ ìˆë‹¤ë©´ R, G, Bê°’ì„ ì½ì–´ë“¤ì„
 		if (str[0] == 'C') {
 			_stscanf_s ( _tcschr(str, '/')+1, _T("%d %d %d"), &red, &green, &blue );
 			tmp.SetRGB(red, green, blue);
 			col_flag = 1;
 		}
 		else if (str[0] == 'P') {
-			// ¸¸¾à COLOR°¡ ¾ø´Ù¸é ±âº»»öÀÎ Èæ»öÀÌ ÇÒ´çµÈ´Ù
+			// ë§Œì•½ COLORê°€ ì—†ë‹¤ë©´ ê¸°ë³¸ìƒ‰ì¸ í‘ìƒ‰ì´ í• ë‹¹ëœë‹¤
 			if (col_flag == 1) {
 				tmp.SetRGB(red, green, blue);
 			}
 
-			// "POLYGON /" ÀÌÈÄ¿¡´Â ³ëµåÀÇ °¹¼ö°¡ ´ëÀÔµÈ´Ù
+			// "POLYGON /" ì´í›„ì—ëŠ” ë…¸ë“œì˜ ê°¯ìˆ˜ê°€ ëŒ€ì…ëœë‹¤
 			_stscanf_s (_tcschr(str, '/')+1, _T("%d"), &tmp.nNodes);
 			tmp.XPos.reserve(tmp.nNodes);
 			tmp.YPos.reserve(tmp.nNodes);
 
-			// Á¡ µ¥ÀÌÅÍ¸¦ ÀĞ¾îµéÀÌ´Â ºÎºĞ
+			// ì  ë°ì´í„°ë¥¼ ì½ì–´ë“¤ì´ëŠ” ë¶€ë¶„
 			for (int i = 0; i < tmp.nNodes; ++i) {
 				_ftscanf_s(fp, _T("%lf %lf"), &x, &y);
 				tmp.XPos.push_back(x);
@@ -299,29 +299,29 @@ void CMy2DTransView::FileRead(CString FileName) {
 				if (x > MaxX) MaxX = x;
 				if (y > MaxY) MaxY = y;
 			}
-			// tmp¸¦ DListÀÇ ¸¶Áö¸· ¿ø¼Ò·Î »ğÀÔ
+			// tmpë¥¼ DListì˜ ë§ˆì§€ë§‰ ì›ì†Œë¡œ ì‚½ì…
 			DList.push_back(tmp);
 			col_flag = 0;
 		}
 	}
 	
-	// ÃÖÁ¾ elementÀÇ °¹¼ö´Â DListÀÇ »çÀÌÁîÀÓ (size_typeÀ» int·Î Ä³½ºÆÃ)
+	// ìµœì¢… elementì˜ ê°¯ìˆ˜ëŠ” DListì˜ ì‚¬ì´ì¦ˆì„ (size_typeì„ intë¡œ ìºìŠ¤íŒ…)
 	nElements = (int)DList.size();
 
-	// ÆÄÀÏÀ» ´İÀ½
+	// íŒŒì¼ì„ ë‹«ìŒ
 	fclose(fp);
 
-	// ÃÊ±â µ¥ÀÌÅÍÀÇ ½ºÄÉÀÏ¸µÀ» À§ÇØ 
+	// ì´ˆê¸° ë°ì´í„°ì˜ ìŠ¤ì¼€ì¼ë§ì„ ìœ„í•´ 
     
-	// ÀĞ¾îµéÀÎ µ¥ÀÌÅÍ·ÎºÎÅÍ documentÀÇ ³»¿ëÀ» ¹İ¿µ
+	// ì½ì–´ë“¤ì¸ ë°ì´í„°ë¡œë¶€í„° documentì˜ ë‚´ìš©ì„ ë°˜ì˜
 	CWnd* pWnd = AfxGetMainWnd();
 	pWnd->RedrawWindow();
 }
 
 
-// ÆæÀ¸·Î ±×¸®´Â µ¿ÀÛ ±¸Çö ºÎºĞ
+// íœìœ¼ë¡œ ê·¸ë¦¬ëŠ” ë™ì‘ êµ¬í˜„ ë¶€ë¶„
 void CMy2DTransView::DrawLines() {
-	// nElements°¡ 0ÀÌ ¾Æ´Ò °æ¿ì¿¡¸¸
+	// nElementsê°€ 0ì´ ì•„ë‹ ê²½ìš°ì—ë§Œ
 	if (nElements != 0) {
 		CClientDC dc(this);
 
@@ -331,17 +331,17 @@ void CMy2DTransView::DrawLines() {
 		//dc.SetViewportOrg( -int(MinX * Scale), -int(MinY * Scale) );
 
 		for(vector<DisplayList>::iterator iterPos = tempList.begin(); iterPos != tempList.end(); ++iterPos) {
-			// ÆæÀÇ ¼Ó¼º ¹× »ö»ó ¼³Á¤
+			// íœì˜ ì†ì„± ë° ìƒ‰ìƒ ì„¤ì •
 			CPen NewPen(PS_SOLID, 1, RGB(iterPos->R, iterPos->G, iterPos->B));
 			dc.SelectObject(&NewPen);
 
-			// i¹øÂ° elementÀÇ Á¡ µ¥ÀÌÅÍ¸¦ ÀÌ¿ëÇØ¼­ ¼±À» ±×¸²
+			// ië²ˆì§¸ elementì˜ ì  ë°ì´í„°ë¥¼ ì´ìš©í•´ì„œ ì„ ì„ ê·¸ë¦¼
 			for(int i = 0; i < iterPos->nNodes - 1; i++) {
 				dc.MoveTo( (int)(iterPos->XPos[i])  , (int)(iterPos->YPos[i])   );
 				dc.LineTo( (int)(iterPos->XPos[i+1]), (int)(iterPos->YPos[i+1]) );
 			}
 
-			// nElements°¡ 2ÀÎ °æ¿ì¿¡´Â ÀÌ µ¿ÀÛÀÌ ÇÊ¿ä ¾øÀ½
+			// nElementsê°€ 2ì¸ ê²½ìš°ì—ëŠ” ì´ ë™ì‘ì´ í•„ìš” ì—†ìŒ
 			if (iterPos->nNodes != 2) {
 				dc.MoveTo( (int)(iterPos->XPos[iterPos->nNodes - 1]),
 					(int)(iterPos->YPos[iterPos->nNodes - 1]) );
@@ -352,32 +352,32 @@ void CMy2DTransView::DrawLines() {
 
 }
 
-// »õ ÆÄÀÏÀ» ¸¸µé °æ¿ì
+// ìƒˆ íŒŒì¼ì„ ë§Œë“¤ ê²½ìš°
 void CMy2DTransView::OnFileNew() {
-	// TODO: ¿©±â¿¡ ¸í·É Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
-	CClientDC dc(this);						// Å¬¶óÀÌ¾ğÆ® ¿µ¿ªÀÇ dc¸¦ ÀĞ¾î¿È
+	// TODO: ì—¬ê¸°ì— ëª…ë ¹ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
+	CClientDC dc(this);						// í´ë¼ì´ì–¸íŠ¸ ì˜ì—­ì˜ dcë¥¼ ì½ì–´ì˜´
 
-	CRect rcClient;							// Å¬¶óÀÌ¾ğÆ® ¿µ¿ªÀ» ÀĞ¾î¿È 
+	CRect rcClient;							// í´ë¼ì´ì–¸íŠ¸ ì˜ì—­ì„ ì½ì–´ì˜´ 
 	GetClientRect(rcClient);
 
-	COLORREF crBack;						// ¹ÙÅÁÈ­¸éÀÇ »ö ÁöÁ¤ (white)
+	COLORREF crBack;						// ë°”íƒ•í™”ë©´ì˜ ìƒ‰ ì§€ì • (white)
 	CBrush jbrBack; 
 	crBack = RGB(255, 255, 255) ;
 
-	jbrBack.CreateSolidBrush(crBack) ;		// ÁöÁ¤µÈ »öÀ¸·Î ¿µ¿ªÀ» Ã¤¿ò
+	jbrBack.CreateSolidBrush(crBack) ;		// ì§€ì •ëœ ìƒ‰ìœ¼ë¡œ ì˜ì—­ì„ ì±„ì›€
 	dc.FillRect(rcClient, &jbrBack) ;
 	dc.SetBkColor(crBack) ;
 
-	nElements = 0;							// Element °¹¼ö¸¦ 0À¸·Î ¸®¼ÂÇÏ¿© draw ¹æÁö
+	nElements = 0;							// Element ê°¯ìˆ˜ë¥¼ 0ìœ¼ë¡œ ë¦¬ì…‹í•˜ì—¬ draw ë°©ì§€
 	tempList.clear();
 	DList.clear();
 
 	CString str;
-	str.Format( _T("Á¦¸ñ ¾øÀ½ - 2DTrans") );
+	str.Format( _T("ì œëª© ì—†ìŒ - 2DTrans") );
 		
 	CMainFrame* pWnd = (CMainFrame*)AfxGetMainWnd();
 	pWnd->SetWindowText( str );
 
-	RedrawWindow();							// ³»¿ëÀ» ´Ù½Ã ±×¸®µµ·Ï ÇÔ (OnDraw È£Ãâ)
+	RedrawWindow();							// ë‚´ìš©ì„ ë‹¤ì‹œ ê·¸ë¦¬ë„ë¡ í•¨ (OnDraw í˜¸ì¶œ)
 }
 

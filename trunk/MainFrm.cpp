@@ -1,4 +1,4 @@
-// MainFrm.cpp : CMainFrame Å¬·¡½ºÀÇ ±¸Çö
+// MainFrm.cpp : CMainFrame í´ë˜ìŠ¤ì˜ êµ¬í˜„
 //
 
 #include "stdafx.h"
@@ -22,11 +22,11 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_PREVIEW, &CMainFrame::OnUpdateFilePrintPreview)
 END_MESSAGE_MAP()
 
-// CMainFrame »ı¼º/¼Ò¸ê
+// CMainFrame ìƒì„±/ì†Œë©¸
 
 CMainFrame::CMainFrame()
 {
-	// TODO: ¿©±â¿¡ ¸â¹ö ÃÊ±âÈ­ ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ë©¤ë²„ ì´ˆê¸°í™” ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 }
 
 CMainFrame::~CMainFrame()
@@ -40,10 +40,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	BOOL bNameValid;
 
-	// ¸ğµç »ç¿ëÀÚ ÀÎÅÍÆäÀÌ½º ¿ä¼Ò¸¦ ±×¸®´Â µ¥ »ç¿ëÇÏ´Â ºñÁÖ¾ó °ü¸®ÀÚ¸¦ ¼³Á¤ÇÕ´Ï´Ù.
+	// ëª¨ë“  ì‚¬ìš©ì ì¸í„°í˜ì´ìŠ¤ ìš”ì†Œë¥¼ ê·¸ë¦¬ëŠ” ë° ì‚¬ìš©í•˜ëŠ” ë¹„ì£¼ì–¼ ê´€ë¦¬ìë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.
 	CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
 
-	// ºñÁÖ¾ó °ü¸®ÀÚ¿¡¼­ »ç¿ëÇÏ´Â ºñÁÖ¾ó ½ºÅ¸ÀÏÀ» ¼³Á¤ÇÕ´Ï´Ù.
+	// ë¹„ì£¼ì–¼ ê´€ë¦¬ìì—ì„œ ì‚¬ìš©í•˜ëŠ” ë¹„ì£¼ì–¼ ìŠ¤íƒ€ì¼ì„ ì„¤ì •í•©ë‹ˆë‹¤.
 	CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_LunaBlue);
 
 	m_wndRibbonBar.Create(this);
@@ -51,8 +51,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if (!m_wndStatusBar.Create(this))
 	{
-		TRACE0("»óÅÂ Ç¥½ÃÁÙÀ» ¸¸µéÁö ¸øÇß½À´Ï´Ù.\n");
-		return -1;      // ¸¸µéÁö ¸øÇß½À´Ï´Ù.
+		TRACE0("ìƒíƒœ í‘œì‹œì¤„ì„ ë§Œë“¤ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.\n");
+		return -1;      // ë§Œë“¤ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.
 	}
 
 	CString strTitlePane1;
@@ -64,28 +64,28 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndStatusBar.AddElement(new CMFCRibbonStatusBarPane(ID_STATUSBAR_PANE1, strTitlePane1, TRUE), strTitlePane1);
 	//m_wndStatusBar.AddExtendedElement(new CMFCRibbonStatusBarPane(ID_STATUSBAR_PANE2, strTitlePane2, TRUE), strTitlePane2);
 
-	// Visual Studio 2005 ½ºÅ¸ÀÏ µµÅ· Ã¢ µ¿ÀÛÀ» È°¼ºÈ­ÇÕ´Ï´Ù.
+	// Visual Studio 2005 ìŠ¤íƒ€ì¼ ë„í‚¹ ì°½ ë™ì‘ì„ í™œì„±í™”í•©ë‹ˆë‹¤.
 	CDockingManager::SetDockingMode(DT_SMART);
-	// Visual Studio 2005 ½ºÅ¸ÀÏ µµÅ· Ã¢ ÀÚµ¿ ¼û±è µ¿ÀÛÀ» È°¼ºÈ­ÇÕ´Ï´Ù.
+	// Visual Studio 2005 ìŠ¤íƒ€ì¼ ë„í‚¹ ì°½ ìë™ ìˆ¨ê¹€ ë™ì‘ì„ í™œì„±í™”í•©ë‹ˆë‹¤.
 	EnableAutoHidePanes(CBRS_ALIGN_ANY);
 
-	// Å½»ö Ã¢ÀÌ ¿ŞÂÊ¿¡ ¸¸µé¾îÁö¹Ç·Î ÀÏ½ÃÀûÀ¸·Î ¿ŞÂÊ¿¡ µµÅ·À» ºñÈ°¼ºÈ­ÇÕ´Ï´Ù.
+	// íƒìƒ‰ ì°½ì´ ì™¼ìª½ì— ë§Œë“¤ì–´ì§€ë¯€ë¡œ ì¼ì‹œì ìœ¼ë¡œ ì™¼ìª½ì— ë„í‚¹ì„ ë¹„í™œì„±í™”í•©ë‹ˆë‹¤.
 	EnableDocking(CBRS_ALIGN_TOP | CBRS_ALIGN_BOTTOM | CBRS_ALIGN_RIGHT);
 
-	// "Outlook" Å½»ö ¸ğÀ½À» ¸¸µé°í ¼³Ä¡ÇÕ´Ï´Ù.
+	// "Outlook" íƒìƒ‰ ëª¨ìŒì„ ë§Œë“¤ê³  ì„¤ì¹˜í•©ë‹ˆë‹¤.
 	if (!CreateOutlookBar(m_wndNavigationBar, ID_VIEW_NAVIGATION, m_wndTree, 250))
 	{
-		TRACE0("Å½»ö Ã¢À» ¸¸µéÁö ¸øÇß½À´Ï´Ù.\n");
-		return -1;      // ¸¸µéÁö ¸øÇß½À´Ï´Ù.
+		TRACE0("íƒìƒ‰ ì°½ì„ ë§Œë“¤ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.\n");
+		return -1;      // ë§Œë“¤ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.
 	}
 
-	// Outlook Ç¥½ÃÁÙÀÌ ¸¸µé¾îÁö°í ¿ŞÂÊ¿¡ µµÅ·ÇÒ ¼ö ÀÖµµ·Ï Çã¿ëÇØ¾ß ÇÕ´Ï´Ù.
+	// Outlook í‘œì‹œì¤„ì´ ë§Œë“¤ì–´ì§€ê³  ì™¼ìª½ì— ë„í‚¹í•  ìˆ˜ ìˆë„ë¡ í—ˆìš©í•´ì•¼ í•©ë‹ˆë‹¤.
 	EnableDocking(CBRS_ALIGN_LEFT);
 	EnableAutoHidePanes(CBRS_ALIGN_RIGHT);
 
-	// Á÷Á¢ Ãß°¡ÇÑ ºÎºĞ
-	// 1. »óÅÂ Ç¥½ÃÁÙÀ» ÁØºñ »óÅÂ·Î ÀüÈ¯ÇÔ
-	m_wndStatusBar.GetElement(0)->SetText(_T("ÁØºñµÊ"));
+	// ì§ì ‘ ì¶”ê°€í•œ ë¶€ë¶„
+	// 1. ìƒíƒœ í‘œì‹œì¤„ì„ ì¤€ë¹„ ìƒíƒœë¡œ ì „í™˜í•¨
+	m_wndStatusBar.GetElement(0)->SetText(_T("ì¤€ë¹„ë¨"));
 
 	return 0;
 }
@@ -94,8 +94,8 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
 	if( !CFrameWndEx::PreCreateWindow(cs) )
 		return FALSE;
-	// TODO: CREATESTRUCT cs¸¦ ¼öÁ¤ÇÏ¿© ¿©±â¿¡¼­
-	//  Window Å¬·¡½º ¶Ç´Â ½ºÅ¸ÀÏÀ» ¼öÁ¤ÇÕ´Ï´Ù.
+	// TODO: CREATESTRUCT csë¥¼ ìˆ˜ì •í•˜ì—¬ ì—¬ê¸°ì—ì„œ
+	//  Window í´ë˜ìŠ¤ ë˜ëŠ” ìŠ¤íƒ€ì¼ì„ ìˆ˜ì •í•©ë‹ˆë‹¤.
 
 	return TRUE;
 }
@@ -108,11 +108,11 @@ void CMainFrame::InitializeRibbon()
 	bNameValid = strTemp.LoadString(IDS_RIBBON_FILE);
 	ASSERT(bNameValid);
 
-	// Ã¢ ÀÌ¹ÌÁö¸¦ ·ÎµåÇÕ´Ï´Ù.
+	// ì°½ ì´ë¯¸ì§€ë¥¼ ë¡œë“œí•©ë‹ˆë‹¤.
 	m_PanelImages.SetImageSize(CSize(16, 16));
 	m_PanelImages.Load(IDB_BUTTONS);
 
-	// ÃÊ±âÈ­ ÁÖ ´ÜÃßÀÔ´Ï´Ù.
+	// ì´ˆê¸°í™” ì£¼ ë‹¨ì¶”ì…ë‹ˆë‹¤.
 	m_MainButton.SetImage(IDB_MAIN);
 	m_MainButton.SetText(_T("\nf"));
 	m_MainButton.SetToolTipText(strTemp);
@@ -165,12 +165,12 @@ void CMainFrame::InitializeRibbon()
 	ASSERT(bNameValid);
 	pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_EXIT, strTemp, 15));
 
-	// "Å¬¸³º¸µå" ÆĞ³ÎÀ» »ç¿ëÇÏ¿© "È¨" ¹üÁÖ¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// "í´ë¦½ë³´ë“œ" íŒ¨ë„ì„ ì‚¬ìš©í•˜ì—¬ "í™ˆ" ë²”ì£¼ë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	bNameValid = strTemp.LoadString(IDS_RIBBON_HOME);
 	ASSERT(bNameValid);
 	CMFCRibbonCategory* pCategoryHome = m_wndRibbonBar.AddCategory(strTemp, IDB_WRITESMALL, IDB_WRITELARGE);
 
-	// "Å¬¸³º¸µå" ÆĞ³ÎÀ» ¸¸µì´Ï´Ù.
+	// "í´ë¦½ë³´ë“œ" íŒ¨ë„ì„ ë§Œë“­ë‹ˆë‹¤.
 	bNameValid = strTemp.LoadString(IDS_RIBBON_CLIPBOARD);
 	ASSERT(bNameValid);
 	CMFCRibbonPanel* pPanelClipboard = pCategoryHome->AddPanel(strTemp, m_PanelImages.ExtractIcon(27));
@@ -190,7 +190,7 @@ void CMainFrame::InitializeRibbon()
 	ASSERT(bNameValid);
 	pPanelClipboard->Add(new CMFCRibbonButton(ID_EDIT_SELECT_ALL, strTemp, -1));
 
-	// "º¸±â" ÆĞ³ÎÀ» ¸¸µé°í Ãß°¡ÇÕ´Ï´Ù.
+	// "ë³´ê¸°" íŒ¨ë„ì„ ë§Œë“¤ê³  ì¶”ê°€í•©ë‹ˆë‹¤.
 	bNameValid = strTemp.LoadString(IDS_RIBBON_VIEW);
 	ASSERT(bNameValid);
 	CMFCRibbonPanel* pPanelView = pCategoryHome->AddPanel(strTemp, m_PanelImages.ExtractIcon (7));
@@ -200,7 +200,7 @@ void CMainFrame::InitializeRibbon()
 	CMFCRibbonButton* pBtnStatusBar = new CMFCRibbonCheckBox(ID_VIEW_STATUS_BAR, strTemp);
 	pPanelView->Add(pBtnStatusBar);
 
-	// ºü¸¥ ½ÇÇà µµ±¸ ¸ğÀ½ ¸í·ÉÀ» Ãß°¡ÇÕ´Ï´Ù.
+	// ë¹ ë¥¸ ì‹¤í–‰ ë„êµ¬ ëª¨ìŒ ëª…ë ¹ì„ ì¶”ê°€í•©ë‹ˆë‹¤.
 	CList<UINT, UINT> lstQATCmds;
 
 	lstQATCmds.AddTail(ID_FILE_NEW);
@@ -212,9 +212,9 @@ void CMainFrame::InitializeRibbon()
 
 	m_wndRibbonBar.AddToTabs(new CMFCRibbonButton(ID_APP_ABOUT, _T("\na"), m_PanelImages.ExtractIcon (0)));
 
-	// Á÷Á¢ Ãß°¡ÇÑ ¸Ş´º ºÎºĞ
-	// 1. ÀÌµ¿ °ü·Ã ¸Ş´º
-	// "Å¬¸³º¸µå" ÆĞ³ÎÀ» »ç¿ëÇÏ¿© "ÀÌµ¿" ¹üÁÖ¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// ì§ì ‘ ì¶”ê°€í•œ ë©”ë‰´ ë¶€ë¶„
+	// 1. ì´ë™ ê´€ë ¨ ë©”ë‰´
+	// "í´ë¦½ë³´ë“œ" íŒ¨ë„ì„ ì‚¬ìš©í•˜ì—¬ "ì´ë™" ë²”ì£¼ë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	bNameValid = strTemp.LoadString(IDS_RIBBON_CATEGORY_TRANSLATE);
 	ASSERT(bNameValid);
 	CMFCRibbonCategory* pCategoryTranslate = m_wndRibbonBar.AddCategory(strTemp, IDB_WRITESMALL, IDB_WRITELARGE);
@@ -234,7 +234,7 @@ BOOL CMainFrame::CreateOutlookBar(CMFCOutlookBar& bar, UINT uiID, CMFCShellTreeC
 	ASSERT(bNameValid);
 	if (!bar.Create(strTemp, this, CRect(0, 0, nInitialWidth, 32000), uiID, WS_CHILD | WS_VISIBLE | CBRS_LEFT))
 	{
-		return FALSE; // ¸¸µéÁö ¸øÇß½À´Ï´Ù.
+		return FALSE; // ë§Œë“¤ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.
 	}
 
 	CMFCOutlookBarTabCtrl* pOutlookBar = (CMFCOutlookBarTabCtrl*)bar.GetUnderlyingWindow();
@@ -251,7 +251,7 @@ BOOL CMainFrame::CreateOutlookBar(CMFCOutlookBar& bar, UINT uiID, CMFCShellTreeC
 
 	DWORD dwPaneStyle = AFX_DEFAULT_TOOLBAR_STYLE | CBRS_FLOAT_MULTI;
 
-	// ¿òÁ÷ÀÌ°Å³ª, ÀÚµ¿À¸·Î ¼û±â°Å³ª, Å©±â¸¦ Á¶Á¤ÇÒ ¼ö ÀÖÁö¸¸ ´İÀ» ¼ö´Â ¾ø½À´Ï´Ù.
+	// ì›€ì§ì´ê±°ë‚˜, ìë™ìœ¼ë¡œ ìˆ¨ê¸°ê±°ë‚˜, í¬ê¸°ë¥¼ ì¡°ì •í•  ìˆ˜ ìˆì§€ë§Œ ë‹«ì„ ìˆ˜ëŠ” ì—†ìŠµë‹ˆë‹¤.
 	DWORD dwStyle = AFX_CBRS_FLOAT | AFX_CBRS_AUTOHIDE | AFX_CBRS_RESIZE;
 
 	CRect rectDummy(0, 0, 0, 0);
@@ -278,7 +278,7 @@ BOOL CMainFrame::CreateOutlookBar(CMFCOutlookBar& bar, UINT uiID, CMFCShellTreeC
 	return TRUE;
 }
 
-// CMainFrame Áø´Ü
+// CMainFrame ì§„ë‹¨
 
 #ifdef _DEBUG
 void CMainFrame::AssertValid() const
@@ -293,7 +293,7 @@ void CMainFrame::Dump(CDumpContext& dc) const
 #endif //_DEBUG
 
 
-// CMainFrame ¸Ş½ÃÁö Ã³¸®±â
+// CMainFrame ë©”ì‹œì§€ ì²˜ë¦¬ê¸°
 
 void CMainFrame::OnFilePrint()
 {
@@ -307,7 +307,7 @@ void CMainFrame::OnFilePrintPreview()
 {
 	if (IsPrintPreview())
 	{
-		PostMessage(WM_COMMAND, AFX_ID_PREVIEW_CLOSE);  // ÀÎ¼â ¹Ì¸® º¸±â ¸ğµå¸¦ ´İ½À´Ï´Ù.
+		PostMessage(WM_COMMAND, AFX_ID_PREVIEW_CLOSE);  // ì¸ì‡„ ë¯¸ë¦¬ ë³´ê¸° ëª¨ë“œë¥¼ ë‹«ìŠµë‹ˆë‹¤.
 	}
 }
 

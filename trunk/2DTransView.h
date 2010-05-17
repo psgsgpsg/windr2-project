@@ -1,41 +1,41 @@
-// 2DTransView.h : CMy2DTransView Å¬·¡½ºÀÇ ÀÎÅÍÆäÀÌ½º
+// 2DTransView.h : CMy2DTransView í´ë˜ìŠ¤ì˜ ì¸í„°í˜ì´ìŠ¤
 //
 
 #pragma once
 
-#define MAXELEMENTS         100		// ÃÖ´ë ¿¤¸®¸ÕÆ® °¹¼ö
-#define MAXNODESPERELEMENT  4		// ¿¤¸®¸ÕÆ®´ç ÃÖ´ë Á¡ °¹¼ö
+#define MAXELEMENTS         100		// ìµœëŒ€ ì—˜ë¦¬ë¨¼íŠ¸ ê°¯ìˆ˜
+#define MAXNODESPERELEMENT  4		// ì—˜ë¦¬ë¨¼íŠ¸ë‹¹ ìµœëŒ€ ì  ê°¯ìˆ˜
 
 class CMy2DTransView : public CView
 {
-protected: // serialization¿¡¼­¸¸ ¸¸µé¾îÁı´Ï´Ù.
+protected: // serializationì—ì„œë§Œ ë§Œë“¤ì–´ì§‘ë‹ˆë‹¤.
 	CMy2DTransView();
 	DECLARE_DYNCREATE(CMy2DTransView)
 
-// Æ¯¼ºÀÔ´Ï´Ù.
+// íŠ¹ì„±ì…ë‹ˆë‹¤.
 public:
 	CMy2DTransDoc* GetDocument() const;
 
-// Á÷Á¢ Ãß°¡ÇÑ ¸â¹ö ÇÔ¼ö ¹× º¯¼ö ¸®½ºÆ®
+// ì§ì ‘ ì¶”ê°€í•œ ë©¤ë²„ í•¨ìˆ˜ ë° ë³€ìˆ˜ ë¦¬ìŠ¤íŠ¸
 public:
-	afx_msg void OnFileOpen();			// ÆÄÀÏÀ» ¿­±â À§ÇÑ ÇÔ¼ö Ã³¸®
+	afx_msg void OnFileOpen();			// íŒŒì¼ì„ ì—´ê¸° ìœ„í•œ í•¨ìˆ˜ ì²˜ë¦¬
 	afx_msg void OnFileNew();
-	void FileRead(CString);				// ÆÄÀÏ parsingÀ» À§ÇÑ Ã³¸®
-	void DrawLines();					// ¼±À» ±×¸®´Â ÇÔ¼ö
+	void FileRead(CString);				// íŒŒì¼ parsingì„ ìœ„í•œ ì²˜ë¦¬
+	void DrawLines();					// ì„ ì„ ê·¸ë¦¬ëŠ” í•¨ìˆ˜
 
-// ÀÛ¾÷ÀÔ´Ï´Ù.
+// ì‘ì—…ì…ë‹ˆë‹¤.
 public:
 
-// ÀçÁ¤ÀÇÀÔ´Ï´Ù.
+// ì¬ì •ì˜ì…ë‹ˆë‹¤.
 public:
-	virtual void OnDraw(CDC* pDC);  // ÀÌ ºä¸¦ ±×¸®±â À§ÇØ ÀçÁ¤ÀÇµÇ¾ú½À´Ï´Ù.
+	virtual void OnDraw(CDC* pDC);  // ì´ ë·°ë¥¼ ê·¸ë¦¬ê¸° ìœ„í•´ ì¬ì •ì˜ë˜ì—ˆìŠµë‹ˆë‹¤.
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 protected:
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
 	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
 	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
 
-// ±¸ÇöÀÔ´Ï´Ù.
+// êµ¬í˜„ì…ë‹ˆë‹¤.
 public:
 	virtual ~CMy2DTransView();
 #ifdef _DEBUG
@@ -45,7 +45,7 @@ public:
 
 protected:
 
-// »ı¼ºµÈ ¸Ş½ÃÁö ¸Ê ÇÔ¼ö
+// ìƒì„±ëœ ë©”ì‹œì§€ ë§µ í•¨ìˆ˜
 protected:
 	afx_msg void OnFilePrintPreview();
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
@@ -54,7 +54,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-#ifndef _DEBUG  // 2DTransView.cppÀÇ µğ¹ö±× ¹öÀü
+#ifndef _DEBUG  // 2DTransView.cppì˜ ë””ë²„ê·¸ ë²„ì „
 inline CMy2DTransDoc* CMy2DTransView::GetDocument() const
    { return reinterpret_cast<CMy2DTransDoc*>(m_pDocument); }
 #endif
