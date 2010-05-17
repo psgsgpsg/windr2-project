@@ -1,4 +1,4 @@
-// 2DTransDoc.cpp : CMy2DTransDoc Å¬·¡½ºÀÇ ±¸Çö
+// 2DTransDoc.cpp : CMy2DTransDoc í´ë˜ìŠ¤ì˜ êµ¬í˜„
 //
 
 #include "stdafx.h"
@@ -19,11 +19,11 @@ BEGIN_MESSAGE_MAP(CMy2DTransDoc, CDocument)
 END_MESSAGE_MAP()
 
 
-// CMy2DTransDoc »ı¼º/¼Ò¸ê
+// CMy2DTransDoc ìƒì„±/ì†Œë©¸
 
 CMy2DTransDoc::CMy2DTransDoc()
 {
-	// TODO: ¿©±â¿¡ ÀÏÈ¸¼º »ı¼º ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì¼íšŒì„± ìƒì„± ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 
 }
 
@@ -36,8 +36,8 @@ BOOL CMy2DTransDoc::OnNewDocument()
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 
-	// TODO: ¿©±â¿¡ ÀçÃÊ±âÈ­ ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
-	// SDI ¹®¼­´Â ÀÌ ¹®¼­¸¦ ´Ù½Ã »ç¿ëÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì¬ì´ˆê¸°í™” ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
+	// SDI ë¬¸ì„œëŠ” ì´ ë¬¸ì„œë¥¼ ë‹¤ì‹œ ì‚¬ìš©í•©ë‹ˆë‹¤.
 
 	return TRUE;
 }
@@ -48,16 +48,16 @@ void CMy2DTransDoc::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		// TODO: ¿©±â¿¡ ÀúÀå ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+		// TODO: ì—¬ê¸°ì— ì €ì¥ ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	}
 	else
 	{
-		// TODO: ¿©±â¿¡ ·Îµù ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+		// TODO: ì—¬ê¸°ì— ë¡œë”© ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	}
 }
 
 
-// CMy2DTransDoc Áø´Ü
+// CMy2DTransDoc ì§„ë‹¨
 
 #ifdef _DEBUG
 void CMy2DTransDoc::AssertValid() const
@@ -72,7 +72,7 @@ void CMy2DTransDoc::Dump(CDumpContext& dc) const
 #endif //_DEBUG
 
 
-// CMy2DTransDoc ¸í·É
+// CMy2DTransDoc ëª…ë ¹
 
 void CMy2DTransDoc::GetMode(int getflag)
 {

@@ -1,4 +1,4 @@
-// MainFrm.h : CMainFrame Å¬·¡½ºÀÇ ÀÎÅÍÆäÀÌ½º
+// MainFrm.h : CMainFrame í´ë˜ìŠ¤ì˜ ì¸í„°í˜ì´ìŠ¤
 //
 
 #pragma once
@@ -13,22 +13,22 @@ class COutlookBar : public CMFCOutlookBar
 class CMainFrame : public CFrameWndEx
 {
 	
-protected: // serialization¿¡¼­¸¸ ¸¸µé¾îÁı´Ï´Ù.
+protected: // serializationì—ì„œë§Œ ë§Œë“¤ì–´ì§‘ë‹ˆë‹¤.
 	CMainFrame();
 	DECLARE_DYNCREATE(CMainFrame)
 
-// Æ¯¼ºÀÔ´Ï´Ù.
+// íŠ¹ì„±ì…ë‹ˆë‹¤.
 public:
 	CMFCRibbonStatusBar  m_wndStatusBar;
 
-// ÀÛ¾÷ÀÔ´Ï´Ù.
+// ì‘ì—…ì…ë‹ˆë‹¤.
 public:
 
-// ÀçÁ¤ÀÇÀÔ´Ï´Ù.
+// ì¬ì •ì˜ì…ë‹ˆë‹¤.
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 
-// ±¸ÇöÀÔ´Ï´Ù.
+// êµ¬í˜„ì…ë‹ˆë‹¤.
 public:
 	virtual ~CMainFrame();
 #ifdef _DEBUG
@@ -36,14 +36,14 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
-protected:  // ÄÁÆ®·Ñ ¸ğÀ½ÀÌ Æ÷ÇÔµÈ ¸â¹öÀÔ´Ï´Ù.
+protected:  // ì»¨íŠ¸ë¡¤ ëª¨ìŒì´ í¬í•¨ëœ ë©¤ë²„ì…ë‹ˆë‹¤.
 	CMFCRibbonBar     m_wndRibbonBar;
 	CMFCRibbonApplicationButton m_MainButton;
 	CMFCToolBarImages m_PanelImages;
 	COutlookBar       m_wndNavigationBar;
 	CMFCShellTreeCtrl m_wndTree;
 
-// »ı¼ºµÈ ¸Ş½ÃÁö ¸Ê ÇÔ¼ö
+// ìƒì„±ëœ ë©”ì‹œì§€ ë§µ í•¨ìˆ˜
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnFilePrint();
