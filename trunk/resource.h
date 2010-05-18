@@ -32,8 +32,11 @@
 #define IDR_POPUP_EDIT                  119
 #define IDS_RIBBON_PANEL_DIRECTION3     119
 #define ID_STATUSBAR_PANE1              120
+#define ID_DIR_SIZE                     120
 #define ID_STATUSBAR_PANE2              121
 #define IDS_STATUS_PANE1                122
+#define IDS_RIBBON_DIR_SIZE             123
+#define ID_RIBBON_DIR_SIZE              124
 #define IDR_MAINFRAME                   128
 #define IDR_MAINFRAME_256               129
 #define IDR_My2DTransTYPE               130
@@ -86,23 +89,14 @@
 #define IDS_EDIT_MENU                   306
 #define IDB_TRANLARGE                   314
 #define ID_WRITE_PASTEASHYPERLINK       32770
-#define ID_32771                        32771
-#define ID_32774                        32774
-#define ID_32775                        32775
-#define ID_32776                        32776
-#define ID_32777                        32777
-#define ID_32778                        32778
-#define ID_32779                        32779
-#define ID_32780                        32780
-#define ID_32781                        32781
 #define IDS_RIBBON_CATEGORY_TRANSLATE   57346
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        315
-#define _APS_NEXT_COMMAND_VALUE         32791
+#define _APS_NEXT_RESOURCE_VALUE        316
+#define _APS_NEXT_COMMAND_VALUE         32794
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

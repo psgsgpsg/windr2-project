@@ -208,7 +208,7 @@ void CMainFrame::InitializeRibbon()
 
 	m_wndRibbonBar.SetQuickAccessCommands(lstQATCmds);
 
-	m_wndRibbonBar.AddToTabs(new CMFCRibbonButton(ID_APP_ABOUT, _T("\na"), m_PanelImages.ExtractIcon(0)));
+	m_wndRibbonBar.AddToTabs(new CMFCRibbonButton(ID_APP_ABOUT, _T("About\na"), m_PanelImages.ExtractIcon(0)));
 
 	// 직접 추가한 메뉴 부분
 	// 1. 이동 관련 메뉴
@@ -221,84 +221,81 @@ void CMainFrame::InitializeRibbon()
 		// "직선 이동" 패널 추가
 		bNameValid = strTemp.LoadString(IDS_RIBBON_PANEL_DIRECTION1);
 		ASSERT(bNameValid);
-		CMFCRibbonPanel* pPanelDirection = pCategoryTranslate->AddPanel(strTemp, m_PanelImages.ExtractIcon(27));
+		CMFCRibbonPanel* pPanelDirection1 = pCategoryTranslate->AddPanel(strTemp, m_PanelImages.ExtractIcon(27));
 
 			// "상", "하", "좌", "우"에 해당하는 버튼을 추가
 			// 상
 			bNameValid = strTemp.LoadString(IDS_RIBBON_DIR_UP);
 			ASSERT(bNameValid);
-			CMFCRibbonButton* pBtnDirUp = new CMFCRibbonButton(ID_DIR_UP, strTemp, -1, 4);
-			pBtnDirUp->SetKeys( _T("U") );
-			pPanelDirection->Add(pBtnDirUp);
+			CMFCRibbonButton* pBtnDir1 = new CMFCRibbonButton(ID_DIR_UP, strTemp, -1, 4);
+			pBtnDir1->SetKeys( _T("U") );
+			pPanelDirection1->Add(pBtnDir1);
 
 			// 하
 			bNameValid = strTemp.LoadString(IDS_RIBBON_DIR_DOWN);
 			ASSERT(bNameValid);
-			pBtnDirUp = new CMFCRibbonButton(ID_DIR_DOWN, strTemp, -1, 5);
-			pBtnDirUp->SetKeys( _T("D") );
-			pPanelDirection->Add(pBtnDirUp);
+			CMFCRibbonButton* pBtnDir2 = new CMFCRibbonButton(ID_DIR_DOWN, strTemp, -1, 5);
+			pBtnDir2->SetKeys( _T("D") );
+			pPanelDirection1->Add(pBtnDir2);
 
 			// 좌
 			bNameValid = strTemp.LoadString(IDS_RIBBON_DIR_LEFT);
 			ASSERT(bNameValid);
-			pBtnDirUp = new CMFCRibbonButton(ID_DIR_LEFT, strTemp, -1, 3);
-			pBtnDirUp->SetKeys( _T("L") );
-			pPanelDirection->Add(pBtnDirUp);
+			CMFCRibbonButton* pBtnDir3 = new CMFCRibbonButton(ID_DIR_LEFT, strTemp, -1, 3);
+			pBtnDir3->SetKeys( _T("L") );
+			pPanelDirection1->Add(pBtnDir3);
 
 			// 우
 			bNameValid = strTemp.LoadString(IDS_RIBBON_DIR_RIGHT);
 			ASSERT(bNameValid);
-			pBtnDirUp = new CMFCRibbonButton(ID_DIR_RIGHT, strTemp, -1, 2);
-			pBtnDirUp->SetKeys( _T("R") );
-			pPanelDirection->Add(pBtnDirUp);
+			CMFCRibbonButton* pBtnDir4 = new CMFCRibbonButton(ID_DIR_RIGHT, strTemp, -1, 2);
+			pBtnDir4->SetKeys( _T("R") );
+			pPanelDirection1->Add(pBtnDir4);
 
 		// "대각선 이동" 패널 추가
 		bNameValid = strTemp.LoadString(IDS_RIBBON_PANEL_DIRECTION2);
 		ASSERT(bNameValid);
-		pPanelDirection = pCategoryTranslate->AddPanel(strTemp, m_PanelImages.ExtractIcon(27));
+		CMFCRibbonPanel* pPanelDirection2 = pCategoryTranslate->AddPanel(strTemp, m_PanelImages.ExtractIcon(27));
 
 			// "우측 상향", "우측 하향", "좌측 상향", "좌측 하향"에 해당하는 버튼을 추가
 			// 우측 상향
 			bNameValid = strTemp.LoadString(IDS_RIBBON_DIR_RUP);
 			ASSERT(bNameValid);
-			pBtnDirUp = new CMFCRibbonButton(ID_DIR_RUP, strTemp, -1, 8);
-			pBtnDirUp->SetKeys( _T("Q") );
-			pPanelDirection->Add(pBtnDirUp);
+			CMFCRibbonButton* pBtnDir5 = new CMFCRibbonButton(ID_DIR_RUP, strTemp, -1, 8);
+			pBtnDir5->SetKeys( _T("Q") );
+			pPanelDirection2->Add(pBtnDir5);
 
 			// 우측 하향
 			bNameValid = strTemp.LoadString(IDS_RIBBON_DIR_RDOWN);
 			ASSERT(bNameValid);
-			pBtnDirUp = new CMFCRibbonButton(ID_DIR_RDOWN, strTemp, -1, 7);
-			pBtnDirUp->SetKeys( _T("E") );
-			pPanelDirection->Add(pBtnDirUp);
+			CMFCRibbonButton* pBtnDir6 = new CMFCRibbonButton(ID_DIR_RDOWN, strTemp, -1, 7);
+			pBtnDir6->SetKeys( _T("E") );
+			pPanelDirection2->Add(pBtnDir6);
 
 			// 좌측 상향
 			bNameValid = strTemp.LoadString(IDS_RIBBON_DIR_LUP);
 			ASSERT(bNameValid);
-			pBtnDirUp = new CMFCRibbonButton(ID_DIR_LUP, strTemp, -1, 9);
-			pBtnDirUp->SetKeys( _T("Z") );
-			pPanelDirection->Add(pBtnDirUp);
+			CMFCRibbonButton* pBtnDir7 = new CMFCRibbonButton(ID_DIR_LUP, strTemp, -1, 9);
+			pBtnDir7->SetKeys( _T("Z") );
+			pPanelDirection2->Add(pBtnDir7);
 
 			// 좌측 하향
 			bNameValid = strTemp.LoadString(IDS_RIBBON_DIR_LDOWN);
 			ASSERT(bNameValid);
-			pBtnDirUp = new CMFCRibbonButton(ID_DIR_LDOWN, strTemp, -1, 6);
-			pBtnDirUp->SetKeys( _T("C") );
-			pPanelDirection->Add(pBtnDirUp);
+			CMFCRibbonButton* pBtnDir8 = new CMFCRibbonButton(ID_DIR_LDOWN, strTemp, -1, 6);
+			pBtnDir8->SetKeys( _T("C") );
+			pPanelDirection2->Add(pBtnDir8);
 
 		// "이동 크기 설정" 패널 추가
 		bNameValid = strTemp.LoadString(IDS_RIBBON_PANEL_DIRECTION3);
 		ASSERT(bNameValid);
-		pPanelDirection = pCategoryTranslate->AddPanel(strTemp, m_PanelImages.ExtractIcon(27));
+		CMFCRibbonPanel* pPanelDirection3 = pCategoryTranslate->AddPanel(strTemp, m_PanelImages.ExtractIcon(27));
 
-			// "우측 상향", "우측 하향", "좌측 상향", "좌측 하향"에 해당하는 버튼을 추가
-			// 우측 상향
-			bNameValid = strTemp.LoadString(IDS_RIBBON_DIR_RUP);
-			ASSERT(bNameValid);
-			
-			pBtnDirUp = new CMFCRibbonButton(ID_DIR_RUP, strTemp, -1, 8);
-			pBtnDirUp->SetKeys( _T("U") );
-			pPanelDirection->Add(pBtnDirUp);
+			// 이동 크기를 편집할 수 있는 콤보 박스를 생성함
+			CMFCRibbonEdit* pEdit = new CMFCRibbonEdit(ID_DIR_SIZE, 90, _T("Step"), 6);
+			pEdit->EnableSpinButtons(0, 1000);			// 0 ~ 1000 사이의 값으로 스핀 버튼
+			pEdit->SetEditText( _T("10") );
+			pPanelDirection3->Add(pEdit);				// 패널에 콤보 박스를 넣음
 }
 
 BOOL CMainFrame::CreateOutlookBar(CMFCOutlookBar& bar, UINT uiID, CMFCShellTreeCtrl& tree, int nInitialWidth)
