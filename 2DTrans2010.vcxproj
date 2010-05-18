@@ -130,7 +130,12 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\2DTrans.ico" />
+    <None Include="DATA01.DAT">
+      <FileType>Text</FileType>
+    </None>
+    <None Include="DATA02.DAT">
+      <FileType>Text</FileType>
+    </None>
     <None Include="res\2DTransDoc.ico" />
     <None Include="res\buttons.bmp" />
     <None Include="res\filelarge.bmp" />
@@ -148,6 +153,7 @@
     <None Include="res\pages_small_hc.bmp" />
     <None Include="res\Toolbar.bmp" />
     <None Include="res\Toolbar256.bmp" />
+    <None Include="res\translate_large.bmp" />
     <None Include="res\writelarge.bmp" />
     <None Include="res\writesmall.bmp" />
     <None Include="ReadMe.txt" />
