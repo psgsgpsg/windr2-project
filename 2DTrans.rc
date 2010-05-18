@@ -179,6 +179,7 @@ BEGIN
         MENUITEM "우측 위",                        ID_DIR_RUP
         MENUITEM "좌측 아래",                       ID_DIR_LDOWN
         MENUITEM "좌측 위",                        ID_DIR_LUP
+        MENUITEM "이동 크기",                       ID_DIR_SIZE
     END
 END
 
@@ -437,12 +438,14 @@ BEGIN
     ID_DIR_DOWN             "화면을 지정된 크기만큼 아래로 이동합니다."
     ID_DIR_LEFT             "화면을 지정된 크기만큼 좌측으로 이동합니다."
     ID_DIR_RIGHT            "화면을 지정된 크기만큼 우측으로 이동합니다."
-    ID_DIR_RUP              "화면을 지정된 크기만큼 우측 위로 이동합니다."
-    ID_DIR_RDOWN            "화면을 지정된 크기만큼 우측 아래로 이동합니다."
-    ID_DIR_LUP              "화면을 지정된 크기만큼 좌측 위로 이동합니다."
-    ID_DIR_LDOWN            "화면을 지정된 크기만큼 좌측 아래로 이동합니다."
+    ID_DIR_RUP              "화면을 지정된 크기만큼 우측 위로 이동합니다.\n우측 위로"
+    ID_DIR_RDOWN            "화면을 지정된 크기만큼 우측 아래로 이동합니다.\n우측 아래로"
+    ID_DIR_LUP              "화면을 지정된 크기만큼 좌측 위로 이동합니다.\n좌측 위로"
+    ID_DIR_LDOWN            "화면을 지정된 크기만큼 좌측 아래로 이동합니다.\n좌측 아래"
     IDS_RIBBON_PANEL_DIRECTION3 "이동 크기"
+    ID_DIR_SIZE             "1회 이동시마다 이동할 크기를 지정합니다.\nStep Size"
     IDS_STATUS_PANE1        "창 1"
+    IDS_RIBBON_DIR_SIZE     "이동 크기"
 END
 
 STRINGTABLE

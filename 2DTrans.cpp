@@ -73,6 +73,7 @@ BOOL CMy2DTransApp::InitInstance()
 	// 적절한 내용으로 수정해야 합니다.
 	SetRegistryKey(_T("Aerospace Engineering"));
 	LoadStdProfileSettings(4);  // 표준 INI 파일 옵션을 로드합니다.
+	SetRegistryBase (_T("Settings"));
 
 	InitContextMenuManager();
 	InitShellManager();
