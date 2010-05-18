@@ -55,9 +55,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\2DTrans.ico">
-      <Filter>리소스 파일</Filter>
-    </None>
     <None Include="res\2DTransDoc.ico">
       <Filter>리소스 파일</Filter>
     </None>
@@ -116,6 +113,11 @@
       <Filter>리소스 파일</Filter>
     </None>
     <None Include="ReadMe.txt" />
+    <None Include="res\translate_large.bmp">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="DATA01.DAT" />
+    <None Include="DATA02.DAT" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="2DTrans.rc">

@@ -94,6 +94,7 @@ IDB_PAGES_HC            BITMAP                  "res\\pages_hc.bmp"
 IDB_PAGES_SMALL         BITMAP                  "res\\pages_small.bmp"
 IDB_PAGES_SMALL_HC      BITMAP                  "res\\pages_small_hc.bmp"
 IDB_INFO                BITMAP                  "res\\info.bmp"
+IDB_TRANLARGE           BITMAP                  "res\\translate_large.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -162,11 +163,22 @@ BEGIN
     POPUP "보기(&V)"
     BEGIN
         MENUITEM "상태 표시줄(&S)",                  ID_VIEW_STATUS_BAR
-        MENUITEM "캡션 표시줄(&C)",                  ID_VIEW_CAPTION_BAR
     END
     POPUP "도움말(&H)"
     BEGIN
         MENUITEM "2DTrans 정보(&A)...",           ID_APP_ABOUT
+    END
+    POPUP "이동(&T)"
+    BEGIN
+        MENUITEM "상",                           ID_DIR_UP
+        MENUITEM "하",                           ID_DIR_DOWN
+        MENUITEM "좌",                           ID_DIR_LEFT
+        MENUITEM "우",                           ID_DIR_RIGHT
+        MENUITEM SEPARATOR
+        MENUITEM "우측 아래",                       ID_DIR_RDOWN
+        MENUITEM "우측 위",                        ID_DIR_RUP
+        MENUITEM "좌측 아래",                       ID_DIR_LDOWN
+        MENUITEM "좌측 위",                        ID_DIR_LUP
     END
 END
 
@@ -207,6 +219,14 @@ BEGIN
     "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
+    VK_NUMPAD9,     ID_DIR_RUP,             VIRTKEY, NOINVERT
+    VK_NUMPAD3,     ID_DIR_RDOWN,           VIRTKEY, NOINVERT
+    VK_NUMPAD7,     ID_DIR_LUP,             VIRTKEY, NOINVERT
+    VK_NUMPAD1,     ID_DIR_LDOWN,           VIRTKEY, NOINVERT
+    VK_NUMPAD8,     ID_DIR_UP,              VIRTKEY, NOINVERT
+    VK_NUMPAD2,     ID_DIR_DOWN,            VIRTKEY, NOINVERT
+    VK_NUMPAD4,     ID_DIR_LEFT,            VIRTKEY, NOINVERT
+    VK_NUMPAD6,     ID_DIR_RIGHT,           VIRTKEY, NOINVERT
 END
 
 
@@ -293,6 +313,17 @@ END
 STRINGTABLE
 BEGIN
     IDP_OLE_INIT_FAILED     "OLE를 초기화할 수 없습니다. OLE 라이브러리 버전이 올바른지 확인하십시오."
+    IDS_RIBBON_PANEL_DIRECTION1 "직선 이동"
+    IDS_RIBBON_DIR_UP       "상"
+    IDS_RIBBON_DIR_DOWN     "하"
+    IDS_RIBBON_DIR_LEFT     "좌"
+    IDS_RIBBON_DIR_RIGHT    "우"
+    IDS_RIBBON_PANEL_DIRECTION2 "대각선 이동"
+    IDS_RIBBON_DIR_RDOWN    "우측 아래"
+    IDS_RIBBON_DIR_RUP      "우측 위"
+    IDS_RIBBON_DIR_LUP      "좌측 위"
+    IDS_RIBBON_DIR_LDOWN    "좌측 아래"
+    ID_DIR_UP               "화면을 지정된 크기만큼 위로 이동합니다."
 END
 
 STRINGTABLE
@@ -381,11 +412,6 @@ END
 
 STRINGTABLE
 BEGIN
-    ID_VIEW_CAPTION_BAR     "캡션 표시줄을 표시하거나 숨깁니다.\n캡션 표시줄 설정/해제"
-END
-
-STRINGTABLE
-BEGIN
     AFX_IDS_SCSIZE          "창 크기를 변경합니다."
     AFX_IDS_SCMOVE          "창 위치를 변경합니다."
     AFX_IDS_SCMINIMIZE      "창을 아이콘으로 축소합니다."
@@ -408,8 +434,15 @@ END
 
 STRINGTABLE
 BEGIN
+    ID_DIR_DOWN             "화면을 지정된 크기만큼 아래로 이동합니다."
+    ID_DIR_LEFT             "화면을 지정된 크기만큼 좌측으로 이동합니다."
+    ID_DIR_RIGHT            "화면을 지정된 크기만큼 우측으로 이동합니다."
+    ID_DIR_RUP              "화면을 지정된 크기만큼 우측 위로 이동합니다."
+    ID_DIR_RDOWN            "화면을 지정된 크기만큼 우측 아래로 이동합니다."
+    ID_DIR_LUP              "화면을 지정된 크기만큼 좌측 위로 이동합니다."
+    ID_DIR_LDOWN            "화면을 지정된 크기만큼 좌측 아래로 이동합니다."
+    IDS_RIBBON_PANEL_DIRECTION3 "이동 크기"
     IDS_STATUS_PANE1        "창 1"
-    IDS_STATUS_PANE2        "창 2"
 END
 
 STRINGTABLE
@@ -438,7 +471,7 @@ STRINGTABLE
 BEGIN
     IDS_RIBBON_RECENT_DOCS  "최근 문서"
     IDS_RIBBON_EXIT         "끝내기(&X)"
-    IDS_RIBBON_HOME         "홈(&H)"
+    IDS_RIBBON_HOME         "홈"
     IDS_RIBBON_CLIPBOARD    "클립보드\nd"
     IDS_RIBBON_PASTE        "붙여넣기\nv"
     IDS_RIBBON_CUT          "자르기\nx"
@@ -446,17 +479,6 @@ BEGIN
     IDS_RIBBON_SELECTALL    "모두 선택\na"
     IDS_RIBBON_WINDOW       "창\nw"
     IDS_RIBBON_WINDOWS      "창\ni"
-    IDS_RIBBON_STYLE        "스타일"
-    IDS_RIBBON_STYLE_TIP    "비주얼 스타일을 수정합니다."
-END
-
-STRINGTABLE
-BEGIN
-    IDS_CAPTION_BUTTON      "옵션..."
-    IDS_CAPTION_BUTTON_TIP  "자세한 옵션을 보려면 여기를 클릭하십시오."
-    IDS_CAPTION_TEXT        "사용자에게 메시지를 표시할 수 있는 캡션 표시줄입니다."
-    IDS_CAPTION_IMAGE_TIP   "중요"
-    IDS_CAPTION_IMAGE_TEXT  "사용자에게 표시되는 정보 메시지입니다."
 END
 
 STRINGTABLE
@@ -476,7 +498,6 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_RIBBON_STYLE_DESC   "Office 2007 테마 중 하나를 선택합니다."
     IDS_RIBBON_STATUSBAR    "상태 표시줄"
     IDS_RIBBON_VIEW         "보기"
 END
