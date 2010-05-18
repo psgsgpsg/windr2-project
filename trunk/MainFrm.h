@@ -59,6 +59,9 @@ protected:
 	CMFCOutlookBarTabCtrl* FindOutlookParent(CWnd* pWnd);
 	CMFCOutlookBarTabCtrl* m_pCurrOutlookWnd;
 	CMFCOutlookBarPane*    m_pCurrOutlookPage;
+public:
+	afx_msg void OnDirSize();
+	afx_msg void OnUpdateDirSize(CCmdUI *pCmdUI);
 };
 
 

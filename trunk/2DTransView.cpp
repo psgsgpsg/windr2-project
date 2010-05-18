@@ -24,18 +24,37 @@ typedef struct DisplayList {
 	int	nNodes;                     // 노드 갯수
 	vector<double> XPos, YPos;      // X, Y 노드 좌표 벡터
 
-	DisplayList() {					// 구조체 생성자
+	// 구조체 생성자
+	DisplayList() {
 		this->R = 0;
 		this->G = 0;
 		this->B = 0;
 		this->nNodes = 0;
 	}
 
-	void SetRGB(int Red, int Green, int Blue) {	// 색상을 지정하는 부분
+	// 색상을 지정하는 부분
+	void SetRGB(int Red, int Green, int Blue) {
 		this->R = Red;
 		this->G = Green;
 		this->B = Blue;
 	}
+
+	// delta만큼 모든 점을 이동시킨다.
+	void Translate(double Xdelta, double Ydelta) {
+		for(int i = 0; i < this->nNodes; ++i) {
+			this->XPos[i] += Xdelta;
+			this->YPos[i] +=  Ydelta;
+		}
+	}
+
+	// scalefactor 만큼 원점을 기준으로 스케일링을 함
+	void Scale(double scalefactor) {
+		for(int i = 0; i < this->nNodes; ++i) {
+			this->XPos[i] *= scalefactor;
+			this->YPos[i] *= scalefactor;
+		}
+	}
+
 } DisplayList;
 
 // 점 데이터 저장을 위한 구조체를 선언함
@@ -48,7 +67,8 @@ double ScaleX, ScaleY;				// X, Y 방향으로의 scale factor
 int nElements;                      // 전체 도형의 갯수
 int nflag, m_option;
 CPoint anchor, last;							// Mouse location points
-double Scale, wsx, wsy, CenX, CenY;
+double Scale = 1.0, wsx, wsy, CenX, CenY;
+double moveSize, scaleSize;			// UI로부터의 입력 변수 저장용
 
 // CMy2DTransView
 
@@ -60,11 +80,23 @@ BEGIN_MESSAGE_MAP(CMy2DTransView, CView)
 	ON_COMMAND(ID_FILE_PRINT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CMy2DTransView::OnFilePrintPreview)
+
+	ON_COMMAND(ID_DIR_UP, &CMy2DTransView::OnDirUp)
 	
 	// 마우스 명령에 따른 메시지 맵
 	ON_WM_RBUTTONUP()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSEWHEEL()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
+	ON_COMMAND(ID_DIR_DOWN, &CMy2DTransView::OnDirDown)
+	ON_COMMAND(ID_DIR_LEFT, &CMy2DTransView::OnDirLeft)
+	ON_COMMAND(ID_DIR_LUP, &CMy2DTransView::OnDirLup)
+	ON_COMMAND(ID_DIR_LDOWN, &CMy2DTransView::OnDirLdown)
+	ON_COMMAND(ID_DIR_RDOWN, &CMy2DTransView::OnDirRdown)
+	ON_COMMAND(ID_DIR_RIGHT, &CMy2DTransView::OnDirRight)
+	ON_COMMAND(ID_DIR_RUP, &CMy2DTransView::OnDirRup)
+//	ON_COMMAND(ID_DIR_SIZE, &CMy2DTransView::OnDirSize)
 END_MESSAGE_MAP()
 
 // CMy2DTransView 생성/소멸
@@ -138,27 +170,29 @@ void CMy2DTransView::OnDraw(CDC* pDC)
         // DList를 tempList로 복사하는 부분
     	//**************************************************************************//
 		// tempList를 초기화하고 DList로부터 데이터를 복사함
-		tempList.clear();
-		tempList.assign(DList.begin(), DList.end());
-
 
 		// 계산된 스케일로 점 데이터를 다시 계산
-		for(vector<DisplayList>::iterator j = tempList.begin(); j != tempList.end(); ++j) {
-			// X 좌표 계산
-			for(int i = 0; i < j->nNodes; ++i) {
-//				j->XPos.at(i) = WIDTH  - ( CenX - j->XPos.at(i) ) * 0.2 * Scale;
-//				j->YPos.at(i) = HEIGHT - ( j->YPos.at(i) - CenY ) * 0.2 * Scale;
-				j->XPos.at(i) =          ( Scale * ( j->XPos.at(i) - (double)MinX ) );
-				j->YPos.at(i) = HEIGHT - ( Scale * ( j->YPos.at(i) - (double)MinY ) );
+		if ( GetCapture() != this ) {
+					tempList.clear();
+		tempList.assign(DList.begin(), DList.end());
 
-				// *(xpos+j) = WIDTH - (CenX - *(xpos+j)) * 0.2 * Scale;
-				// *(ypos+j) = HEIGHT - (*(ypos+j) - CenY) * 0.2 * Scale;
-				// *(xpos+j) = ( *(xpos+j)*(+Scale) ) - ( Scale * MinX ) + CenX;
-				// *(ypos+j) = ( *(ypos+j)*(-Scale) ) - ( Scale * MinY ) + CenY;
+			for(vector<DisplayList>::iterator j = tempList.begin(); j != tempList.end(); ++j) {
+				// X 좌표 계산
+				for(int i = 0; i < j->nNodes; ++i) {
+					//				j->XPos.at(i) = WIDTH  - ( CenX - j->XPos.at(i) ) * 0.2 * Scale;
+					//				j->YPos.at(i) = HEIGHT - ( j->YPos.at(i) - CenY ) * 0.2 * Scale;
+					j->XPos.at(i) =          ( Scale * ( j->XPos.at(i) - (double)MinX ) );
+					j->YPos.at(i) = HEIGHT - ( Scale * ( j->YPos.at(i) - (double)MinY ) );
+
+					// *(xpos+j) = WIDTH - (CenX - *(xpos+j)) * 0.2 * Scale;
+					// *(ypos+j) = HEIGHT - (*(ypos+j) - CenY) * 0.2 * Scale;
+					// *(xpos+j) = ( *(xpos+j)*(+Scale) ) - ( Scale * MinX ) + CenX;
+					// *(ypos+j) = ( *(ypos+j)*(-Scale) ) - ( Scale * MinY ) + CenY;
+				}
 			}
 		}
 	}
-	
+
 	//nflag = pDoc->PutMode();
 	DrawLines();
 }
@@ -304,11 +338,6 @@ void CMy2DTransView::FileRead(CString FileName) {
 	// 파일을 닫음
 	fclose(fp);
 
-	// 파일을 열었음을 알리는 플래그 설정
-	nflag = 1;
-
-	// 초기 데이터의 스케일링을 위해 
-    
 	// 읽어들인 데이터로부터 document의 내용을 반영
 	CWnd* pWnd = AfxGetMainWnd();
 	pWnd->RedrawWindow();
@@ -377,51 +406,148 @@ void CMy2DTransView::OnFileNew() {
 	RedrawWindow();							// 내용을 다시 그리도록 함 (OnDraw 호출)
 }
 
-
-
 BOOL CMy2DTransView::OnMouseWheel(UINT nFlags, short zDelta, CPoint point)
 {
 	// TODO: Add your message handler code here and/or call default
+	nflag = 1;
+	
 	if( (nFlags & MK_CONTROL) != MK_CONTROL ) {
 		return CView::OnMouseWheel(nFlags, zDelta, point);
 	}
-
+	
 	if ( zDelta > 0 ) {
 		Scale += 0.1;
 
 		if ( Scale > 100 ) {
 			Scale = 100;
 		}
-	} else {
+
+		// view에 내용을 반영
+		CWnd* pWnd = AfxGetMainWnd();
+		pWnd->RedrawWindow();
+	}
+	else {
 		Scale -= 0.1;
 		
-		if (Scale < 0.1) {
-			Scale = 0.1;
+		if (Scale < 1E-6) {
+			Scale = 1E-6;
 		}
+		
+		// view에 내용을 반영
+		CWnd* pWnd = AfxGetMainWnd();
+		pWnd->RedrawWindow();
 	}
 
 	CMainFrame* pmf = (CMainFrame*)AfxGetMainWnd();
 	CString status;
 
-	status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %5.3lf"), point.x, point.y, Scale);
+	status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %8.6lf"), point.x, point.y, Scale);
 	pmf->m_wndStatusBar.GetElement(0)->SetText(status);
-	pmf->m_wndStatusBar.RecalcLayout();	
-	pmf->m_wndStatusBar.RedrawWindow();
-
-	// 읽어들인 데이터로부터 document의 내용을 반영
-	CWnd* pWnd = AfxGetMainWnd();
-	pWnd->RedrawWindow();
+	//pmf->m_wndStatusBar.RecalcLayout();	
+	//pmf->m_wndStatusBar.RedrawWindow();
 
 	return CView::OnMouseWheel(nFlags, zDelta, point);
 }
 
 void CMy2DTransView::OnMouseMove(UINT nFlags, CPoint point) {
 	// TODO: 마우스 이동시 상태 표시줄에 좌표를 출력합니다.
+	// 만약 드래그를 한다면 점을 이동합니다.
+	CPoint realPos;
+
+	if( GetCapture() == this ) {
+		realPos += (point - anchor);
+		anchor = point;
+
+		// 계산된 좌표만큼 형상을 이동시킨다.
+		if ( nElements != 0) {
+			for( vector<DisplayList>::iterator j = tempList.begin(); j != tempList.end(); ++j) {
+				j->Translate( (double)realPos.x, (double)realPos.y );
+			}
+		}
+		
+		// view에 내용을 반영
+		CWnd* pWnd = AfxGetMainWnd();
+		pWnd->RedrawWindow();
+	}
+
 	CMainFrame* pmf = (CMainFrame*)AfxGetMainWnd();
 	CString status;
 
-	status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %5.3lf"), point.x, point.y, Scale);
+	status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %8.6lf"), point.x, point.y, Scale);
 	pmf->m_wndStatusBar.GetElement(0)->SetText(status);
 	pmf->m_wndStatusBar.RecalcLayout();	
 	pmf->m_wndStatusBar.RedrawWindow();
 }
+
+
+void CMy2DTransView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	// TODO: Add your message handler code here and/or call default
+	SetCapture();
+
+	anchor = point;
+
+	CView::OnLButtonDown(nFlags, point);
+}
+
+
+void CMy2DTransView::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	// TODO: Add your message handler code here and/or call default
+	ReleaseCapture();
+
+	CView::OnLButtonUp(nFlags, point);
+}
+
+void CMy2DTransView::OnDirUp()
+{
+	// TODO: Add your command handler code here
+	
+}
+
+void CMy2DTransView::OnDirDown()
+{
+	// TODO: Add your command handler code here
+}
+
+
+void CMy2DTransView::OnDirLeft()
+{
+	// TODO: Add your command handler code here
+}
+
+
+void CMy2DTransView::OnDirLup()
+{
+	// TODO: Add your command handler code here
+}
+
+
+void CMy2DTransView::OnDirLdown()
+{
+	// TODO: Add your command handler code here
+}
+
+
+void CMy2DTransView::OnDirRdown()
+{
+	// TODO: Add your command handler code here
+}
+
+
+void CMy2DTransView::OnDirRight()
+{
+	// TODO: Add your command handler code here
+}
+
+
+void CMy2DTransView::OnDirRup()
+{
+	// TODO: Add your command handler code here
+}
+
+
+//void CMy2DTransView::OnDirSize()
+//{
+//	// TODO: Add your command handler code here
+//}

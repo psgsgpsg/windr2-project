@@ -206,6 +206,14 @@ END
 
 IDR_MAINFRAME ACCELERATORS
 BEGIN
+    VK_DOWN,        ID_DIR_DOWN,            VIRTKEY, NOINVERT
+    VK_END,         ID_DIR_LDOWN,           VIRTKEY, NOINVERT
+    VK_LEFT,        ID_DIR_LEFT,            VIRTKEY, NOINVERT
+    VK_HOME,        ID_DIR_LUP,             VIRTKEY, NOINVERT
+    VK_NEXT,        ID_DIR_RDOWN,           VIRTKEY, NOINVERT
+    VK_RIGHT,       ID_DIR_RIGHT,           VIRTKEY, NOINVERT
+    VK_PRIOR,       ID_DIR_RUP,             VIRTKEY, NOINVERT
+    VK_UP,          ID_DIR_UP,              VIRTKEY, NOINVERT
     "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
     VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
     VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
@@ -220,14 +228,6 @@ BEGIN
     "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
-    VK_NUMPAD9,     ID_DIR_RUP,             VIRTKEY, NOINVERT
-    VK_NUMPAD3,     ID_DIR_RDOWN,           VIRTKEY, NOINVERT
-    VK_NUMPAD7,     ID_DIR_LUP,             VIRTKEY, NOINVERT
-    VK_NUMPAD1,     ID_DIR_LDOWN,           VIRTKEY, NOINVERT
-    VK_NUMPAD8,     ID_DIR_UP,              VIRTKEY, NOINVERT
-    VK_NUMPAD2,     ID_DIR_DOWN,            VIRTKEY, NOINVERT
-    VK_NUMPAD4,     ID_DIR_LEFT,            VIRTKEY, NOINVERT
-    VK_NUMPAD6,     ID_DIR_RIGHT,           VIRTKEY, NOINVERT
 END
 
 
@@ -324,7 +324,7 @@ BEGIN
     IDS_RIBBON_DIR_RUP      "우측 위"
     IDS_RIBBON_DIR_LUP      "좌측 위"
     IDS_RIBBON_DIR_LDOWN    "좌측 아래"
-    ID_DIR_UP               "화면을 지정된 크기만큼 위로 이동합니다."
+    ID_DIR_UP               "화면을 지정된 크기만큼 위로 이동합니다.\n위로"
 END
 
 STRINGTABLE
@@ -435,9 +435,9 @@ END
 
 STRINGTABLE
 BEGIN
-    ID_DIR_DOWN             "화면을 지정된 크기만큼 아래로 이동합니다."
-    ID_DIR_LEFT             "화면을 지정된 크기만큼 좌측으로 이동합니다."
-    ID_DIR_RIGHT            "화면을 지정된 크기만큼 우측으로 이동합니다."
+    ID_DIR_DOWN             "화면을 지정된 크기만큼 아래로 이동합니다.\n아래로"
+    ID_DIR_LEFT             "화면을 지정된 크기만큼 좌측으로 이동합니다.\n좌측으로"
+    ID_DIR_RIGHT            "화면을 지정된 크기만큼 우측으로 이동합니다.\n우측으로"
     ID_DIR_RUP              "화면을 지정된 크기만큼 우측 위로 이동합니다.\n우측 위로"
     ID_DIR_RDOWN            "화면을 지정된 크기만큼 우측 아래로 이동합니다.\n우측 아래로"
     ID_DIR_LUP              "화면을 지정된 크기만큼 좌측 위로 이동합니다.\n좌측 위로"

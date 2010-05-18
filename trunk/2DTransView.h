@@ -50,6 +50,18 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint point);
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnDirUp();
+	afx_msg void OnDirDown();
+	afx_msg void OnDirLeft();
+	afx_msg void OnDirLup();
+	afx_msg void OnDirLdown();
+	afx_msg void OnDirRdown();
+	afx_msg void OnDirRight();
+	afx_msg void OnDirRup();
+//	afx_msg void OnDirSize();
 };
 
 #ifndef _DEBUG  // 2DTransView.cpp의 디버그 버전
