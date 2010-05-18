@@ -20,6 +20,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CMainFrame::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CMainFrame::OnFilePrintPreview)
 	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_PREVIEW, &CMainFrame::OnUpdateFilePrintPreview)
+	ON_COMMAND(ID_DIR_SIZE, &CMainFrame::OnDirSize)
+	ON_UPDATE_COMMAND_UI(ID_DIR_SIZE, &CMainFrame::OnUpdateDirSize)
 END_MESSAGE_MAP()
 
 // CMainFrame 생성/소멸
@@ -391,3 +393,16 @@ void CMainFrame::OnUpdateFilePrintPreview(CCmdUI* pCmdUI)
 	pCmdUI->SetCheck(IsPrintPreview());
 }
 
+
+void CMainFrame::OnDirSize()
+{
+	// TODO: Add your command handler code here
+	CMFCRibbonEdit* pEdit = (CMFCRibbonEdit*)(m_wndRibbonBar.FindByID(ID_DIR_SIZE));
+	CString size = pEdit->GetEditText();
+}
+
+
+void CMainFrame::OnUpdateDirSize(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+}
