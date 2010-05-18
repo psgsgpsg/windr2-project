@@ -64,6 +64,7 @@ BEGIN_MESSAGE_MAP(CMy2DTransView, CView)
 	// 마우스 명령에 따른 메시지 맵
 	ON_WM_RBUTTONUP()
 	ON_WM_MOUSEMOVE()
+	ON_WM_MOUSEWHEEL()
 END_MESSAGE_MAP()
 
 // CMy2DTransView 생성/소멸
@@ -124,7 +125,10 @@ void CMy2DTransView::OnDraw(CDC* pDC)
 		CenY = MinY + wsy;
 
 		// 스케일을 계산함. 작은쪽을 취해준다 min(x, y)를 사용함
-		Scale = (double)(0.9 * min(WIDTH/(wsx*2), HEIGHT/(wsy*2)));
+		// 이미 파일을 열어놓은 상태라면 스케일을 다시 계산하지 않음
+		if( nflag != 1) {
+			Scale = (double)(0.9 * min(WIDTH/(wsx*2), HEIGHT/(wsy*2)));
+		}
 
 		/* 계산한 중심점을 스케일에 맞추어 변환 */
 		CenX = CenX * Scale;
@@ -180,17 +184,6 @@ void CMy2DTransView::OnBeginPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 void CMy2DTransView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 {
 	// TODO: 인쇄 후 정리 작업을 추가합니다.
-}
-
-void CMy2DTransView::OnMouseMove(UINT nFlags, CPoint point) {
-	// TODO: 마우스 이동시 상태 표시줄에 좌표를 출력합니다.
-	CMainFrame* pmf = (CMainFrame*)AfxGetMainWnd();
-	CString status;
-
-	status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld"), point.x, point.y);
-	pmf->m_wndStatusBar.GetElement(0)->SetText(status);
-	pmf->m_wndStatusBar.RecalcLayout();	
-	pmf->m_wndStatusBar.RedrawWindow();
 }
 
 void CMy2DTransView::OnRButtonUp(UINT nFlags, CPoint point)
@@ -311,6 +304,9 @@ void CMy2DTransView::FileRead(CString FileName) {
 	// 파일을 닫음
 	fclose(fp);
 
+	// 파일을 열었음을 알리는 플래그 설정
+	nflag = 1;
+
 	// 초기 데이터의 스케일링을 위해 
     
 	// 읽어들인 데이터로부터 document의 내용을 반영
@@ -381,3 +377,51 @@ void CMy2DTransView::OnFileNew() {
 	RedrawWindow();							// 내용을 다시 그리도록 함 (OnDraw 호출)
 }
 
+
+
+BOOL CMy2DTransView::OnMouseWheel(UINT nFlags, short zDelta, CPoint point)
+{
+	// TODO: Add your message handler code here and/or call default
+	if( (nFlags & MK_CONTROL) != MK_CONTROL ) {
+		return CView::OnMouseWheel(nFlags, zDelta, point);
+	}
+
+	if ( zDelta > 0 ) {
+		Scale += 0.1;
+
+		if ( Scale > 100 ) {
+			Scale = 100;
+		}
+	} else {
+		Scale -= 0.1;
+		
+		if (Scale < 0.1) {
+			Scale = 0.1;
+		}
+	}
+
+	CMainFrame* pmf = (CMainFrame*)AfxGetMainWnd();
+	CString status;
+
+	status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %5.3lf"), point.x, point.y, Scale);
+	pmf->m_wndStatusBar.GetElement(0)->SetText(status);
+	pmf->m_wndStatusBar.RecalcLayout();	
+	pmf->m_wndStatusBar.RedrawWindow();
+
+	// 읽어들인 데이터로부터 document의 내용을 반영
+	CWnd* pWnd = AfxGetMainWnd();
+	pWnd->RedrawWindow();
+
+	return CView::OnMouseWheel(nFlags, zDelta, point);
+}
+
+void CMy2DTransView::OnMouseMove(UINT nFlags, CPoint point) {
+	// TODO: 마우스 이동시 상태 표시줄에 좌표를 출력합니다.
+	CMainFrame* pmf = (CMainFrame*)AfxGetMainWnd();
+	CString status;
+
+	status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %5.3lf"), point.x, point.y, Scale);
+	pmf->m_wndStatusBar.GetElement(0)->SetText(status);
+	pmf->m_wndStatusBar.RecalcLayout();	
+	pmf->m_wndStatusBar.RedrawWindow();
+}
