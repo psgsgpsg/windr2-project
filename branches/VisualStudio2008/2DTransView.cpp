@@ -54,7 +54,6 @@ typedef struct DisplayList {
 			this->YPos[i] *= scalefactor;
 		}
 	}
-
 } DisplayList;
 
 // 점 데이터 저장을 위한 구조체를 선언함
@@ -81,14 +80,14 @@ BEGIN_MESSAGE_MAP(CMy2DTransView, CView)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CMy2DTransView::OnFilePrintPreview)
 
-	ON_COMMAND(ID_DIR_UP, &CMy2DTransView::OnDirUp)
-	
 	// 마우스 명령에 따른 메시지 맵
 	ON_WM_RBUTTONUP()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
+
+	// 메뉴 코맨드 메시지 맵
 	ON_COMMAND(ID_DIR_DOWN, &CMy2DTransView::OnDirDown)
 	ON_COMMAND(ID_DIR_LEFT, &CMy2DTransView::OnDirLeft)
 	ON_COMMAND(ID_DIR_LUP, &CMy2DTransView::OnDirLup)
@@ -96,6 +95,7 @@ BEGIN_MESSAGE_MAP(CMy2DTransView, CView)
 	ON_COMMAND(ID_DIR_RDOWN, &CMy2DTransView::OnDirRdown)
 	ON_COMMAND(ID_DIR_RIGHT, &CMy2DTransView::OnDirRight)
 	ON_COMMAND(ID_DIR_RUP, &CMy2DTransView::OnDirRup)
+	ON_COMMAND(ID_DIR_UP, &CMy2DTransView::OnDirUp)
 //	ON_COMMAND(ID_DIR_SIZE, &CMy2DTransView::OnDirSize)
 END_MESSAGE_MAP()
 
@@ -173,8 +173,8 @@ void CMy2DTransView::OnDraw(CDC* pDC)
 
 		// 계산된 스케일로 점 데이터를 다시 계산
 		if ( GetCapture() != this ) {
-					tempList.clear();
-		tempList.assign(DList.begin(), DList.end());
+			tempList.clear();
+			tempList.assign(DList.begin(), DList.end());
 
 			for(vector<DisplayList>::iterator j = tempList.begin(); j != tempList.end(); ++j) {
 				// X 좌표 계산
@@ -421,10 +421,6 @@ BOOL CMy2DTransView::OnMouseWheel(UINT nFlags, short zDelta, CPoint point)
 		if ( Scale > 100 ) {
 			Scale = 100;
 		}
-
-		// view에 내용을 반영
-		CWnd* pWnd = AfxGetMainWnd();
-		pWnd->RedrawWindow();
 	}
 	else {
 		Scale -= 0.1;
@@ -432,13 +428,13 @@ BOOL CMy2DTransView::OnMouseWheel(UINT nFlags, short zDelta, CPoint point)
 		if (Scale < 1E-6) {
 			Scale = 1E-6;
 		}
+	}
 		
 		// view에 내용을 반영
 		CWnd* pWnd = AfxGetMainWnd();
 		pWnd->RedrawWindow();
-	}
 
-	CMainFrame* pmf = (CMainFrame*)AfxGetMainWnd();
+		CMainFrame* pmf = (CMainFrame*)AfxGetMainWnd();
 	CString status;
 
 	status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %8.6lf"), point.x, point.y, Scale);
@@ -471,7 +467,7 @@ void CMy2DTransView::OnMouseMove(UINT nFlags, CPoint point) {
 	}
 
 	CMainFrame* pmf = (CMainFrame*)AfxGetMainWnd();
-	CString status;
+	CString status;0
 
 	status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %8.6lf"), point.x, point.y, Scale);
 	pmf->m_wndStatusBar.GetElement(0)->SetText(status);
