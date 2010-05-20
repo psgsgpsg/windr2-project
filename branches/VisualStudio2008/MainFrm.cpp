@@ -5,6 +5,8 @@
 #include "2DTrans.h"
 
 #include "MainFrm.h"
+#include "2DTransDoc.h"
+#include "2DTransView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -394,11 +396,45 @@ void CMainFrame::OnUpdateFilePrintPreview(CCmdUI* pCmdUI)
 }
 
 
+// 형상을 이동(translation)하는 크기를 변경한 경우 이를 적용하는 부분
 void CMainFrame::OnDirSize()
 {
 	// TODO: Add your command handler code here
 	CMFCRibbonEdit* pEdit = (CMFCRibbonEdit*)(m_wndRibbonBar.FindByID(ID_DIR_SIZE));
 	CString size = pEdit->GetEditText();
+	int count = size.GetLength();
+	int i;
+
+	// 형식 검사 int로 변경한 후 같지 않으면 오류 메시지 표시
+	for(i = 0; i < count; i++) {
+		TCHAR temp = size.GetAt(i);
+
+		// 음수 처리. 
+		if( i == 0 && temp == '-' ) {
+			continue;
+		}
+
+		// 입력된 키가 0 ~ 9 사이인가를 체크. 
+		if( temp >= '0' && temp <= '9' ) {
+			continue;
+		}
+		else{
+			break;
+		}
+	} 
+
+	// 만약 모두 수가 맞다면 해당 값을 전달
+	if(i == count) {
+		// 활성화된 현재 CView 객체에 접근
+		CMy2DTransView *pView = (CMy2DTransView *)( this->GetActiveView() );
+		
+		// DirSize를 전달
+		pView->SetDirSize( _wtoi(size) );
+	}
+	// 그렇지 않다면 오류 메시지 표시
+	else {
+		AfxMessageBox( _T("이동 크기는 반드시 정수이어야 합니다.") );
+	}	
 }
 
 

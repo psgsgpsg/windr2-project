@@ -19,6 +19,10 @@ public:
 	afx_msg void OnFileNew();
 	void FileRead(CString);				// 파일 parsing을 위한 처리
 	void DrawLines();					// 선을 그리는 함수
+	
+	int DirSize;						// 형상 변경시 사용되는 변수
+	void SetDirSize(int);				// 이동 크기 변경시 적용하는 함수
+	double GetDirSize();				// 이동 크기를 얻어내는 함수
 
 // 작업입니다.
 public:
@@ -61,7 +65,6 @@ public:
 	afx_msg void OnDirRdown();
 	afx_msg void OnDirRight();
 	afx_msg void OnDirRup();
-//	afx_msg void OnDirSize();
 };
 
 #ifndef _DEBUG  // 2DTransView.cpp의 디버그 버전

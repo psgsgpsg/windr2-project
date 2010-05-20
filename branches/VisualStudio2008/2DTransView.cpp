@@ -105,6 +105,7 @@ CMy2DTransView::CMy2DTransView()
 	// TODO: 여기에 생성 코드를 추가합니다.
 	nflag = 0;
 	nElements = 0;
+	SetDirSize(10);
 }
 
 CMy2DTransView::~CMy2DTransView()
@@ -191,10 +192,8 @@ void CMy2DTransView::OnDraw(CDC* pDC)
 				}
 			}
 		}
+		DrawLines();
 	}
-
-	//nflag = pDoc->PutMode();
-	DrawLines();
 }
 
 
@@ -343,6 +342,15 @@ void CMy2DTransView::FileRead(CString FileName) {
 	pWnd->RedrawWindow();
 }
 
+// 변경된 이동(translation) 크기 변수를 적용하는 부분
+void CMy2DTransView::SetDirSize(int size) {
+	this->DirSize = size;
+}
+
+// 설정된 이동(translatrion) 크기 변수를 얻어내는 부분 (double 형으로 반환한다)
+double CMy2DTransView::GetDirSize() {
+	return (double)(this->DirSize);
+}
 
 // 펜으로 그리는 동작 구현 부분
 void CMy2DTransView::DrawLines() {
@@ -381,6 +389,9 @@ void CMy2DTransView::DrawLines() {
 void CMy2DTransView::OnFileNew() {
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
 	CClientDC dc(this);						// 클라이언트 영역의 dc를 읽어옴
+	CMainFrame* pWnd = (CMainFrame*)AfxGetMainWnd();
+	CString str;
+	str.Format( _T("제목 없음 - 2DTrans") );
 
 	CRect rcClient;							// 클라이언트 영역을 읽어옴 
 	GetClientRect(rcClient);
@@ -394,16 +405,13 @@ void CMy2DTransView::OnFileNew() {
 	dc.SetBkColor(crBack) ;
 
 	nElements = 0;							// Element 갯수를 0으로 리셋하여 draw 방지
-	tempList.clear();
+	tempList.clear();						// DisplayList 데이터를 모두 초기화함
 	DList.clear();
 
-	CString str;
-	str.Format( _T("제목 없음 - 2DTrans") );
-		
-	CMainFrame* pWnd = (CMainFrame*)AfxGetMainWnd();
-	pWnd->SetWindowText( str );
-
-	RedrawWindow();							// 내용을 다시 그리도록 함 (OnDraw 호출)
+	Scale = 0.0;													// Scale을 0.0으로 리셋하고
+	pWnd->m_wndStatusBar.GetElement(0)->SetText( _T("준비됨") );	// 상태 표시줄의 메시지를 초기화
+	pWnd->SetWindowText( str );										// 제목 표시줄을 초기화
+	pWnd->RedrawWindow();											// 내용을 다시 그리도록 함 (OnDraw 호출)
 }
 
 BOOL CMy2DTransView::OnMouseWheel(UINT nFlags, short zDelta, CPoint point)
@@ -430,11 +438,11 @@ BOOL CMy2DTransView::OnMouseWheel(UINT nFlags, short zDelta, CPoint point)
 		}
 	}
 		
-		// view에 내용을 반영
-		CWnd* pWnd = AfxGetMainWnd();
-		pWnd->RedrawWindow();
+	// view에 내용을 반영
+	CWnd* pWnd = AfxGetMainWnd();
+	pWnd->RedrawWindow();
 
-		CMainFrame* pmf = (CMainFrame*)AfxGetMainWnd();
+	CMainFrame* pmf = (CMainFrame*)AfxGetMainWnd();
 	CString status;
 
 	status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %8.6lf"), point.x, point.y, Scale);
@@ -467,7 +475,7 @@ void CMy2DTransView::OnMouseMove(UINT nFlags, CPoint point) {
 	}
 
 	CMainFrame* pmf = (CMainFrame*)AfxGetMainWnd();
-	CString status;0
+	CString status;
 
 	status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %8.6lf"), point.x, point.y, Scale);
 	pmf->m_wndStatusBar.GetElement(0)->SetText(status);
@@ -495,55 +503,127 @@ void CMy2DTransView::OnLButtonUp(UINT nFlags, CPoint point)
 	CView::OnLButtonUp(nFlags, point);
 }
 
+// 위로가기 버튼을 누른 경우
 void CMy2DTransView::OnDirUp()
 {
 	// TODO: Add your command handler code here
-	
+	// 모든 DisplayList의 좌표를 Size만큼 위로 이동시킴 (방향이 반대이므로 y를 감소시킴)
+	for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
+		for( int j = 0; j < i->nNodes; ++j ) {
+			i->Translate( 0.0, -GetDirSize() );
+		}
+	}
+
+	SetCapture();
+	RedrawWindow();
+	ReleaseCapture();
 }
 
 void CMy2DTransView::OnDirDown()
 {
 	// TODO: Add your command handler code here
+	// 모든 DisplayList의 좌표를 Size만큼 아래로 이동시킴 (방향이 반대이므로 y를 증가시킴)
+	for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
+		for( int j = 0; j < i->nNodes; ++j ) {
+			i->Translate( 0.0, GetDirSize() );
+		}
+	}
+
+	SetCapture();
+	RedrawWindow();
+	ReleaseCapture();
 }
 
 
 void CMy2DTransView::OnDirLeft()
 {
 	// TODO: Add your command handler code here
+	// 모든 DisplayList의 좌표를 Size만큼 좌로로 이동시킴 (x를 감소시킴)
+	for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
+		for( int j = 0; j < i->nNodes; ++j ) {
+			i->Translate( -GetDirSize(), 0.0 );
+		}
+	}
+
+	SetCapture();
+	RedrawWindow();
+	ReleaseCapture();
 }
 
+void CMy2DTransView::OnDirRight()
+{
+	// TODO: Add your command handler code here
+	// 모든 DisplayList의 좌표를 Size만큼 우측으로 이동시킴 (x를 증가)
+	for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
+		for( int j = 0; j < i->nNodes; ++j ) {
+			i->Translate( GetDirSize(), 0.0 );
+		}
+	}
+
+	SetCapture();
+	RedrawWindow();
+	ReleaseCapture();
+}
 
 void CMy2DTransView::OnDirLup()
 {
 	// TODO: Add your command handler code here
+	// 모든 DisplayList의 좌표를 Size만큼 좌측위로 이동 (x를 감소, y를 감소)
+	for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
+		for( int j = 0; j < i->nNodes; ++j ) {
+			i->Translate( -GetDirSize(), -GetDirSize() );
+		}
+	}
+
+	SetCapture();
+	RedrawWindow();
+	ReleaseCapture();
 }
 
 
 void CMy2DTransView::OnDirLdown()
 {
 	// TODO: Add your command handler code here
+	// 모든 DisplayList의 좌표를 Size만큼 좌측 아래로 이동 (x를 감소, y를 증가)
+	for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
+		for( int j = 0; j < i->nNodes; ++j ) {
+			i->Translate( -GetDirSize(), GetDirSize() );
+		}
+	}
+
+	SetCapture();
+	RedrawWindow();
+	ReleaseCapture();
 }
 
 
 void CMy2DTransView::OnDirRdown()
 {
 	// TODO: Add your command handler code here
+	// 모든 DisplayList의 좌표를 Size만큼 우측 아래로 이동시킴 (x를 증가, y를 증가)
+	for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
+		for( int j = 0; j < i->nNodes; ++j ) {
+			i->Translate( GetDirSize(), GetDirSize() );
+		}
+	}
+
+	SetCapture();
+	RedrawWindow();
+	ReleaseCapture();
 }
-
-
-void CMy2DTransView::OnDirRight()
-{
-	// TODO: Add your command handler code here
-}
-
 
 void CMy2DTransView::OnDirRup()
 {
 	// TODO: Add your command handler code here
+	// 모든 DisplayList의 좌표를 Size만큼 우측 위로 이동시킴 (x를 증가, y를 감소)
+	for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
+		for( int j = 0; j < i->nNodes; ++j ) {
+			i->Translate( GetDirSize(), -GetDirSize() );
+		}
+	}
+
+	SetCapture();
+	RedrawWindow();
+	ReleaseCapture();
 }
 
-
-//void CMy2DTransView::OnDirSize()
-//{
-//	// TODO: Add your command handler code here
-//}
