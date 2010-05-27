@@ -5,6 +5,7 @@
 #include "MainFrm.h"
 #include "2DTransDoc.h"
 #include "2DTransView.h"
+#include "windows.h"
 
 // 점 데이터를 저장하기 위한 STL 템플릿 라이브러리 사용
 #include <vector>
@@ -252,7 +253,12 @@ void CMy2DTransView::OnFileOpen() {
 	TCHAR szFilter[] = _T("DAT File (.dat)|*.dat|OUT File (.out)|*.out|All File (.*)|*.*||");
 
 	CFileDialog m_FileOpenDialog(TRUE, NULL, NULL, OFN_HIDEREADONLY | OFN_EXPLORER, szFilter);
-	m_FileOpenDialog.m_ofn.lpstrTitle = _T("데이터 파일 열기");
+	m_FileOpenDialog.m_ofn.lpstrTitle = _T("데이터 파일 열기");			// 파일 열기 대화 상자의 제목을 설정
+
+	// 현재 프로그램 실행 경로를 기본 경로로 설정
+	TCHAR currentPath[250];
+	GetCurrentDirectory(255, currentPath);
+	m_FileOpenDialog.m_ofn.lpstrInitialDir = (LPCTSTR)currentPath;
 
 	if( m_FileOpenDialog.DoModal() == IDOK ) {
 		CString str;
