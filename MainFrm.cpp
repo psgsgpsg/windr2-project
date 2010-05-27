@@ -48,7 +48,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
 
 	// 비주얼 관리자에서 사용하는 비주얼 스타일을 설정합니다.
-	CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_LunaBlue);
+	CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Aqua);
 
 	m_wndRibbonBar.Create(this);
 	InitializeRibbon();
@@ -95,8 +95,8 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
 	if( !CFrameWndEx::PreCreateWindow(cs) )
 		return FALSE;
-	// TODO: CREATESTRUCT cs를 수정하여 여기에서
-	//  Window 클래스 또는 스타일을 수정합니다.
+	// CREATESTRUCT cs를 수정하여 여기에서
+	// Window 클래스 또는 스타일을 수정합니다.
 
 	return TRUE;
 }
@@ -399,7 +399,6 @@ void CMainFrame::OnUpdateFilePrintPreview(CCmdUI* pCmdUI)
 // 형상을 이동(translation)하는 크기를 변경한 경우 이를 적용하는 부분
 void CMainFrame::OnDirSize()
 {
-	// TODO: Add your command handler code here
 	CMFCRibbonEdit* pEdit = (CMFCRibbonEdit*)(m_wndRibbonBar.FindByID(ID_DIR_SIZE));
 	CString size = pEdit->GetEditText();
 	int count = size.GetLength();
@@ -440,5 +439,4 @@ void CMainFrame::OnDirSize()
 
 void CMainFrame::OnUpdateDirSize(CCmdUI *pCmdUI)
 {
-	// TODO: Add your command update UI handler code here
 }
