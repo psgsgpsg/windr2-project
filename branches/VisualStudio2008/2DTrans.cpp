@@ -32,7 +32,7 @@ CMy2DTransApp::CMy2DTransApp()
 
 	m_bHiColorIcons = TRUE;
 
-	// TODO: 여기에 생성 코드를 추가합니다.
+	// 여기에 생성 코드를 추가합니다.
 	// InitInstance에 모든 중요한 초기화 작업을 배치합니다.
 }
 
@@ -69,7 +69,7 @@ BOOL CMy2DTransApp::InitInstance()
 	// 아래에서 필요 없는 특정 초기화
 	// 루틴을 제거해야 합니다.
 	// 해당 설정이 저장된 레지스트리 키를 변경하십시오.
-	// TODO: 이 문자열을 회사 또는 조직의 이름과 같은
+	// 이 문자열을 회사 또는 조직의 이름과 같은
 	// 적절한 내용으로 수정해야 합니다.
 	SetRegistryKey(_T("Aerospace Engineering"));
 	LoadStdProfileSettings(4);  // 표준 INI 파일 옵션을 로드합니다.

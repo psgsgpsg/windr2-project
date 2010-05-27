@@ -88,6 +88,8 @@
 #define IDS_RIBBON_VIEW                 290
 #define IDS_EDIT_MENU                   306
 #define IDB_TRANLARGE                   314
+#define ID_STT_TEXT_VER                 1000
+#define IDC_NETADDRESS1                 1001
 #define ID_WRITE_PASTEASHYPERLINK       32770
 #define IDS_RIBBON_CATEGORY_TRANSLATE   57346
 
@@ -97,7 +99,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        316
 #define _APS_NEXT_COMMAND_VALUE         32794
-#define _APS_NEXT_CONTROL_VALUE         1000
+#define _APS_NEXT_CONTROL_VALUE         1002
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

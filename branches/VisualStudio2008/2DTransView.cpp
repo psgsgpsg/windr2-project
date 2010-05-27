@@ -96,13 +96,12 @@ BEGIN_MESSAGE_MAP(CMy2DTransView, CView)
 	ON_COMMAND(ID_DIR_RIGHT, &CMy2DTransView::OnDirRight)
 	ON_COMMAND(ID_DIR_RUP, &CMy2DTransView::OnDirRup)
 	ON_COMMAND(ID_DIR_UP, &CMy2DTransView::OnDirUp)
-//	ON_COMMAND(ID_DIR_SIZE, &CMy2DTransView::OnDirSize)
 END_MESSAGE_MAP()
 
 // CMy2DTransView 생성/소멸
 CMy2DTransView::CMy2DTransView()
 {
-	// TODO: 여기에 생성 코드를 추가합니다.
+	// 여기에 생성 코드를 추가합니다.
 	nflag = 0;
 	nElements = 0;
 	SetDirSize(10);
@@ -114,8 +113,8 @@ CMy2DTransView::~CMy2DTransView()
 
 BOOL CMy2DTransView::PreCreateWindow(CREATESTRUCT& cs)
 {
-	// TODO: CREATESTRUCT cs를 수정하여 여기에서
-	//  Window 클래스 또는 스타일을 수정합니다.
+	// CREATESTRUCT cs를 수정하여 여기에서
+	// Window 클래스 또는 스타일을 수정합니다.
 
 	return CView::PreCreateWindow(cs);
 }
@@ -129,7 +128,6 @@ void CMy2DTransView::OnDraw(CDC* pDC)
 	if (!pDoc)
 		return;
 
-	// TODO: 여기에 원시 데이터에 대한 그리기 코드를 추가합니다.
 	// client 영역 설정
     CRect rcClient;
 	GetClientRect(rcClient);
@@ -196,7 +194,6 @@ void CMy2DTransView::OnDraw(CDC* pDC)
 	}
 }
 
-
 // CMy2DTransView 인쇄
 void CMy2DTransView::OnFilePrintPreview()
 {
@@ -230,7 +227,6 @@ void CMy2DTransView::OnContextMenu(CWnd* pWnd, CPoint point)
 	theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EDIT, point.x, point.y, this, TRUE);
 }
 
-
 // CMy2DTransView 진단
 #ifdef _DEBUG
 void CMy2DTransView::AssertValid() const
@@ -250,11 +246,9 @@ CMy2DTransDoc* CMy2DTransView::GetDocument() const // 디버그되지 않은 버
 }
 #endif //_DEBUG
 
-
 // CMy2DTransView 메시지 처리기
 // 1. 파일을 열 경우 메세지 처리
 void CMy2DTransView::OnFileOpen() {
-    // TODO: Add your command handler code here
 	TCHAR szFilter[] = _T("DAT File (.dat)|*.dat|OUT File (.out)|*.out|All File (.*)|*.*||");
 
 	CFileDialog m_FileOpenDialog(TRUE, NULL, NULL, OFN_HIDEREADONLY | OFN_EXPLORER, szFilter);
@@ -382,12 +376,10 @@ void CMy2DTransView::DrawLines() {
 			}
 		}
 	}
-
 }
 
 // 새 파일을 만들 경우
 void CMy2DTransView::OnFileNew() {
-	// TODO: 여기에 명령 처리기 코드를 추가합니다.
 	CClientDC dc(this);						// 클라이언트 영역의 dc를 읽어옴
 	CMainFrame* pWnd = (CMainFrame*)AfxGetMainWnd();
 	CString str;
@@ -416,7 +408,6 @@ void CMy2DTransView::OnFileNew() {
 
 BOOL CMy2DTransView::OnMouseWheel(UINT nFlags, short zDelta, CPoint point)
 {
-	// TODO: Add your message handler code here and/or call default
 	nflag = 1;
 	
 	if( (nFlags & MK_CONTROL) != MK_CONTROL ) {
@@ -454,7 +445,7 @@ BOOL CMy2DTransView::OnMouseWheel(UINT nFlags, short zDelta, CPoint point)
 }
 
 void CMy2DTransView::OnMouseMove(UINT nFlags, CPoint point) {
-	// TODO: 마우스 이동시 상태 표시줄에 좌표를 출력합니다.
+	// 마우스 이동시 상태 표시줄에 좌표를 출력합니다.
 	// 만약 드래그를 한다면 점을 이동합니다.
 	CPoint realPos;
 
@@ -483,21 +474,17 @@ void CMy2DTransView::OnMouseMove(UINT nFlags, CPoint point) {
 	pmf->m_wndStatusBar.RedrawWindow();
 }
 
-
 void CMy2DTransView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	// TODO: Add your message handler code here and/or call default
 	SetCapture();
 
 	anchor = point;
 
-	CView::OnLButtonDown(nFlags, point);
+	//CView::OnLButtonDown(nFlags, point);
 }
-
 
 void CMy2DTransView::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	// TODO: Add your message handler code here and/or call default
 	ReleaseCapture();
 
 	CView::OnLButtonUp(nFlags, point);
@@ -506,7 +493,6 @@ void CMy2DTransView::OnLButtonUp(UINT nFlags, CPoint point)
 // 위로가기 버튼을 누른 경우
 void CMy2DTransView::OnDirUp()
 {
-	// TODO: Add your command handler code here
 	// 모든 DisplayList의 좌표를 Size만큼 위로 이동시킴 (방향이 반대이므로 y를 감소시킴)
 	for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
 		for( int j = 0; j < i->nNodes; ++j ) {
@@ -521,7 +507,6 @@ void CMy2DTransView::OnDirUp()
 
 void CMy2DTransView::OnDirDown()
 {
-	// TODO: Add your command handler code here
 	// 모든 DisplayList의 좌표를 Size만큼 아래로 이동시킴 (방향이 반대이므로 y를 증가시킴)
 	for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
 		for( int j = 0; j < i->nNodes; ++j ) {
@@ -533,7 +518,6 @@ void CMy2DTransView::OnDirDown()
 	RedrawWindow();
 	ReleaseCapture();
 }
-
 
 void CMy2DTransView::OnDirLeft()
 {
@@ -580,7 +564,6 @@ void CMy2DTransView::OnDirLup()
 	ReleaseCapture();
 }
 
-
 void CMy2DTransView::OnDirLdown()
 {
 	// TODO: Add your command handler code here
@@ -595,7 +578,6 @@ void CMy2DTransView::OnDirLdown()
 	RedrawWindow();
 	ReleaseCapture();
 }
-
 
 void CMy2DTransView::OnDirRdown()
 {
@@ -626,4 +608,3 @@ void CMy2DTransView::OnDirRup()
 	RedrawWindow();
 	ReleaseCapture();
 }
-

@@ -338,6 +338,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\translate_large.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\writelarge.bmp"
 				>
 			</File>
@@ -362,5 +366,9 @@
 		</File>
 	</Files>
 	<Globals>
+		<Global
+			Name="RESOURCE_FILE"
+			Value="2DTrans.rc"
+		/>
 	</Globals>
 </VisualStudioProject>
