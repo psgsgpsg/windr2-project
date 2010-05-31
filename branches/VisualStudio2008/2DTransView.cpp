@@ -44,7 +44,7 @@ typedef struct DisplayList {
 	void Translate(double Xdelta, double Ydelta) {
 		for(int i = 0; i < this->nNodes; ++i) {
 			this->XPos[i] += Xdelta;
-			this->YPos[i] +=  Ydelta;
+			this->YPos[i] += Ydelta;
 		}
 	}
 
@@ -453,7 +453,7 @@ BOOL CMy2DTransView::OnMouseWheel(UINT nFlags, short zDelta, CPoint point)
 void CMy2DTransView::OnMouseMove(UINT nFlags, CPoint point) {
 	// 마우스 이동시 상태 표시줄에 좌표를 출력합니다.
 	// 만약 드래그를 한다면 점을 이동합니다.
-	CPoint realPos;
+	CPoint realPos(0, 0);
 
 	if( GetCapture() == this ) {
 		realPos += (point - anchor);
