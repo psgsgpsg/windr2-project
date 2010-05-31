@@ -238,7 +238,7 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 370, 181
+IDD_ABOUTBOX DIALOGEX 0, 0, 287, 97
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About 2DTrans Project"
 FONT 9, "MS Shell Dlg", 0, 0, 0x1
@@ -246,8 +246,8 @@ BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20,0,WS_EX_TRANSPARENT
     LTEXT           "University of Ulsan 2DTrans Project 1.0.20272.13",IDC_STATIC,42,14,164,8,SS_NOPREFIX
     LTEXT           "Copyright (C) 2010 HyunJoon, Kim All Right Reserved",IDC_STATIC,42,26,175,8
-    DEFPUSHBUTTON   "확인",IDOK,313,160,50,14,WS_GROUP
-    LTEXT           "This program is under licensed GNU Public License Version 3(GPLv3).\nTo See the information visit http://www.gnu.org/licenses/gpl-3.0.html",IDC_STATIC,42,42,305,65
+    DEFPUSHBUTTON   "확인",IDOK,230,76,50,14,WS_GROUP
+    LTEXT           "This program is under licensed GNU Public License Version 3(GPLv3).\nTo See the information visit http://www.gnu.org/licenses/gpl-3.0.html",IDC_STATIC,42,42,238,33
 END
 
 
@@ -301,9 +301,9 @@ BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 363
+        RIGHTMARGIN, 280
         TOPMARGIN, 7
-        BOTTOMMARGIN, 174
+        BOTTOMMARGIN, 90
     END
 END
 #endif    // APSTUDIO_INVOKED
