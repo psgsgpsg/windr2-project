@@ -202,19 +202,9 @@ void CMainFrame::InitializeRibbon()
 	CMFCRibbonButton* pBtnStatusBar = new CMFCRibbonCheckBox(ID_VIEW_STATUS_BAR, strTemp);
 	pPanelView->Add(pBtnStatusBar);
 
-	// 빠른 실행 도구 모음 명령을 추가합니다.
-	CList<UINT, UINT> lstQATCmds;
-
-	lstQATCmds.AddTail(ID_FILE_NEW);
-	lstQATCmds.AddTail(ID_FILE_OPEN);
-	lstQATCmds.AddTail(ID_FILE_SAVE);
-	lstQATCmds.AddTail(ID_FILE_PRINT_DIRECT);
-
-	m_wndRibbonBar.SetQuickAccessCommands(lstQATCmds);
-
-	m_wndRibbonBar.AddToTabs(new CMFCRibbonButton(ID_APP_ABOUT, _T("About\na"), m_PanelImages.ExtractIcon(0)));
-
-	// 직접 추가한 메뉴 부분
+//////////////////////////////
+// 직접 추가 메뉴 부분 시작 //
+//////////////////////////////
 	// 1. 이동 관련 메뉴
 	// "이동" 범주 추가
 	bNameValid = strTemp.LoadString(IDS_RIBBON_CATEGORY_TRANSLATE);
@@ -300,6 +290,48 @@ void CMainFrame::InitializeRibbon()
 			pEdit->EnableSpinButtons(0, 1000);			// 0 ~ 1000 사이의 값으로 스핀 버튼
 			pEdit->SetEditText( _T("10") );
 			pPanelDirection3->Add(pEdit);				// 패널에 콤보 박스를 넣음
+
+	// 2. 회전 관련 메뉴
+	// "회전 및 스케일링" 범주 추가
+	bNameValid = strTemp.LoadString(IDS_RIBBON_CATEGORY_ROTATE);
+	ASSERT(bNameValid);
+	CMFCRibbonCategory* pCategoryRotScale = m_wndRibbonBar.AddCategory(strTemp, IDB_WRITESMALL, IDB_ROT_SCALE_LARGE);
+	pCategoryRotScale->SetKeys(_T("R"));
+
+		// "회전" 패널 추가
+		bNameValid = strTemp.LoadString(IDS_RIBBON_PANEL_ROTATE);
+		ASSERT(bNameValid);
+		CMFCRibbonPanel* pPanelRotate = pCategoryRotScale->AddPanel(strTemp, m_PanelImages.ExtractIcon(28));
+
+			// 좌, 우로 회전 버튼을 추가
+			// 좌로 회전
+			bNameValid = strTemp.LoadString(IDS_RIBBON_ROT_LEFT);
+			ASSERT(bNameValid);
+			CMFCRibbonButton* pBtnRotLeft = new CMFCRibbonButton(ID_ROT_LEFT, strTemp, -1, 4);
+			pBtnRotLeft->SetKeys( _T("Q") );
+			pPanelRotate->Add(pBtnRotLeft);
+
+			// 우로 회전
+			bNameValid = strTemp.LoadString(IDS_RIBBON_ROT_RIGHT);
+			ASSERT(bNameValid);
+			CMFCRibbonButton* pBtnRotRight = new CMFCRibbonButton(ID_ROT_RIGHT, strTemp, -1, 3);
+			pBtnRotRight->SetKeys( _T("E") );
+			pPanelRotate->Add(pBtnRotRight);
+
+////////////////////////////
+// 직접 추가 메뉴 부분 끝 //
+////////////////////////////
+			
+	// 빠른 실행 도구 모음 명령을 추가합니다.
+	CList<UINT, UINT> lstQATCmds;
+
+	lstQATCmds.AddTail(ID_FILE_NEW);
+	lstQATCmds.AddTail(ID_FILE_OPEN);
+	lstQATCmds.AddTail(ID_FILE_SAVE);
+	lstQATCmds.AddTail(ID_FILE_PRINT_DIRECT);
+
+	m_wndRibbonBar.SetQuickAccessCommands(lstQATCmds);
+	m_wndRibbonBar.AddToTabs(new CMFCRibbonButton(ID_APP_ABOUT, _T("About\na"), m_PanelImages.ExtractIcon(0)));
 }
 
 BOOL CMainFrame::CreateOutlookBar(CMFCOutlookBar& bar, UINT uiID, CMFCShellTreeCtrl& tree, int nInitialWidth)

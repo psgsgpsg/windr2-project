@@ -97,6 +97,7 @@ IDB_PAGES_SMALL         BITMAP                  "res\\pages_small.bmp"
 IDB_PAGES_SMALL_HC      BITMAP                  "res\\pages_small_hc.bmp"
 IDB_INFO                BITMAP                  "res\\info.bmp"
 IDB_TRANLARGE           BITMAP                  "res\\translate_large.bmp"
+IDB_ROT_SCALE_LARGE     BITMAP                  "res\\rot_scale_large.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -216,20 +217,14 @@ BEGIN
     VK_RIGHT,       ID_DIR_RIGHT,           VIRTKEY, NOINVERT
     VK_PRIOR,       ID_DIR_RUP,             VIRTKEY, NOINVERT
     VK_UP,          ID_DIR_UP,              VIRTKEY, NOINVERT
-    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
-    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
-    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
-    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
-    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
-    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
-    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
-    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
     "N",            ID_FILE_NEW,            VIRTKEY, CONTROL, NOINVERT
     "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
     "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL, NOINVERT
     "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
+    VK_LEFT,        ID_ROT_LEFT,            VIRTKEY, CONTROL, NOINVERT
+    VK_RIGHT,       ID_ROT_RIGHT,           VIRTKEY, CONTROL, NOINVERT
 END
 
 
@@ -340,6 +335,7 @@ BEGIN
     AFX_IDS_APP_TITLE       "2DTrans"
     AFX_IDS_IDLEMESSAGE     "준비"
     IDS_RIBBON_CATEGORY_TRANSLATE "이동"
+    IDS_RIBBON_CATEGORY_ROTATE "회전 및 크기"
 END
 
 STRINGTABLE 
@@ -447,8 +443,13 @@ BEGIN
     ID_DIR_LDOWN            "화면을 지정된 크기만큼 좌측 아래로 이동합니다.\n좌측 아래"
     IDS_RIBBON_PANEL_DIRECTION3 "이동 크기"
     ID_DIR_SIZE             "1회 이동시마다 이동할 크기를 지정합니다.\nStep Size"
+    IDS_RIBBON_PANEL_ROTATE "회전"
     IDS_STATUS_PANE1        "창 1"
     IDS_RIBBON_DIR_SIZE     "이동 크기"
+    ID_ROT_LEFT             "지정된 각도 만큼 반시계 방향으로 회전합니다.\n반시계 방향"
+    IDS_RIBBON_ROT_RIGHT    "시계 방향 회전"
+    IDS_RIBBON_ROT_LEFT     "반시계 방향 회전"
+    ID_ROT_RIGHT            "지정된 각도만큼 시계 방향으로 회전합니다.\n시계 방향"
 END
 
 STRINGTABLE 

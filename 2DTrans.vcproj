@@ -240,6 +240,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DisplayList.h"
+				>
+			</File>
+			<File
 				RelativePath=".\MainFrm.h"
 				>
 			</File>
@@ -327,6 +331,10 @@
 			</File>
 			<File
 				RelativePath=".\res\pages_small_hc.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\rot_scale_large.bmp"
 				>
 			</File>
 			<File
