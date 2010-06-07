@@ -7,55 +7,11 @@
 #include "2DTransView.h"
 #include "windows.h"
 
-// 점 데이터를 저장하기 위한 STL 템플릿 라이브러리 사용
-#include <vector>
-#include <algorithm>
 using namespace std;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
-// 점 데이터를 저장하기 위한 구조체
-// R, G, B : 색상 데이터
-// nNodes : 형상의 노드 갯수
-// *Xpos, *Ypos : 데이터의 x, y좌표
-typedef struct DisplayList {
-	int	R, G, B;                    // 색상 정보
-	int	nNodes;                     // 노드 갯수
-	vector<double> XPos, YPos;      // X, Y 노드 좌표 벡터
-
-	// 구조체 생성자
-	DisplayList() {
-		this->R = 0;
-		this->G = 0;
-		this->B = 0;
-		this->nNodes = 0;
-	}
-
-	// 색상을 지정하는 부분
-	void SetRGB(int Red, int Green, int Blue) {
-		this->R = Red;
-		this->G = Green;
-		this->B = Blue;
-	}
-
-	// delta만큼 모든 점을 이동시킨다.
-	void Translate(double Xdelta, double Ydelta) {
-		for(int i = 0; i < this->nNodes; ++i) {
-			this->XPos[i] += Xdelta;
-			this->YPos[i] += Ydelta;
-		}
-	}
-
-	// scalefactor 만큼 원점을 기준으로 스케일링을 함
-	void Scale(double scalefactor) {
-		for(int i = 0; i < this->nNodes; ++i) {
-			this->XPos[i] *= scalefactor;
-			this->YPos[i] *= scalefactor;
-		}
-	}
-} DisplayList;
 
 // 점 데이터 저장을 위한 구조체를 선언함
 vector<DisplayList> DList, tempList;
@@ -66,7 +22,7 @@ double MaxX, MaxY, MinX, MinY;		// 데이터로부터 최대 최소값을 읽어
 double ScaleX, ScaleY;				// X, Y 방향으로의 scale factor
 int nElements;                      // 전체 도형의 갯수
 int nflag, m_option;
-CPoint anchor, last;							// Mouse location points
+CPoint anchor, last;				// Mouse location points
 double Scale = 1.0, wsx, wsy, CenX, CenY;
 double moveSize, scaleSize;			// UI로부터의 입력 변수 저장용
 
@@ -89,6 +45,7 @@ BEGIN_MESSAGE_MAP(CMy2DTransView, CView)
 	ON_WM_LBUTTONUP()
 
 	// 메뉴 코맨드 메시지 맵
+	// 이동 범주 메뉴 메시지
 	ON_COMMAND(ID_DIR_DOWN, &CMy2DTransView::OnDirDown)
 	ON_COMMAND(ID_DIR_LEFT, &CMy2DTransView::OnDirLeft)
 	ON_COMMAND(ID_DIR_LUP, &CMy2DTransView::OnDirLup)
@@ -97,6 +54,10 @@ BEGIN_MESSAGE_MAP(CMy2DTransView, CView)
 	ON_COMMAND(ID_DIR_RIGHT, &CMy2DTransView::OnDirRight)
 	ON_COMMAND(ID_DIR_RUP, &CMy2DTransView::OnDirRup)
 	ON_COMMAND(ID_DIR_UP, &CMy2DTransView::OnDirUp)
+
+	// 회전 및 크기 변경 메뉴 메시지
+	ON_COMMAND(ID_ROT_LEFT, &CMy2DTransView::OnRotateLeft)
+	ON_COMMAND(ID_ROT_RIGHT, &CMy2DTransView::OnRotateRight)
 END_MESSAGE_MAP()
 
 // CMy2DTransView 생성/소멸
@@ -527,7 +488,6 @@ void CMy2DTransView::OnDirDown()
 
 void CMy2DTransView::OnDirLeft()
 {
-	// TODO: Add your command handler code here
 	// 모든 DisplayList의 좌표를 Size만큼 좌로로 이동시킴 (x를 감소시킴)
 	for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
 		for( int j = 0; j < i->nNodes; ++j ) {
@@ -542,7 +502,6 @@ void CMy2DTransView::OnDirLeft()
 
 void CMy2DTransView::OnDirRight()
 {
-	// TODO: Add your command handler code here
 	// 모든 DisplayList의 좌표를 Size만큼 우측으로 이동시킴 (x를 증가)
 	for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
 		for( int j = 0; j < i->nNodes; ++j ) {
@@ -557,7 +516,6 @@ void CMy2DTransView::OnDirRight()
 
 void CMy2DTransView::OnDirLup()
 {
-	// TODO: Add your command handler code here
 	// 모든 DisplayList의 좌표를 Size만큼 좌측위로 이동 (x를 감소, y를 감소)
 	for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
 		for( int j = 0; j < i->nNodes; ++j ) {
@@ -572,7 +530,6 @@ void CMy2DTransView::OnDirLup()
 
 void CMy2DTransView::OnDirLdown()
 {
-	// TODO: Add your command handler code here
 	// 모든 DisplayList의 좌표를 Size만큼 좌측 아래로 이동 (x를 감소, y를 증가)
 	for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
 		for( int j = 0; j < i->nNodes; ++j ) {
@@ -587,7 +544,6 @@ void CMy2DTransView::OnDirLdown()
 
 void CMy2DTransView::OnDirRdown()
 {
-	// TODO: Add your command handler code here
 	// 모든 DisplayList의 좌표를 Size만큼 우측 아래로 이동시킴 (x를 증가, y를 증가)
 	for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
 		for( int j = 0; j < i->nNodes; ++j ) {
@@ -602,7 +558,6 @@ void CMy2DTransView::OnDirRdown()
 
 void CMy2DTransView::OnDirRup()
 {
-	// TODO: Add your command handler code here
 	// 모든 DisplayList의 좌표를 Size만큼 우측 위로 이동시킴 (x를 증가, y를 감소)
 	for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
 		for( int j = 0; j < i->nNodes; ++j ) {
@@ -613,4 +568,16 @@ void CMy2DTransView::OnDirRup()
 	SetCapture();
 	RedrawWindow();
 	ReleaseCapture();
+}
+
+void CMy2DTransView::OnRotateLeft()
+{
+	// 모든 DisplayList의 좌표를 정해진 각도만큼 반시계방향으로 회전시킴
+
+}
+
+void CMy2DTransView::OnRotateRight()
+{
+	// 모든 DisplayList의 좌표를 정해진 각도만큼 시계방향으로 회전시킴
+
 }

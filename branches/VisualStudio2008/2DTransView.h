@@ -65,6 +65,8 @@ public:
 	afx_msg void OnDirRdown();
 	afx_msg void OnDirRight();
 	afx_msg void OnDirRup();
+	afx_msg void OnRotateLeft();
+	afx_msg void OnRotateRight();
 };
 
 #ifndef _DEBUG  // 2DTransView.cpp의 디버그 버전
