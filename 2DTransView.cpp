@@ -237,7 +237,11 @@ void CMy2DTransView::OnFileOpen() {
 		
 		GetMainFrm()->SetWindowText( str ); // 윈도우 제목창을 다시 설정함
 		AddToRecentFileList( (LPCTSTR)m_FileOpenDialog.GetPathName() ); // MRU 목록에 해당 파일을 추가
-		FileRead( m_FileOpenDialog.GetPathName() ); // 파일 열기 함수 호출
+		
+		if( !FileRead( m_FileOpenDialog.GetPathName() ) ) {
+			AfxMessageBox( _T("파일 읽기가 제대로 수행되지 않았습니다.") );
+			return;
+		}// 파일 열기 함수 호출
 	} 
 	
 	if( m_FileOpenDialog.GetFileName() == _T("\0") ) {

@@ -53,11 +53,9 @@ DisplayList::DisplayList() // 기본 DiplayList 객체 생성자입니다.
 	this->nNodes = 0;
 }
 
-DisplayList::~DisplayList()
+DisplayList::~DisplayList() // 기본 소멸자입니다.
 {
-	// 동적으로 할당된 벡터 컨테이너를 초기화합니다.
-	this->XPos.clear();
-	this->YPos.clear();
+
 }
 
 void DisplayList::reset()  // 모든 속성을 0으로 초기화합니다.

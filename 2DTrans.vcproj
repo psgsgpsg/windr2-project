@@ -368,10 +368,6 @@
 			FileType="5"
 			>
 		</File>
-		<File
-			RelativePath=".\ReadMe.txt"
-			>
-		</File>
 	</Files>
 	<Globals>
 		<Global
