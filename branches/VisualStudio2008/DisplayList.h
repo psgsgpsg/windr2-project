@@ -1,8 +1,9 @@
-﻿// 점 데이터를 저장하기 위한 클래스
+// 점 데이터를 저장하기 위한 클래스
 // R, G, B : 색상 데이터
 // nNodes : 형상의 노드 갯수
 // *Xpos, *Ypos : 데이터의 x, y좌표
 #pragma once
+#include <cmath>
 
 using namespace std;
 
@@ -43,6 +44,9 @@ public:
 	// 좌표 변환 관련 함수 정의
 	void Translate(double Xdelta, double Ydelta); // 지정된 방향으로 Xdelta, Ydelta만큼 점을 이동합니다.
 	void Scale(double scalefactor);	// scalefactor 만큼 원점을 기준으로 확대/축소 연산을 수행합니다.
+	void rot(double radian); // 지정된 각도만큼 원점을 기준으로 회전합니다. 반시계방향이 +입니다.
+	void rot(double radian, double x, double y); // 지정된 각도만큼 (x, y)를 기준으로 회전합니다. 반시계방향이 +입니다.
+	void reflect(bool isX, bool isY); // X축 혹은 Y축을 기준으로 반사 변환을 수행합니다.
 };
 
 DisplayList::DisplayList() // 기본 DiplayList 객체 생성자입니다.
@@ -90,22 +94,6 @@ int DisplayList::getB() // B 색상 데이터를 반환합니다.
 	return this->B;
 }
 
-void DisplayList::Translate(double Xdelta, double Ydelta) // 지정된 방향으로 Xdelta, Ydelta만큼 점을 이동합니다.
-{
-	for(unsigned int i = 0; i < this->nNodes; ++i) {
-		this->XPos[i] += Xdelta;
-		this->YPos[i] += Ydelta;
-	}
-}
-
-void DisplayList::Scale(double scalefactor) // scalefactor 만큼 원점을 기준으로 확대/축소 연산을 수행합니다.
-{
-	for(unsigned int i = 0; i < this->nNodes; ++i) {
-		this->XPos[i] *= scalefactor;
-		this->YPos[i] *= scalefactor;
-	}
-}
-
 unsigned int DisplayList::GetNodes() // 노드 갯수를 반환합니다.
 {
 	return (this->nNodes);
@@ -150,3 +138,74 @@ void DisplayList::addYPos(double coord) // Y좌표값을 추가합니다.
 {
 	this->YPos.push_back(coord);
 }
+
+void DisplayList::Translate(double Xdelta, double Ydelta) // 지정된 방향으로 Xdelta, Ydelta만큼 점을 이동합니다.
+{
+	for(unsigned int i = 0; i < this->nNodes; ++i) {
+		this->XPos[i] += Xdelta;
+		this->YPos[i] += Ydelta;
+	}
+}
+
+void DisplayList::Scale(double scalefactor) // scalefactor 만큼 원점을 기준으로 확대/축소 연산을 수행합니다.
+{
+	for(unsigned int i = 0; i < this->nNodes; ++i) {
+		this->XPos[i] *= scalefactor;
+		this->YPos[i] *= scalefactor;
+	}
+}
+
+void DisplayList::rot(double degree) // 지정된 각도만큼 원점을 기준으로 회전합니다. 반시계방향이 +입니다.
+{
+	degree *= ( atan(1.0) / 180.0 ); // 입력받은 degree를 라디안으로 변환
+
+	for(unsigned int i = 0; i < this->nNodes; ++i) {
+		this->XPos[i] = cos(degree) * this->XPos[i] - sin(degree) * this->YPos[i];
+		this->YPos[i] = sin(degree) * this->XPos[i] + cos(degree) * this->YPos[i];
+	}
+}
+void DisplayList::rot(double degree, double x, double y) // 지정된 각도만큼 (x, y)를 기준으로 회전합니다. 반시계방향이 +입니다.
+{
+	degree *= ( atan(1.0) / 180.0 ); // 입력받은 degree를 라디안으로 변환
+
+	// 입력받은 x, y 만큼 원점으로 이동함
+	this->Translate(-x, -y);
+
+	// 각도만큼 회전
+	for(unsigned int i = 0; i < this->nNodes; ++i) {
+		this->XPos[i] = cos(degree) * this->XPos[i] - sin(degree) * this->YPos[i];
+		this->YPos[i] = sin(degree) * this->XPos[i] + cos(degree) * this->YPos[i];
+	}
+
+	// 다시 원래 위치로 복귀
+	this->Translate(x, y);
+}
+
+void DisplayList::reflect(bool isX, bool isY) // X축 혹은 Y축을 기준으로 반사 변환을 수행합니다.
+{
+	/*
+	isX가 true일 경우에는 X축을 기준으로 반사, isY가 true일 경우에는 Y축을 기준으로 반사
+	 둘다 true일 경우에는 원점을 기준으로 반사, 둘다 false일 경우에는 아무 동작도 하지 않음
+	*/
+
+	if ( isX && !isY) { // isX만 true일 경우 Y좌표값의 부호를 모두 뒤집는다.
+		for(unsigned int i = 0; i < this->nNodes; ++i) {
+			this->YPos[i] -= this->YPos[i];
+		}
+	}
+	else if ( !isX && isY) { // isY만 true일 경우 X좌표값의 부호를 모두 뒤집는다.
+		for(unsigned int i = 0; i < this->nNodes; ++i) {
+			this->XPos[i] -= this->XPos[i];
+		}
+	}
+	else if ( isX && isY ) { // isX, isY 모두 true일 경우 X, Y 좌표값의 부호는 모두 뒤집는다.
+		for(unsigned int i = 0; i < this->nNodes; ++i) {
+			this->XPos[i] -= this->XPos[i];
+			this->YPos[i] -= this->YPos[i];
+		}
+	}
+	else { // 모두 false일 경우
+		return;
+	}
+}
+
