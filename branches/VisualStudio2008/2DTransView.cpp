@@ -634,8 +634,9 @@ void CMy2DTransView::OnDirRup()
 
 void CMy2DTransView::OnRotateLeft()
 {
+	tempList.begin()->rot(45);
 	// 모든 DisplayList의 좌표를 정해진 각도만큼 반시계방향으로 회전시킴
-		SetCapture();
+	SetCapture();
 	RedrawWindow();
 	ReleaseCapture();
 
@@ -644,6 +645,10 @@ void CMy2DTransView::OnRotateLeft()
 
 void CMy2DTransView::OnRotateRight()
 {
-	// 모든 DisplayList의 좌표를 정해진 각도만큼 시계방향으로 회전시킴
+	tempList.begin()->rot(-45);
+	// 모든 DisplayList의 좌표를 정해진 각도만큼 반시계방향으로 회전시킴
+	SetCapture();
+	RedrawWindow();
+	ReleaseCapture();
 
 }
