@@ -17,7 +17,7 @@ class CMy2DTransApp : public CWinAppEx
 {
 public:
 	CMy2DTransApp();
-
+	virtual void MRUFileHandler(UINT i); // MRU 목록의 파일을 선택할 경우의 동작을 지정합니다.
 
 // 재정의입니다.
 public:

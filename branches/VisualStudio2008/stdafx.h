@@ -5,7 +5,6 @@
 #pragma once
 
 #include <vector>			// STL vector 컨테이너입니다.
-#include "DisplayList.h"	// DisplayList 구조체입니다.
 
 #ifndef _SECURE_ATL
 #define _SECURE_ATL 1
