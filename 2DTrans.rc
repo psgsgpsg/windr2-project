@@ -223,8 +223,8 @@ BEGIN
     "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
-    VK_LEFT,        ID_ROT_LEFT,            VIRTKEY, CONTROL, NOINVERT
-    VK_RIGHT,       ID_ROT_RIGHT,           VIRTKEY, CONTROL, NOINVERT
+    VK_LEFT,        ID_ROT_LEFT,            VIRTKEY, ALT, NOINVERT
+    VK_RIGHT,       ID_ROT_RIGHT,           VIRTKEY, ALT, NOINVERT
 END
 
 
@@ -233,7 +233,7 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 287, 97
+IDD_ABOUTBOX DIALOGEX 0, 0, 329, 97
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About 2DTrans Project"
 FONT 9, "MS Shell Dlg", 0, 0, 0x1
@@ -241,8 +241,8 @@ BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20,0,WS_EX_TRANSPARENT
     LTEXT           "University of Ulsan 2DTrans Project 1.0.20272.13",IDC_STATIC,42,14,164,8,SS_NOPREFIX
     LTEXT           "Copyright (C) 2010 HyunJoon, Kim All Right Reserved",IDC_STATIC,42,26,175,8
-    DEFPUSHBUTTON   "확인",IDOK,230,76,50,14,WS_GROUP
-    LTEXT           "This program is under licensed GNU Public License Version 3(GPLv3).\nTo See the information visit http://www.gnu.org/licenses/gpl-3.0.html",IDC_STATIC,42,42,238,33
+    DEFPUSHBUTTON   "확인",IDOK,272,77,50,14,WS_GROUP
+    LTEXT           "This program is under licensed GNU Public License Version 3(GPLv3).\nTo see more information about license visit http://www.gnu.org/licenses/gpl-3.0.html\n\nYou can download source code at http://code.google.com/p/windr2-project.",IDC_STATIC,42,40,278,36
 END
 
 
@@ -296,9 +296,9 @@ BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 280
+        RIGHTMARGIN, 322
         TOPMARGIN, 7
-        BOTTOMMARGIN, 90
+        BOTTOMMARGIN, 91
     END
 END
 #endif    // APSTUDIO_INVOKED

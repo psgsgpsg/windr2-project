@@ -23,7 +23,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CMainFrame::OnFilePrintPreview)
 	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_PREVIEW, &CMainFrame::OnUpdateFilePrintPreview)
 	ON_COMMAND(ID_DIR_SIZE, &CMainFrame::OnDirSize)
-	ON_UPDATE_COMMAND_UI(ID_DIR_SIZE, &CMainFrame::OnUpdateDirSize)
 END_MESSAGE_MAP()
 
 // CMainFrame 생성/소멸
@@ -466,9 +465,4 @@ void CMainFrame::OnDirSize()
 	else {
 		AfxMessageBox( _T("이동 크기는 반드시 정수이어야 합니다.") );
 	}	
-}
-
-
-void CMainFrame::OnUpdateDirSize(CCmdUI *pCmdUI)
-{
 }
