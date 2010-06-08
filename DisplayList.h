@@ -1,7 +1,7 @@
-// Á¡ µ¥ÀÌÅÍ¸¦ ÀúÀåÇÏ±â À§ÇÑ Å¬·¡½º
-// R, G, B : »ö»ó µ¥ÀÌÅÍ
-// nNodes : Çü»óÀÇ ³ëµå °¹¼ö
-// *Xpos, *Ypos : µ¥ÀÌÅÍÀÇ x, yÁÂÇ¥
+ï»¿// ì  ë°ì´í„°ë¥¼ ì €ì¥í•˜ê¸° ìœ„í•œ í´ë˜ìŠ¤
+// R, G, B : ìƒ‰ìƒ ë°ì´í„°
+// nNodes : í˜•ìƒì˜ ë…¸ë“œ ê°¯ìˆ˜
+// *Xpos, *Ypos : ë°ì´í„°ì˜ x, yì¢Œí‘œ
 #pragma once
 #include <cmath>
 
@@ -9,47 +9,47 @@ using namespace std;
 
 class DisplayList
 {
-	int R; // Red »ö»ó µ¥ÀÌÅÍ (0-255 »çÀÌÀÇ Á¤¼öÀÔ´Ï´Ù)
-	int G; // Green »ö»ó µ¥ÀÌÅÍ (0-255 »çÀÌÀÇ Á¤¼öÀÔ´Ï´Ù)
-	int B; // Blue »ö»ó µ¥ÀÌÅÍ (0-255 »çÀÌÀÇ Á¤¼öÀÔ´Ï´Ù)
-	unsigned int nNodes; // ³ëµå °¹¼ö
-	vector<double> XPos; // X ³ëµå ÁÂÇ¥ º¤ÅÍ
-	vector<double> YPos; // Y ³ëµå ÁÂÇ¥ º¤ÅÍ
+	int R; // Red ìƒ‰ìƒ ë°ì´í„° (0-255 ì‚¬ì´ì˜ ì •ìˆ˜ì…ë‹ˆë‹¤)
+	int G; // Green ìƒ‰ìƒ ë°ì´í„° (0-255 ì‚¬ì´ì˜ ì •ìˆ˜ì…ë‹ˆë‹¤)
+	int B; // Blue ìƒ‰ìƒ ë°ì´í„° (0-255 ì‚¬ì´ì˜ ì •ìˆ˜ì…ë‹ˆë‹¤)
+	unsigned int nNodes; // ë…¸ë“œ ê°¯ìˆ˜
+	vector<double> XPos; // X ë…¸ë“œ ì¢Œí‘œ ë²¡í„°
+	vector<double> YPos; // Y ë…¸ë“œ ì¢Œí‘œ ë²¡í„°
 
-	// ¸â¹ö ÇÔ¼ö
+	// ë©¤ë²„ í•¨ìˆ˜
 public:
-	// ±âº» »ı¼ºÀÚ ¹× ¼Ò¸êÀÚ ÇÔ¼ö Á¤ÀÇ
-	DisplayList();	// ±âº» DiplayList ±¸Á¶Ã¼¸¦ »ı¼ºÇÕ´Ï´Ù.
-	~DisplayList(); // DisplayList ¼Ò¸êÀÚÀÔ´Ï´Ù.
-	void reset(); // ¸ğµç ¼Ó¼ºÀ» 0À¸·Î ÃÊ±âÈ­ÇÕ´Ï´Ù.
+	// ê¸°ë³¸ ìƒì„±ì ë° ì†Œë©¸ì í•¨ìˆ˜ ì •ì˜
+	DisplayList();	// ê¸°ë³¸ DiplayList êµ¬ì¡°ì²´ë¥¼ ìƒì„±í•©ë‹ˆë‹¤.
+	~DisplayList(); // DisplayList ì†Œë©¸ìì…ë‹ˆë‹¤.
+	void reset(); // ëª¨ë“  ì†ì„±ì„ 0ìœ¼ë¡œ ì´ˆê¸°í™”í•©ë‹ˆë‹¤.
 
-	// »ö»ó °ü·Ã ÇÔ¼ö Á¤ÀÇ
-	void SetRGB(int Red = 0, int Green = 0, int Blue = 0); // »ö»óÀ» R, G, B ¼ø¼­·Î ÁöÁ¤ÇÕ´Ï´Ù. »ö»ó ¹üÀ§´Â 0-255ÀÔ´Ï´Ù.
-	int getR(); // R »ö»ó µ¥ÀÌÅÍ¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
-	int getG(); // G »ö»ó µ¥ÀÌÅÍ¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
-	int getB(); // B »ö»ó µ¥ÀÌÅÍ¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+	// ìƒ‰ìƒ ê´€ë ¨ í•¨ìˆ˜ ì •ì˜
+	void SetRGB(int Red = 0, int Green = 0, int Blue = 0); // ìƒ‰ìƒì„ R, G, B ìˆœì„œë¡œ ì§€ì •í•©ë‹ˆë‹¤. ìƒ‰ìƒ ë²”ìœ„ëŠ” 0-255ì…ë‹ˆë‹¤.
+	int getR(); // R ìƒ‰ìƒ ë°ì´í„°ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
+	int getG(); // G ìƒ‰ìƒ ë°ì´í„°ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
+	int getB(); // B ìƒ‰ìƒ ë°ì´í„°ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 
-	// ³ëµå ¼ö °ü·Ã ÇÔ¼ö Á¤ÀÇ
-	unsigned int GetNodes(); // ³ëµå °¹¼ö¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
-	void setNodes(unsigned int numOfNodes); // ³ëµå °¹¼ö¸¦ ÁöÁ¤ÇÕ´Ï´Ù.
+	// ë…¸ë“œ ìˆ˜ ê´€ë ¨ í•¨ìˆ˜ ì •ì˜
+	unsigned int GetNodes(); // ë…¸ë“œ ê°¯ìˆ˜ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
+	void setNodes(unsigned int numOfNodes); // ë…¸ë“œ ê°¯ìˆ˜ë¥¼ ì§€ì •í•©ë‹ˆë‹¤.
 
-	// ÁÂÇ¥ µ¥ÀÌÅÍ °ü·Ã ÇÔ¼ö Á¤ÀÇ
-	void setXPos(int index, double coord); //ÁöÁ¤µÈ º¤ÅÍ ÀÎµ¦½º¿¡ XÁÂÇ¥°ªÀ» ÀÔ·ÂÇÕ´Ï´Ù.
-	void setYPos(int index, double coord); //ÁöÁ¤µÈ º¤ÅÍ ÀÎµ¦½º¿¡ YÁÂÇ¥°ªÀ» ÀÔ·ÂÇÕ´Ï´Ù.
-	double getXPos(int index); //ÁöÁ¤µÈ º¤ÅÍ ÀÎµ¦½ºÀÇ XÁÂÇ¥°ªÀ» ¹İÈ¯ÇÕ´Ï´Ù.
-	double getYPos(int index); //ÁöÁ¤µÈ º¤ÅÍ ÀÎµ¦½ºÀÇ YÁÂÇ¥°ªÀ» ¹İÈ¯ÇÕ´Ï´Ù.
-	void addXPos(double coord); // X ÁÂÇ¥ µ¥ÀÌÅÍ¸¦ Ãß°¡ÇÕ´Ï´Ù.
-	void addYPos(double coord); // Y ÁÂÇ¥ µ¥ÀÌÅÍ¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// ì¢Œí‘œ ë°ì´í„° ê´€ë ¨ í•¨ìˆ˜ ì •ì˜
+	void setXPos(int index, double coord); //ì§€ì •ëœ ë²¡í„° ì¸ë±ìŠ¤ì— Xì¢Œí‘œê°’ì„ ì…ë ¥í•©ë‹ˆë‹¤.
+	void setYPos(int index, double coord); //ì§€ì •ëœ ë²¡í„° ì¸ë±ìŠ¤ì— Yì¢Œí‘œê°’ì„ ì…ë ¥í•©ë‹ˆë‹¤.
+	double getXPos(int index); //ì§€ì •ëœ ë²¡í„° ì¸ë±ìŠ¤ì˜ Xì¢Œí‘œê°’ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
+	double getYPos(int index); //ì§€ì •ëœ ë²¡í„° ì¸ë±ìŠ¤ì˜ Yì¢Œí‘œê°’ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
+	void addXPos(double coord); // X ì¢Œí‘œ ë°ì´í„°ë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
+	void addYPos(double coord); // Y ì¢Œí‘œ ë°ì´í„°ë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 
-	// ÁÂÇ¥ º¯È¯ °ü·Ã ÇÔ¼ö Á¤ÀÇ
-	void Translate(double Xdelta, double Ydelta); // ÁöÁ¤µÈ ¹æÇâÀ¸·Î Xdelta, Ydelta¸¸Å­ Á¡À» ÀÌµ¿ÇÕ´Ï´Ù.
-	void Scale(double scalefactor);	// scalefactor ¸¸Å­ ¿øÁ¡À» ±âÁØÀ¸·Î È®´ë/Ãà¼Ò ¿¬»êÀ» ¼öÇàÇÕ´Ï´Ù.
-	void rot(double radian); // ÁöÁ¤µÈ °¢µµ¸¸Å­ ¿øÁ¡À» ±âÁØÀ¸·Î È¸ÀüÇÕ´Ï´Ù. ¹İ½Ã°è¹æÇâÀÌ +ÀÔ´Ï´Ù.
-	void rot(double radian, double x, double y); // ÁöÁ¤µÈ °¢µµ¸¸Å­ (x, y)¸¦ ±âÁØÀ¸·Î È¸ÀüÇÕ´Ï´Ù. ¹İ½Ã°è¹æÇâÀÌ +ÀÔ´Ï´Ù.
-	void reflect(bool isX, bool isY); // XÃà È¤Àº YÃàÀ» ±âÁØÀ¸·Î ¹İ»ç º¯È¯À» ¼öÇàÇÕ´Ï´Ù.
+	// ì¢Œí‘œ ë³€í™˜ ê´€ë ¨ í•¨ìˆ˜ ì •ì˜
+	void Translate(double Xdelta, double Ydelta); // ì§€ì •ëœ ë°©í–¥ìœ¼ë¡œ Xdelta, Ydeltaë§Œí¼ ì ì„ ì´ë™í•©ë‹ˆë‹¤.
+	void Scale(double scalefactor);	// scalefactor ë§Œí¼ ì›ì ì„ ê¸°ì¤€ìœ¼ë¡œ í™•ëŒ€/ì¶•ì†Œ ì—°ì‚°ì„ ìˆ˜í–‰í•©ë‹ˆë‹¤.
+	void rot(double radian); // ì§€ì •ëœ ê°ë„ë§Œí¼ ì›ì ì„ ê¸°ì¤€ìœ¼ë¡œ íšŒì „í•©ë‹ˆë‹¤. ë°˜ì‹œê³„ë°©í–¥ì´ +ì…ë‹ˆë‹¤.
+	void rot(double radian, double x, double y); // ì§€ì •ëœ ê°ë„ë§Œí¼ (x, y)ë¥¼ ê¸°ì¤€ìœ¼ë¡œ íšŒì „í•©ë‹ˆë‹¤. ë°˜ì‹œê³„ë°©í–¥ì´ +ì…ë‹ˆë‹¤.
+	void reflect(bool isX, bool isY); // Xì¶• í˜¹ì€ Yì¶•ì„ ê¸°ì¤€ìœ¼ë¡œ ë°˜ì‚¬ ë³€í™˜ì„ ìˆ˜í–‰í•©ë‹ˆë‹¤.
 };
 
-DisplayList::DisplayList() // ±âº» DiplayList °´Ã¼ »ı¼ºÀÚÀÔ´Ï´Ù.
+DisplayList::DisplayList() // ê¸°ë³¸ DiplayList ê°ì²´ ìƒì„±ìì…ë‹ˆë‹¤.
 {
 	this->R = 0;
 	this->G = 0;
@@ -57,12 +57,12 @@ DisplayList::DisplayList() // ±âº» DiplayList °´Ã¼ »ı¼ºÀÚÀÔ´Ï´Ù.
 	this->nNodes = 0;
 }
 
-DisplayList::~DisplayList() // ±âº» ¼Ò¸êÀÚÀÔ´Ï´Ù.
+DisplayList::~DisplayList() // ê¸°ë³¸ ì†Œë©¸ìì…ë‹ˆë‹¤.
 {
 
 }
 
-void DisplayList::reset()  // ¸ğµç ¼Ó¼ºÀ» 0À¸·Î ÃÊ±âÈ­ÇÕ´Ï´Ù.
+void DisplayList::reset()  // ëª¨ë“  ì†ì„±ì„ 0ìœ¼ë¡œ ì´ˆê¸°í™”í•©ë‹ˆë‹¤.
 {
 	this->R = 0;
 	this->G = 0;
@@ -72,74 +72,74 @@ void DisplayList::reset()  // ¸ğµç ¼Ó¼ºÀ» 0À¸·Î ÃÊ±âÈ­ÇÕ´Ï´Ù.
 	this->YPos.clear();
 }
 
-void DisplayList::SetRGB(int Red, int Green, int Blue) // »ö»óÀ» R, G, B ¼ø¼­·Î ÁöÁ¤ÇÕ´Ï´Ù. »ö»ó ¹üÀ§´Â 0-255ÀÔ´Ï´Ù.
+void DisplayList::SetRGB(int Red, int Green, int Blue) // ìƒ‰ìƒì„ R, G, B ìˆœì„œë¡œ ì§€ì •í•©ë‹ˆë‹¤. ìƒ‰ìƒ ë²”ìœ„ëŠ” 0-255ì…ë‹ˆë‹¤.
 {
 	this->R = Red;
 	this->G = Green;
 	this->B = Blue;
 }
 
-int DisplayList::getR() // R »ö»ó µ¥ÀÌÅÍ¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+int DisplayList::getR() // R ìƒ‰ìƒ ë°ì´í„°ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 {
 	return this->R;
 }
 
-int DisplayList::getG() // G »ö»ó µ¥ÀÌÅÍ¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+int DisplayList::getG() // G ìƒ‰ìƒ ë°ì´í„°ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 {
 	return this->G;
 }
 
-int DisplayList::getB() // B »ö»ó µ¥ÀÌÅÍ¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+int DisplayList::getB() // B ìƒ‰ìƒ ë°ì´í„°ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 {
 	return this->B;
 }
 
-unsigned int DisplayList::GetNodes() // ³ëµå °¹¼ö¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+unsigned int DisplayList::GetNodes() // ë…¸ë“œ ê°¯ìˆ˜ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 {
 	return (this->nNodes);
 }
 
-void DisplayList::setNodes(unsigned int numOfNodes) // ³ëµå °¹¼ö¸¦ ÁöÁ¤ÇÕ´Ï´Ù.
+void DisplayList::setNodes(unsigned int numOfNodes) // ë…¸ë“œ ê°¯ìˆ˜ë¥¼ ì§€ì •í•©ë‹ˆë‹¤.
 {
-	// ³ëµå °¹¼ö¸¦ ÀúÀåÇÔ
+	// ë…¸ë“œ ê°¯ìˆ˜ë¥¼ ì €ì¥í•¨
 	this->nNodes = numOfNodes;
 
-	// XPos, YPos vector ÄÁÅ×ÀÌ³ÊÀÇ °ø°£À» ¹Ì¸® È®º¸ÇÔ
+	// XPos, YPos vector ì»¨í…Œì´ë„ˆì˜ ê³µê°„ì„ ë¯¸ë¦¬ í™•ë³´í•¨
 	this->XPos.reserve(numOfNodes);
 	this->YPos.reserve(numOfNodes);
 }
 
-void DisplayList::setXPos(int index, double coord) // ÁöÁ¤µÈ ÀÎµ¦½º¿¡ XÁÂÇ¥¸¦ ÀÔ·ÂÇÕ´Ï´Ù.
+void DisplayList::setXPos(int index, double coord) // ì§€ì •ëœ ì¸ë±ìŠ¤ì— Xì¢Œí‘œë¥¼ ì…ë ¥í•©ë‹ˆë‹¤.
 {
 	this->XPos[index] = coord;
 }
 
-void DisplayList::setYPos(int index, double coord) // ÁöÁ¤µÈ ÀÎµ¦½º¿¡ YÁÂÇ¥¸¦ ÀÔ·ÂÇÕ´Ï´Ù.
+void DisplayList::setYPos(int index, double coord) // ì§€ì •ëœ ì¸ë±ìŠ¤ì— Yì¢Œí‘œë¥¼ ì…ë ¥í•©ë‹ˆë‹¤.
 {
 	this->YPos[index] = coord;
 }
 
-double DisplayList::getXPos(int index) //ÁöÁ¤µÈ º¤ÅÍ ÀÎµ¦½ºÀÇ XÁÂÇ¥°ªÀ» ¹İÈ¯ÇÕ´Ï´Ù.
+double DisplayList::getXPos(int index) //ì§€ì •ëœ ë²¡í„° ì¸ë±ìŠ¤ì˜ Xì¢Œí‘œê°’ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
 {
 	return ( this->XPos[index] );
 }
 
-double DisplayList::getYPos(int index) //ÁöÁ¤µÈ º¤ÅÍ ÀÎµ¦½ºÀÇ YÁÂÇ¥°ªÀ» ¹İÈ¯ÇÕ´Ï´Ù.
+double DisplayList::getYPos(int index) //ì§€ì •ëœ ë²¡í„° ì¸ë±ìŠ¤ì˜ Yì¢Œí‘œê°’ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
 {
 	return ( this->YPos[index] );
 }
 
-void DisplayList::addXPos(double coord) // XÁÂÇ¥°ªÀ» Ãß°¡ÇÕ´Ï´Ù.
+void DisplayList::addXPos(double coord) // Xì¢Œí‘œê°’ì„ ì¶”ê°€í•©ë‹ˆë‹¤.
 {
 	this->XPos.push_back(coord);
 }
 
-void DisplayList::addYPos(double coord) // YÁÂÇ¥°ªÀ» Ãß°¡ÇÕ´Ï´Ù.
+void DisplayList::addYPos(double coord) // Yì¢Œí‘œê°’ì„ ì¶”ê°€í•©ë‹ˆë‹¤.
 {
 	this->YPos.push_back(coord);
 }
 
-void DisplayList::Translate(double Xdelta, double Ydelta) // ÁöÁ¤µÈ ¹æÇâÀ¸·Î Xdelta, Ydelta¸¸Å­ Á¡À» ÀÌµ¿ÇÕ´Ï´Ù.
+void DisplayList::Translate(double Xdelta, double Ydelta) // ì§€ì •ëœ ë°©í–¥ìœ¼ë¡œ Xdelta, Ydeltaë§Œí¼ ì ì„ ì´ë™í•©ë‹ˆë‹¤.
 {
 	for(unsigned int i = 0; i < this->nNodes; ++i) {
 		this->XPos[i] += Xdelta;
@@ -147,7 +147,7 @@ void DisplayList::Translate(double Xdelta, double Ydelta) // ÁöÁ¤µÈ ¹æÇâÀ¸·Î Xde
 	}
 }
 
-void DisplayList::Scale(double scalefactor) // scalefactor ¸¸Å­ ¿øÁ¡À» ±âÁØÀ¸·Î È®´ë/Ãà¼Ò ¿¬»êÀ» ¼öÇàÇÕ´Ï´Ù.
+void DisplayList::Scale(double scalefactor) // scalefactor ë§Œí¼ ì›ì ì„ ê¸°ì¤€ìœ¼ë¡œ í™•ëŒ€/ì¶•ì†Œ ì—°ì‚°ì„ ìˆ˜í–‰í•©ë‹ˆë‹¤.
 {
 	for(unsigned int i = 0; i < this->nNodes; ++i) {
 		this->XPos[i] *= scalefactor;
@@ -155,56 +155,56 @@ void DisplayList::Scale(double scalefactor) // scalefactor ¸¸Å­ ¿øÁ¡À» ±âÁØÀ¸·Î 
 	}
 }
 
-void DisplayList::rot(double degree) // ÁöÁ¤µÈ °¢µµ¸¸Å­ ¿øÁ¡À» ±âÁØÀ¸·Î È¸ÀüÇÕ´Ï´Ù. ¹İ½Ã°è¹æÇâÀÌ +ÀÔ´Ï´Ù.
+void DisplayList::rot(double degree) // ì§€ì •ëœ ê°ë„ë§Œí¼ ì›ì ì„ ê¸°ì¤€ìœ¼ë¡œ íšŒì „í•©ë‹ˆë‹¤. ë°˜ì‹œê³„ë°©í–¥ì´ +ì…ë‹ˆë‹¤.
 {
-	degree *= ( atan(1.0) / 180.0 ); // ÀÔ·Â¹ŞÀº degree¸¦ ¶óµğ¾ÈÀ¸·Î º¯È¯
+	degree *= ( atan(1.0) / 180.0 ); // ì…ë ¥ë°›ì€ degreeë¥¼ ë¼ë””ì•ˆìœ¼ë¡œ ë³€í™˜
 
 	for(unsigned int i = 0; i < this->nNodes; ++i) {
 		this->XPos[i] = cos(degree) * this->XPos[i] - sin(degree) * this->YPos[i];
 		this->YPos[i] = sin(degree) * this->XPos[i] + cos(degree) * this->YPos[i];
 	}
 }
-void DisplayList::rot(double degree, double x, double y) // ÁöÁ¤µÈ °¢µµ¸¸Å­ (x, y)¸¦ ±âÁØÀ¸·Î È¸ÀüÇÕ´Ï´Ù. ¹İ½Ã°è¹æÇâÀÌ +ÀÔ´Ï´Ù.
+void DisplayList::rot(double degree, double x, double y) // ì§€ì •ëœ ê°ë„ë§Œí¼ (x, y)ë¥¼ ê¸°ì¤€ìœ¼ë¡œ íšŒì „í•©ë‹ˆë‹¤. ë°˜ì‹œê³„ë°©í–¥ì´ +ì…ë‹ˆë‹¤.
 {
-	degree *= ( atan(1.0) / 180.0 ); // ÀÔ·Â¹ŞÀº degree¸¦ ¶óµğ¾ÈÀ¸·Î º¯È¯
+	degree *= ( atan(1.0) / 180.0 ); // ì…ë ¥ë°›ì€ degreeë¥¼ ë¼ë””ì•ˆìœ¼ë¡œ ë³€í™˜
 
-	// ÀÔ·Â¹ŞÀº x, y ¸¸Å­ ¿øÁ¡À¸·Î ÀÌµ¿ÇÔ
+	// ì…ë ¥ë°›ì€ x, y ë§Œí¼ ì›ì ìœ¼ë¡œ ì´ë™í•¨
 	this->Translate(-x, -y);
 
-	// °¢µµ¸¸Å­ È¸Àü
+	// ê°ë„ë§Œí¼ íšŒì „
 	for(unsigned int i = 0; i < this->nNodes; ++i) {
 		this->XPos[i] = cos(degree) * this->XPos[i] - sin(degree) * this->YPos[i];
 		this->YPos[i] = sin(degree) * this->XPos[i] + cos(degree) * this->YPos[i];
 	}
 
-	// ´Ù½Ã ¿ø·¡ À§Ä¡·Î º¹±Í
+	// ë‹¤ì‹œ ì›ë˜ ìœ„ì¹˜ë¡œ ë³µê·€
 	this->Translate(x, y);
 }
 
-void DisplayList::reflect(bool isX, bool isY) // XÃà È¤Àº YÃàÀ» ±âÁØÀ¸·Î ¹İ»ç º¯È¯À» ¼öÇàÇÕ´Ï´Ù.
+void DisplayList::reflect(bool isX, bool isY) // Xì¶• í˜¹ì€ Yì¶•ì„ ê¸°ì¤€ìœ¼ë¡œ ë°˜ì‚¬ ë³€í™˜ì„ ìˆ˜í–‰í•©ë‹ˆë‹¤.
 {
 	/*
-	isX°¡ trueÀÏ °æ¿ì¿¡´Â XÃàÀ» ±âÁØÀ¸·Î ¹İ»ç, isY°¡ trueÀÏ °æ¿ì¿¡´Â YÃàÀ» ±âÁØÀ¸·Î ¹İ»ç
-	 µÑ´Ù trueÀÏ °æ¿ì¿¡´Â ¿øÁ¡À» ±âÁØÀ¸·Î ¹İ»ç, µÑ´Ù falseÀÏ °æ¿ì¿¡´Â ¾Æ¹« µ¿ÀÛµµ ÇÏÁö ¾ÊÀ½
+	isXê°€ trueì¼ ê²½ìš°ì—ëŠ” Xì¶•ì„ ê¸°ì¤€ìœ¼ë¡œ ë°˜ì‚¬, isYê°€ trueì¼ ê²½ìš°ì—ëŠ” Yì¶•ì„ ê¸°ì¤€ìœ¼ë¡œ ë°˜ì‚¬
+	 ë‘˜ë‹¤ trueì¼ ê²½ìš°ì—ëŠ” ì›ì ì„ ê¸°ì¤€ìœ¼ë¡œ ë°˜ì‚¬, ë‘˜ë‹¤ falseì¼ ê²½ìš°ì—ëŠ” ì•„ë¬´ ë™ì‘ë„ í•˜ì§€ ì•ŠìŒ
 	*/
 
-	if ( isX && !isY) { // isX¸¸ trueÀÏ °æ¿ì YÁÂÇ¥°ªÀÇ ºÎÈ£¸¦ ¸ğµÎ µÚÁı´Â´Ù.
+	if ( isX && !isY) { // isXë§Œ trueì¼ ê²½ìš° Yì¢Œí‘œê°’ì˜ ë¶€í˜¸ë¥¼ ëª¨ë‘ ë’¤ì§‘ëŠ”ë‹¤.
 		for(unsigned int i = 0; i < this->nNodes; ++i) {
 			this->YPos[i] -= this->YPos[i];
 		}
 	}
-	else if ( !isX && isY) { // isY¸¸ trueÀÏ °æ¿ì XÁÂÇ¥°ªÀÇ ºÎÈ£¸¦ ¸ğµÎ µÚÁı´Â´Ù.
+	else if ( !isX && isY) { // isYë§Œ trueì¼ ê²½ìš° Xì¢Œí‘œê°’ì˜ ë¶€í˜¸ë¥¼ ëª¨ë‘ ë’¤ì§‘ëŠ”ë‹¤.
 		for(unsigned int i = 0; i < this->nNodes; ++i) {
 			this->XPos[i] -= this->XPos[i];
 		}
 	}
-	else if ( isX && isY ) { // isX, isY ¸ğµÎ trueÀÏ °æ¿ì X, Y ÁÂÇ¥°ªÀÇ ºÎÈ£´Â ¸ğµÎ µÚÁı´Â´Ù.
+	else if ( isX && isY ) { // isX, isY ëª¨ë‘ trueì¼ ê²½ìš° X, Y ì¢Œí‘œê°’ì˜ ë¶€í˜¸ëŠ” ëª¨ë‘ ë’¤ì§‘ëŠ”ë‹¤.
 		for(unsigned int i = 0; i < this->nNodes; ++i) {
 			this->XPos[i] -= this->XPos[i];
 			this->YPos[i] -= this->YPos[i];
 		}
 	}
-	else { // ¸ğµÎ falseÀÏ °æ¿ì
+	else { // ëª¨ë‘ falseì¼ ê²½ìš°
 		return;
 	}
 }
