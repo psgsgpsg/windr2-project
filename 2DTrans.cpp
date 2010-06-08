@@ -19,9 +19,10 @@ BEGIN_MESSAGE_MAP(CMy2DTransApp, CWinAppEx)
 	ON_COMMAND(ID_APP_ABOUT, &CMy2DTransApp::OnAppAbout)
 	// 표준 파일을 기초로 하는 문서 명령입니다.
 	//ON_COMMAND(ID_FILE_NEW, &CWinAppEx::OnFileNew)
-	ON_COMMAND(ID_FILE_OPEN, &CMy2DTransView::OnFileOpen)
+	//ON_COMMAND(ID_FILE_OPEN, &CMy2DTransView::OnFileOpen)
 	// 표준 인쇄 설정 명령입니다.
 	ON_COMMAND(ID_FILE_PRINT_SETUP, &CWinAppEx::OnFilePrintSetup)
+	ON_COMMAND_RANGE(ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16, &CMy2DTransApp::MRUFileHandler)
 END_MESSAGE_MAP()
 
 
@@ -32,7 +33,7 @@ CMy2DTransApp::CMy2DTransApp()
 
 	m_bHiColorIcons = TRUE;
 
-	// TODO: 여기에 생성 코드를 추가합니다.
+	// 여기에 생성 코드를 추가합니다.
 	// InitInstance에 모든 중요한 초기화 작업을 배치합니다.
 }
 
@@ -69,10 +70,10 @@ BOOL CMy2DTransApp::InitInstance()
 	// 아래에서 필요 없는 특정 초기화
 	// 루틴을 제거해야 합니다.
 	// 해당 설정이 저장된 레지스트리 키를 변경하십시오.
-	// TODO: 이 문자열을 회사 또는 조직의 이름과 같은
+	// 이 문자열을 회사 또는 조직의 이름과 같은
 	// 적절한 내용으로 수정해야 합니다.
 	SetRegistryKey(_T("Aerospace Engineering"));
-	LoadStdProfileSettings(4);  // 표준 INI 파일 옵션을 로드합니다.
+	LoadStdProfileSettings(8);  // 표준 INI 파일 옵션을 로드합니다.
 	SetRegistryBase (_T("Settings"));
 
 	InitContextMenuManager();
@@ -174,5 +175,19 @@ void CMy2DTransApp::SaveCustomState()
 
 // CMy2DTransApp 메시지 처리기
 
+void CMy2DTransApp::MRUFileHandler(UINT i) // MRU 파일 선택시 동작을 정의합니다.
+{
+    int nIndex = i - ID_FILE_MRU_FILE1;
+
+	CMainFrame *pFrame = (CMainFrame *)AfxGetApp()->m_pMainWnd;
+	CMy2DTransView *pView = (CMy2DTransView *)( pFrame->GetActiveView() );
+
+	// 파일이 존재하지 않을 경우 MRU 목록에서 제거하고, 파일 없음 메시지를 표시.
+	if ( !pView->FileRead( (*m_pRecentFileList)[nIndex] ) ) {
+		m_pRecentFileList->Remove(nIndex);
+		AfxMessageBox( _T("파일이 존재하지 않습니다.") );
+		return;
+	}	
+}
 
 
