@@ -5,6 +5,8 @@
 #include "2DTrans.h"
 
 #include "MainFrm.h"
+#include "2DTransDoc.h"
+#include "2DTransView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -21,7 +23,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CMainFrame::OnFilePrintPreview)
 	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_PREVIEW, &CMainFrame::OnUpdateFilePrintPreview)
 	ON_COMMAND(ID_DIR_SIZE, &CMainFrame::OnDirSize)
-	ON_UPDATE_COMMAND_UI(ID_DIR_SIZE, &CMainFrame::OnUpdateDirSize)
 END_MESSAGE_MAP()
 
 // CMainFrame 생성/소멸
@@ -46,7 +47,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
 
 	// 비주얼 관리자에서 사용하는 비주얼 스타일을 설정합니다.
-	CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_LunaBlue);
+	CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Aqua);
 
 	m_wndRibbonBar.Create(this);
 	InitializeRibbon();
@@ -93,8 +94,8 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
 	if( !CFrameWndEx::PreCreateWindow(cs) )
 		return FALSE;
-	// TODO: CREATESTRUCT cs를 수정하여 여기에서
-	//  Window 클래스 또는 스타일을 수정합니다.
+	// CREATESTRUCT cs를 수정하여 여기에서
+	// Window 클래스 또는 스타일을 수정합니다.
 
 	return TRUE;
 }
@@ -200,19 +201,9 @@ void CMainFrame::InitializeRibbon()
 	CMFCRibbonButton* pBtnStatusBar = new CMFCRibbonCheckBox(ID_VIEW_STATUS_BAR, strTemp);
 	pPanelView->Add(pBtnStatusBar);
 
-	// 빠른 실행 도구 모음 명령을 추가합니다.
-	CList<UINT, UINT> lstQATCmds;
-
-	lstQATCmds.AddTail(ID_FILE_NEW);
-	lstQATCmds.AddTail(ID_FILE_OPEN);
-	lstQATCmds.AddTail(ID_FILE_SAVE);
-	lstQATCmds.AddTail(ID_FILE_PRINT_DIRECT);
-
-	m_wndRibbonBar.SetQuickAccessCommands(lstQATCmds);
-
-	m_wndRibbonBar.AddToTabs(new CMFCRibbonButton(ID_APP_ABOUT, _T("About\na"), m_PanelImages.ExtractIcon(0)));
-
-	// 직접 추가한 메뉴 부분
+//////////////////////////////
+// 직접 추가 메뉴 부분 시작 //
+//////////////////////////////
 	// 1. 이동 관련 메뉴
 	// "이동" 범주 추가
 	bNameValid = strTemp.LoadString(IDS_RIBBON_CATEGORY_TRANSLATE);
@@ -298,6 +289,48 @@ void CMainFrame::InitializeRibbon()
 			pEdit->EnableSpinButtons(0, 1000);			// 0 ~ 1000 사이의 값으로 스핀 버튼
 			pEdit->SetEditText( _T("10") );
 			pPanelDirection3->Add(pEdit);				// 패널에 콤보 박스를 넣음
+
+	// 2. 회전 관련 메뉴
+	// "회전 및 스케일링" 범주 추가
+	bNameValid = strTemp.LoadString(IDS_RIBBON_CATEGORY_ROTATE);
+	ASSERT(bNameValid);
+	CMFCRibbonCategory* pCategoryRotScale = m_wndRibbonBar.AddCategory(strTemp, IDB_WRITESMALL, IDB_ROT_SCALE_LARGE);
+	pCategoryRotScale->SetKeys(_T("R"));
+
+		// "회전" 패널 추가
+		bNameValid = strTemp.LoadString(IDS_RIBBON_PANEL_ROTATE);
+		ASSERT(bNameValid);
+		CMFCRibbonPanel* pPanelRotate = pCategoryRotScale->AddPanel(strTemp, m_PanelImages.ExtractIcon(28));
+
+			// 좌, 우로 회전 버튼을 추가
+			// 좌로 회전
+			bNameValid = strTemp.LoadString(IDS_RIBBON_ROT_LEFT);
+			ASSERT(bNameValid);
+			CMFCRibbonButton* pBtnRotLeft = new CMFCRibbonButton(ID_ROT_LEFT, strTemp, -1, 4);
+			pBtnRotLeft->SetKeys( _T("Q") );
+			pPanelRotate->Add(pBtnRotLeft);
+
+			// 우로 회전
+			bNameValid = strTemp.LoadString(IDS_RIBBON_ROT_RIGHT);
+			ASSERT(bNameValid);
+			CMFCRibbonButton* pBtnRotRight = new CMFCRibbonButton(ID_ROT_RIGHT, strTemp, -1, 3);
+			pBtnRotRight->SetKeys( _T("E") );
+			pPanelRotate->Add(pBtnRotRight);
+
+////////////////////////////
+// 직접 추가 메뉴 부분 끝 //
+////////////////////////////
+			
+	// 빠른 실행 도구 모음 명령을 추가합니다.
+	CList<UINT, UINT> lstQATCmds;
+
+	lstQATCmds.AddTail(ID_FILE_NEW);
+	lstQATCmds.AddTail(ID_FILE_OPEN);
+	lstQATCmds.AddTail(ID_FILE_SAVE);
+	lstQATCmds.AddTail(ID_FILE_PRINT_DIRECT);
+
+	m_wndRibbonBar.SetQuickAccessCommands(lstQATCmds);
+	m_wndRibbonBar.AddToTabs(new CMFCRibbonButton(ID_APP_ABOUT, _T("About\na"), m_PanelImages.ExtractIcon(0)));
 }
 
 BOOL CMainFrame::CreateOutlookBar(CMFCOutlookBar& bar, UINT uiID, CMFCShellTreeCtrl& tree, int nInitialWidth)
@@ -394,15 +427,42 @@ void CMainFrame::OnUpdateFilePrintPreview(CCmdUI* pCmdUI)
 }
 
 
+// 형상을 이동(translation)하는 크기를 변경한 경우 이를 적용하는 부분
 void CMainFrame::OnDirSize()
 {
-	// TODO: Add your command handler code here
 	CMFCRibbonEdit* pEdit = (CMFCRibbonEdit*)(m_wndRibbonBar.FindByID(ID_DIR_SIZE));
 	CString size = pEdit->GetEditText();
-}
+	int count = size.GetLength();
+	int i;
 
+	// 형식 검사 int로 변경한 후 같지 않으면 오류 메시지 표시
+	for(i = 0; i < count; i++) {
+		TCHAR temp = size.GetAt(i);
 
-void CMainFrame::OnUpdateDirSize(CCmdUI *pCmdUI)
-{
-	// TODO: Add your command update UI handler code here
+		// 음수 처리. 
+		if( i == 0 && temp == '-' ) {
+			continue;
+		}
+
+		// 입력된 키가 0 ~ 9 사이인가를 체크. 
+		if( temp >= '0' && temp <= '9' ) {
+			continue;
+		}
+		else{
+			break;
+		}
+	} 
+
+	// 만약 모두 수가 맞다면 해당 값을 전달
+	if(i == count) {
+		// 활성화된 현재 CView 객체에 접근
+		CMy2DTransView *pView = (CMy2DTransView *)( this->GetActiveView() );
+		
+		// DirSize를 전달
+		pView->SetDirSize( _wtoi(size) );
+	}
+	// 그렇지 않다면 오류 메시지 표시
+	else {
+		AfxMessageBox( _T("이동 크기는 반드시 정수이어야 합니다.") );
+	}	
 }
