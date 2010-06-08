@@ -16,11 +16,13 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Korean (Korea) resources
+// 한국어 resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_KOR)
+#ifdef _WIN32
 LANGUAGE LANG_KOREAN, SUBLANG_DEFAULT
 #pragma code_page(949)
+#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -95,13 +97,14 @@ IDB_PAGES_SMALL         BITMAP                  "res\\pages_small.bmp"
 IDB_PAGES_SMALL_HC      BITMAP                  "res\\pages_small_hc.bmp"
 IDB_INFO                BITMAP                  "res\\info.bmp"
 IDB_TRANLARGE           BITMAP                  "res\\translate_large.bmp"
+IDB_ROT_SCALE_LARGE     BITMAP                  "res\\rot_scale_large.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Toolbar
 //
 
-IDR_MAINFRAME TOOLBAR 16, 16
+IDR_MAINFRAME TOOLBAR  16, 16
 BEGIN
     BUTTON      ID_FILE_NEW
     BUTTON      ID_FILE_OPEN
@@ -115,7 +118,7 @@ BEGIN
     BUTTON      ID_APP_ABOUT
 END
 
-IDR_MAINFRAME_256 TOOLBAR 16, 16
+IDR_MAINFRAME_256 TOOLBAR  16, 16
 BEGIN
     BUTTON      ID_FILE_NEW
     BUTTON      ID_FILE_OPEN
@@ -135,7 +138,7 @@ END
 // Menu
 //
 
-IDR_MAINFRAME MENU
+IDR_MAINFRAME MENU 
 BEGIN
     POPUP "파일(&F)"
     BEGIN
@@ -183,7 +186,7 @@ BEGIN
     END
 END
 
-IDR_POPUP_EDIT MENU
+IDR_POPUP_EDIT MENU 
 BEGIN
     POPUP "편집"
     BEGIN
@@ -193,7 +196,7 @@ BEGIN
     END
 END
 
-IDR_WINDOWS_MENU MENU
+IDR_WINDOWS_MENU MENU 
 BEGIN
     MENUITEM "새 창(&N)",                     ID_WINDOW_NEW
 END
@@ -204,7 +207,7 @@ END
 // Accelerator
 //
 
-IDR_MAINFRAME ACCELERATORS
+IDR_MAINFRAME ACCELERATORS 
 BEGIN
     VK_DOWN,        ID_DIR_DOWN,            VIRTKEY, NOINVERT
     VK_END,         ID_DIR_LDOWN,           VIRTKEY, NOINVERT
@@ -214,20 +217,14 @@ BEGIN
     VK_RIGHT,       ID_DIR_RIGHT,           VIRTKEY, NOINVERT
     VK_PRIOR,       ID_DIR_RUP,             VIRTKEY, NOINVERT
     VK_UP,          ID_DIR_UP,              VIRTKEY, NOINVERT
-    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
-    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
-    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
-    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
-    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
-    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
-    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
-    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
     "N",            ID_FILE_NEW,            VIRTKEY, CONTROL, NOINVERT
     "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
     "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL, NOINVERT
     "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
+    VK_LEFT,        ID_ROT_LEFT,            VIRTKEY, ALT, NOINVERT
+    VK_RIGHT,       ID_ROT_RIGHT,           VIRTKEY, ALT, NOINVERT
 END
 
 
@@ -236,15 +233,16 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
+IDD_ABOUTBOX DIALOGEX 0, 0, 329, 97
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "2DTrans 정보"
+CAPTION "About 2DTrans Project"
 FONT 9, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    ICON            IDR_MAINFRAME,IDC_STATIC,14,14,21,20
-    LTEXT           "2DTrans, 버전 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2010",IDC_STATIC,42,26,114,8
-    DEFPUSHBUTTON   "확인",IDOK,113,41,50,14,WS_GROUP
+    ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20,0,WS_EX_TRANSPARENT
+    LTEXT           "University of Ulsan 2DTrans Project 1.0.20272.13",IDC_STATIC,42,14,164,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2010 HyunJoon, Kim All Right Reserved",IDC_STATIC,42,26,175,8
+    DEFPUSHBUTTON   "확인",IDOK,272,77,50,14,WS_GROUP
+    LTEXT           "This program is under licensed GNU Public License Version 3(GPLv3).\nTo see more information about license visit http://www.gnu.org/licenses/gpl-3.0.html\n\nYou can download source code at http://code.google.com/p/windr2-project.",IDC_STATIC,42,40,278,36
 END
 
 
@@ -271,10 +269,10 @@ BEGIN
         BLOCK "041203b5"
         BEGIN
             VALUE "CompanyName", "University of Ulsan"
-            VALUE "FileDescription", "2D Transform drawing tool"
+            VALUE "FileDescription", "Basic 2D Drawing Tool for Windows"
             VALUE "FileVersion", "1.0.0.1"
             VALUE "InternalName", "2DTrans.exe"
-            VALUE "LegalCopyright", "(c) 2010 Kim Hyun Joon, Oh Young Kwang.  All rights reserved."
+            VALUE "LegalCopyright", "(c) 2010 HyunJoon, Kim.  All rights reserved."
             VALUE "OriginalFilename", "2DTrans.exe"
             VALUE "ProductName", "2DTransfomer"
             VALUE "ProductVersion", "1.0.0.1"
@@ -293,14 +291,14 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO
+GUIDELINES DESIGNINFO 
 BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 163
+        RIGHTMARGIN, 322
         TOPMARGIN, 7
-        BOTTOMMARGIN, 55
+        BOTTOMMARGIN, 91
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -311,7 +309,7 @@ END
 // String Table
 //
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDP_OLE_INIT_FAILED     "OLE를 초기화할 수 없습니다. OLE 라이브러리 버전이 올바른지 확인하십시오."
     IDS_RIBBON_PANEL_DIRECTION1 "직선 이동"
@@ -327,19 +325,20 @@ BEGIN
     ID_DIR_UP               "화면을 지정된 크기만큼 위로 이동합니다.\n위로"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDR_MAINFRAME           "2DTrans\n\n2DTrans\n\n\nMy2DTrans.Document\n2DTrans.Document"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     AFX_IDS_APP_TITLE       "2DTrans"
     AFX_IDS_IDLEMESSAGE     "준비"
     IDS_RIBBON_CATEGORY_TRANSLATE "이동"
+    IDS_RIBBON_CATEGORY_ROTATE "회전 및 크기"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_FILE_NEW             "새 문서를 만듭니다.\n새로 만들기"
     ID_FILE_OPEN            "기존 문서를 엽니다.\n열기"
@@ -353,13 +352,13 @@ BEGIN
     ID_FILE_PRINT_PREVIEW   "전체 페이지를 표시합니다.\n인쇄 미리 보기"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_APP_ABOUT            "프로그램 정보, 버전 번호, 저작권을 표시합니다.\n정보"
     ID_APP_EXIT             "문서를 저장할지를 묻고 응용 프로그램을 끝냅니다.\n끝내기"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_FILE_MRU_FILE1       "현재 문서를 엽니다."
     ID_FILE_MRU_FILE2       "현재 문서를 엽니다."
@@ -379,18 +378,18 @@ BEGIN
     ID_FILE_MRU_FILE16      "현재 문서를 엽니다."
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_NEXT_PANE            "다음 창으로 전환합니다.\n다음 창"
     ID_PREV_PANE            "이전 창으로 전환합니다.\n이전 창"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_WINDOW_SPLIT         "활성 창을 여러 개의 창으로 분할합니다.\n분할"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_EDIT_CLEAR           "선택 영역을 지웁니다.\n지우기"
     ID_EDIT_CLEAR_ALL       "모두 지웁니다.\n모두 지우기"
@@ -405,13 +404,13 @@ BEGIN
     ID_EDIT_REDO            "이전에 실행 취소된 작업을 다시 실행합니다.\n다시 실행"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_VIEW_TOOLBAR         "도구 모음을 표시하거나 숨깁니다.\n도구 모음 설정/해제"
     ID_VIEW_STATUS_BAR      "상태 표시줄을 표시하거나 숨깁니다.\n상태 표시줄 설정/해제"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     AFX_IDS_SCSIZE          "창 크기를 변경합니다."
     AFX_IDS_SCMOVE          "창 위치를 변경합니다."
@@ -422,18 +421,18 @@ BEGIN
     AFX_IDS_SCCLOSE         "문서를 저장할 것인지 확인하고 활성 창을 닫습니다."
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     AFX_IDS_SCRESTORE       "창을 보통 크기로 복원합니다."
     AFX_IDS_SCTASKLIST      "작업 목록을 활성화합니다."
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     AFX_IDS_PREVIEW_CLOSE   "인쇄 미리 보기 모드를 닫습니다.\n미리 보기 취소"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_DIR_DOWN             "화면을 지정된 크기만큼 아래로 이동합니다.\n아래로"
     ID_DIR_LEFT             "화면을 지정된 크기만큼 좌측으로 이동합니다.\n좌측으로"
@@ -444,17 +443,22 @@ BEGIN
     ID_DIR_LDOWN            "화면을 지정된 크기만큼 좌측 아래로 이동합니다.\n좌측 아래"
     IDS_RIBBON_PANEL_DIRECTION3 "이동 크기"
     ID_DIR_SIZE             "1회 이동시마다 이동할 크기를 지정합니다.\nStep Size"
+    IDS_RIBBON_PANEL_ROTATE "회전"
     IDS_STATUS_PANE1        "창 1"
     IDS_RIBBON_DIR_SIZE     "이동 크기"
+    ID_ROT_LEFT             "지정된 각도 만큼 반시계 방향으로 회전합니다.\n반시계 방향"
+    IDS_RIBBON_ROT_RIGHT    "시계 방향 회전"
+    IDS_RIBBON_ROT_LEFT     "반시계 방향 회전"
+    ID_ROT_RIGHT            "지정된 각도만큼 시계 방향으로 회전합니다.\n시계 방향"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDS_SHORTCUTS           "바로 가기"
     IDS_FOLDERS             "폴더"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDS_OUTLOOKBAR          "Outlook 표시줄"
     IDS_RIBBON_FILE         "파일"
@@ -470,7 +474,7 @@ BEGIN
     IDS_RIBBON_CLOSE        "닫기(&C)"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDS_RIBBON_RECENT_DOCS  "최근 문서"
     IDS_RIBBON_EXIT         "끝내기(&X)"
@@ -484,12 +488,12 @@ BEGIN
     IDS_RIBBON_WINDOWS      "창\ni"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDS_EDIT_MENU           "편집"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_INDICATOR_EXT        "EXT"
     ID_INDICATOR_CAPS       "CAP"
@@ -499,13 +503,13 @@ BEGIN
     ID_INDICATOR_REC        "REC"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDS_RIBBON_STATUSBAR    "상태 표시줄"
     IDS_RIBBON_VIEW         "보기"
 END
 
-#endif    // Korean (Korea) resources
+#endif    // 한국어 resources
 /////////////////////////////////////////////////////////////////////////////
 
 

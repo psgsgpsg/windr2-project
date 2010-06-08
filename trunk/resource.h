@@ -34,9 +34,14 @@
 #define ID_STATUSBAR_PANE1              120
 #define ID_DIR_SIZE                     120
 #define ID_STATUSBAR_PANE2              121
+#define IDS_RIBBON_PANEL_ROTATE         121
 #define IDS_STATUS_PANE1                122
 #define IDS_RIBBON_DIR_SIZE             123
 #define ID_RIBBON_DIR_SIZE              124
+#define ID_ROT_LEFT                     124
+#define IDS_RIBBON_ROT_RIGHT            125
+#define IDS_RIBBON_ROT_LEFT             126
+#define ID_ROT_RIGHT                    127
 #define IDR_MAINFRAME                   128
 #define IDR_MAINFRAME_256               129
 #define IDR_My2DTransTYPE               130
@@ -88,16 +93,20 @@
 #define IDS_RIBBON_VIEW                 290
 #define IDS_EDIT_MENU                   306
 #define IDB_TRANLARGE                   314
+#define IDB_ROT_SCALE_LARGE             316
+#define ID_STT_TEXT_VER                 1000
+#define IDC_NETADDRESS1                 1001
 #define ID_WRITE_PASTEASHYPERLINK       32770
 #define IDS_RIBBON_CATEGORY_TRANSLATE   57346
+#define IDS_RIBBON_CATEGORY_ROTATE      57347
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        316
-#define _APS_NEXT_COMMAND_VALUE         32794
-#define _APS_NEXT_CONTROL_VALUE         1000
+#define _APS_NEXT_RESOURCE_VALUE        317
+#define _APS_NEXT_COMMAND_VALUE         32799
+#define _APS_NEXT_CONTROL_VALUE         1002
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

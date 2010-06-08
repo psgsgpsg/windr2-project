@@ -121,6 +121,9 @@
     </None>
     <None Include="DATA01.DAT" />
     <None Include="DATA02.DAT" />
+    <None Include="res\rot_scale_large.bmp">
+      <Filter>리소스 파일</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="2DTrans.rc">
