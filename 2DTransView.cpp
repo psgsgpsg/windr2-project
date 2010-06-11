@@ -7,6 +7,8 @@
 #include "2DTransView.h"
 #include "windows.h"
 
+// 표준 STL vector 컨테이너와, DisplayList 클래스
+#include <vector>
 #include "DisplayList.h"
 
 #ifdef _DEBUG
@@ -14,17 +16,23 @@
 #endif
 
 using namespace std;
+
 vector<DisplayList> DList, tempList;		// 점 데이터 저장을 위한 구조체를 선언함
 
-// 변수 설정
+COLORREF crBack = RGB(255, 255, 255);		// 바탕 화면의 색 지정.
+CBrush jbrBack;								// 바탕 배경 칠하기용 브러시
+CRect rcClient;								// 클라이언트 영역 저장용 구조체
+
 int cen_x, cen_y;							// 뷰 영역의 중심점 좌표
 double MaxX, MaxY, MinX, MinY;				// 데이터로부터 최대 최소값을 읽어들임
 double ScaleX, ScaleY;						// X, Y 방향으로의 scale factor
 int nElements;								// 전체 도형의 갯수
 int nflag, m_option;
 CPoint anchor, last;						// Mouse location points
-double Scale = 1.0, wsx, wsy, CenX, CenY;
+double Scale, wsx, wsy, CenX, CenY;
 double moveSize, scaleSize;					// UI로부터의 입력 변수 저장용
+double originX, originY;					// 데이터의 원점이 View상의 좌표로 변환된 좌표
+double moveX = 0.0, moveY = 0.0;			// 마우스로 드래그시 이동한 총 변량을 저장하는 데이터
 
 // CMy2DTransView
 
@@ -68,6 +76,9 @@ CMy2DTransView::CMy2DTransView()
 	nflag = 0;
 	nElements = 0;
 	SetDirSize(10);
+	Scale = 1.0;
+
+	jbrBack.CreateSolidBrush(crBack);		// 지정된 색으로 브러시 생성.
 }
 
 CMy2DTransView::~CMy2DTransView()
@@ -91,19 +102,13 @@ void CMy2DTransView::OnDraw(CDC* pDC)
 	if (!pDoc)
 		return;
 
-	// client 영역 설정
-    CRect rcClient;
-	GetClientRect(rcClient);
- 
-	COLORREF crBack = RGB(255, 255, 255);	// 바탕 화면의 색 지정.
-    CBrush jbrBack;
-	jbrBack.CreateSolidBrush(crBack);		// 지정된 색으로 브러시 생성.
+	GetClientRect(rcClient);				// client 영역 설정 
 	pDC->FillRect(rcClient, &jbrBack);		// 브러시로 클라이언트 영역을 채움.
     pDC->SetBkColor(crBack);				// 지정된 바탕화면 색으로 덮음.
 	
-	//**************************************************************************//
-	// 점 데이터의 최대 최소값을 읽어들여 스케일링을 하는 부분                  //
-	//**************************************************************************//
+	/* 점 데이터의 최대 최소값을 읽어들여 스케일링을 하는 부분
+	 1. 마우스 조작이 가해진 경우 GetCapture()로 플래그를 읽어 들여 동작 여부를 확인함
+	 2. 도형 요소의 수가 0일 경우에는 동작하지 않음 */
 
 	// nElements가 0이 아닐 경우에만
 	if (nElements != 0) {
@@ -124,9 +129,13 @@ void CMy2DTransView::OnDraw(CDC* pDC)
 			Scale = (double)(0.9 * min(WIDTH/(wsx*2), HEIGHT/(wsy*2)));
 		}
 
-		/* 계산한 중심점을 스케일에 맞추어 변환 */
-		CenX = CenX * Scale;
-		CenY = CenY * Scale;
+		/* 계산한 중심점을 스케일에 맞추어 변환하고, 클라이언트 영역의 중심점과의 차이를 저장 */
+		CenX = cen_x - Scale * ( CenX - MinX );
+		CenY = cen_y - ( HEIGHT - ( Scale * ( CenY - MinY) ) );
+
+		/* 데이터의 원점을 스케일에 맞추어 변환하고, 클라이언트 영역의 중심점과의 차이를 저장 */
+		originX = ( Scale * -MinX ) + CenX + moveX;
+		originY = ( HEIGHT + (Scale * MinY) ) + CenY + moveY;
 
 		//**************************************************************************//
         // DList를 tempList로 복사하는 부분
@@ -135,21 +144,14 @@ void CMy2DTransView::OnDraw(CDC* pDC)
 
 		// 계산된 스케일로 점 데이터를 다시 계산
 		if ( GetCapture() != this ) {		// 마우스 조작이 걸려있는 경우, 이 부분은 넘어감
-			tempList.clear();
-			tempList.assign(DList.begin(), DList.end());
+			int k = 0;
 
 			for(vector<DisplayList>::iterator j = tempList.begin(); j != tempList.end(); ++j) {
-				// X 좌표 계산
 				for(unsigned int i = 0; i < j->GetNodes(); ++i) {
-					// j->XPos.at(i) = WIDTH  - ( CenX - j->XPos.at(i) ) * 0.2 * Scale;
-					// j->YPos.at(i) = HEIGHT - ( j->YPos.at(i) - CenY ) * 0.2 * Scale;
-					j->setXPos(i, Scale * ( j->getXPos(i) - (double)MinX ) );
-					j->setYPos(i, HEIGHT - ( Scale * ( j->getYPos(i) - (double)MinY ) ));
-					// *(xpos+j) = WIDTH - (CenX - *(xpos+j)) * 0.2 * Scale;
-					// *(ypos+j) = HEIGHT - (*(ypos+j) - CenY) * 0.2 * Scale;
-					// *(xpos+j) = ( *(xpos+j)*(+Scale) ) - ( Scale * MinX ) + CenX;
-					// *(ypos+j) = ( *(ypos+j)*(-Scale) ) - ( Scale * MinY ) + CenY;
+					j->setXPos( i, Scale * ( DList[k].getXPos(i) - MinX ) + CenX + moveX);
+					j->setYPos( i, (HEIGHT - ( Scale * ( DList[k].getYPos(i) - MinY ) )) + CenY + moveY);
 				}
+				++k;
 			}
 		}
 		DrawLines();		// 계산된 tempList를 화면에 그리는 함수
@@ -232,10 +234,6 @@ void CMy2DTransView::OnFileOpen() {
 	m_FileOpenDialog.m_ofn.lpstrInitialDir = (LPCTSTR)currentPath;
 
 	if( m_FileOpenDialog.DoModal() == IDOK ) {
-		CString str;
-		str.Format( _T("%s - 2DTrans"), m_FileOpenDialog.GetFileName() );
-		
-		GetMainFrm()->SetWindowText( str ); // 윈도우 제목창을 다시 설정함
 		AddToRecentFileList( (LPCTSTR)m_FileOpenDialog.GetPathName() ); // MRU 목록에 해당 파일을 추가
 		
 		if( !FileRead( m_FileOpenDialog.GetPathName() ) ) {
@@ -257,9 +255,15 @@ bool CMy2DTransView::FileRead(CString FileName) {
     double x = 0., y = 0.;
 	int red, green, blue;
 	unsigned int nNodes;
+	CString title;
 
     // DList 원소의 갯수가 0이 아닐 경우 모든 원소를 삭제하도록 해야함
-    if(!DList.empty()) { DList.clear(); }
+    if( !DList.empty() ) { DList.clear(); }
+	if( !tempList.empty() ) { tempList.clear(); }
+
+	// 마우스 움직임 변량값을 초기화
+	moveX = 0;
+	moveY = 0;
 
     // 파일 포인터를 연다
     FILE *fp;
@@ -329,11 +333,18 @@ bool CMy2DTransView::FileRead(CString FileName) {
 	// 최종 element의 갯수는 DList의 사이즈임 (size_type을 int로 캐스팅)
 	nElements = (int)DList.size();
 
+	// tempList에 읽어들인 원본 데이터 DList를 복사
+	// 미리 공간을 확보
+	tempList.assign(DList.begin(), DList.end());
+
 	// 파일을 닫음
 	fclose(fp);
 
 	// 읽어들인 데이터로부터 document의 내용을 반영
 	GetMainFrm()->RedrawWindow();
+	title.Format( _T("%s - 2DTrans"), FileName );
+	GetMainFrm()->SetWindowText( title ); // 윈도우 제목창을 다시 설정함
+
 
 	// 파일 읽기 성공 여부 반환
 	return true;
@@ -467,6 +478,10 @@ void CMy2DTransView::OnMouseMove(UINT nFlags, CPoint point) {
 					j->Translate( (double)realPos.x, (double)realPos.y );
 				}
 			}
+
+			// 마우스로 이동한 변량을 변수에 계속 더한다.
+			moveX += (double)realPos.x;
+			moveY += (double)realPos.y;
 			
 			// view에 내용을 반영
 			GetMainFrm()->RedrawWindow();
@@ -634,7 +649,7 @@ void CMy2DTransView::OnDirRup()
 
 void CMy2DTransView::OnRotateLeft()
 {
-	tempList.begin()->rot(45);
+	tempList.begin()->rot(45, originX, originY);
 	// 모든 DisplayList의 좌표를 정해진 각도만큼 반시계방향으로 회전시킴
 	SetCapture();
 	RedrawWindow();
@@ -645,7 +660,7 @@ void CMy2DTransView::OnRotateLeft()
 
 void CMy2DTransView::OnRotateRight()
 {
-	tempList.begin()->rot(-45);
+	tempList.begin()->rot(-45, originX, originY);
 	// 모든 DisplayList의 좌표를 정해진 각도만큼 반시계방향으로 회전시킴
 	SetCapture();
 	RedrawWindow();
