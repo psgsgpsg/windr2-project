@@ -114,6 +114,7 @@
     <ClCompile Include="2DTrans.cpp" />
     <ClCompile Include="2DTransDoc.cpp" />
     <ClCompile Include="2DTransView.cpp" />
+    <ClCompile Include="DisplayList.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -158,7 +159,6 @@
     <None Include="res\translate_large.bmp" />
     <None Include="res\writelarge.bmp" />
     <None Include="res\writesmall.bmp" />
-    <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="2DTrans.rc" />

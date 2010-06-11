@@ -30,6 +30,9 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="DisplayList.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2DTrans.h">
@@ -115,7 +118,6 @@
     <None Include="res\writesmall.bmp">
       <Filter>리소스 파일</Filter>
     </None>
-    <None Include="ReadMe.txt" />
     <None Include="res\translate_large.bmp">
       <Filter>리소스 파일</Filter>
     </None>

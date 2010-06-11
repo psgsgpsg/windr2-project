@@ -23,6 +23,9 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CMainFrame::OnFilePrintPreview)
 	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_PREVIEW, &CMainFrame::OnUpdateFilePrintPreview)
 	ON_COMMAND(ID_DIR_SIZE, &CMainFrame::OnDirSize)
+	ON_COMMAND(ID_ROT_ORIGIN_X, &CMainFrame::OnRotOriginX)
+	ON_COMMAND(ID_ROT_ORIGIN_Y, &CMainFrame::OnRotOriginY)
+	ON_COMMAND(ID_ROT_ANGLE, &CMainFrame::OnRotAngle)
 END_MESSAGE_MAP()
 
 // CMainFrame 생성/소멸
@@ -284,11 +287,11 @@ void CMainFrame::InitializeRibbon()
 		ASSERT(bNameValid);
 		CMFCRibbonPanel* pPanelDirection3 = pCategoryTranslate->AddPanel(strTemp, m_PanelImages.ExtractIcon(27));
 
-			// 이동 크기를 편집할 수 있는 콤보 박스를 생성함
+			// 이동 크기를 편집할 수 있는 에디트 콘트롤를 생성함
 			CMFCRibbonEdit* pEdit = new CMFCRibbonEdit(ID_DIR_SIZE, 90, _T("Step"), 6);
 			pEdit->EnableSpinButtons(0, 1000);			// 0 ~ 1000 사이의 값으로 스핀 버튼
 			pEdit->SetEditText( _T("10") );
-			pPanelDirection3->Add(pEdit);				// 패널에 콤보 박스를 넣음
+			pPanelDirection3->Add(pEdit);
 
 	// 2. 회전 관련 메뉴
 	// "회전 및 스케일링" 범주 추가
@@ -298,9 +301,9 @@ void CMainFrame::InitializeRibbon()
 	pCategoryRotScale->SetKeys(_T("R"));
 
 		// "회전" 패널 추가
-		bNameValid = strTemp.LoadString(IDS_RIBBON_PANEL_ROTATE);
+		bNameValid = strTemp.LoadString(IDS_RIBBON_PANEL_ROTATE1);
 		ASSERT(bNameValid);
-		CMFCRibbonPanel* pPanelRotate = pCategoryRotScale->AddPanel(strTemp, m_PanelImages.ExtractIcon(28));
+		CMFCRibbonPanel* pPanelRotate1 = pCategoryRotScale->AddPanel(strTemp, m_PanelImages.ExtractIcon(28));
 
 			// 좌, 우로 회전 버튼을 추가
 			// 좌로 회전
@@ -308,14 +311,67 @@ void CMainFrame::InitializeRibbon()
 			ASSERT(bNameValid);
 			CMFCRibbonButton* pBtnRotLeft = new CMFCRibbonButton(ID_ROT_LEFT, strTemp, -1, 4);
 			pBtnRotLeft->SetKeys( _T("Q") );
-			pPanelRotate->Add(pBtnRotLeft);
+			pPanelRotate1->Add(pBtnRotLeft);
 
 			// 우로 회전
 			bNameValid = strTemp.LoadString(IDS_RIBBON_ROT_RIGHT);
 			ASSERT(bNameValid);
 			CMFCRibbonButton* pBtnRotRight = new CMFCRibbonButton(ID_ROT_RIGHT, strTemp, -1, 3);
 			pBtnRotRight->SetKeys( _T("E") );
-			pPanelRotate->Add(pBtnRotRight);
+			pPanelRotate1->Add(pBtnRotRight);
+
+		// "회전 관련 파라미터" 패널 추가
+		bNameValid = strTemp.LoadString(IDS_RIBBON_PANEL_ROTATE2);
+		ASSERT(bNameValid);
+		CMFCRibbonPanel* pPanelRotate2 = pCategoryRotScale->AddPanel(strTemp, m_PanelImages.ExtractIcon(28));
+
+			// 회전 중심의 X 좌표를 설정할 수 있는 에디트 콘트롤을 생성함
+			CMFCRibbonEdit* pEditOriginX = new CMFCRibbonEdit(ID_ROT_ORIGIN_X, 65,  _T("X Coordinates"), 6);
+			pEditOriginX->SetKeys( _T("Z") );
+			pEditOriginX->SetEditText( _T("0") );
+			pPanelRotate2->Add(pEditOriginX);
+
+			// 회전 중심의 Y 좌표를 설정할 수 있는 에디트 콘트롤을 생성함
+			CMFCRibbonEdit* pEditOriginY = new CMFCRibbonEdit(ID_ROT_ORIGIN_Y, 65,  _T("X Coordinates"), 6);
+			pEditOriginY->SetKeys( _T("X") );
+			pEditOriginY->SetEditText( _T("0") );
+			pPanelRotate2->Add(pEditOriginY);
+
+			// 회전할 각도를 설정할 수 있는 에디트 콘트롤을 생성함
+			CMFCRibbonEdit* pEditAngle = new CMFCRibbonEdit(ID_ROT_ANGLE, 65,  _T("Angle(degree)"), 6);
+			pEditAngle->SetKeys( _T("R") );
+			pEditAngle->SetEditText( _T("0") );
+			pPanelRotate2->Add(pEditAngle);
+
+		// "확대 축소" 패널 추가
+		bNameValid = strTemp.LoadString(IDS_RIBBON_PANEL_ROTATE3);
+		ASSERT(bNameValid);
+		CMFCRibbonPanel* pPanelRotate3 = pCategoryRotScale->AddPanel(strTemp, m_PanelImages.ExtractIcon(28));
+
+			// 확대
+			bNameValid = strTemp.LoadString(IDS_RIBBON_MAGNIFY);
+			ASSERT(bNameValid);
+			CMFCRibbonButton* pBtnMagnify = new CMFCRibbonButton(ID_SCALE_MAGNIFY, strTemp, -1, 1);
+			pBtnMagnify->SetKeys( _T("A") );
+			pPanelRotate3->Add(pBtnMagnify);
+
+			// 축소
+			bNameValid = strTemp.LoadString(IDS_RIBBON_SHRINK);
+			ASSERT(bNameValid);
+			CMFCRibbonButton* pBtnShrink = new CMFCRibbonButton(ID_SCALE_SHRINK, strTemp, -1, 2);
+			pBtnShrink->SetKeys( _T("D") );
+			pPanelRotate3->Add(pBtnShrink);
+
+		// "확대 및 축소 파라미터" 패널 추가
+		bNameValid = strTemp.LoadString(IDS_RIBBON_PANEL_ROTATE4);
+		ASSERT(bNameValid);
+		CMFCRibbonPanel* pPanelRotate4 = pCategoryRotScale->AddPanel(strTemp, m_PanelImages.ExtractIcon(28));
+
+			// 확대 및 축소 비율을 지정할 수 있는 에디트 콘트롤 추가
+			CMFCRibbonEdit* pEditScaleRatio = new CMFCRibbonEdit(ID_SCALE_RATIO, 65,  _T("Ratio"), 6);
+			pEditScaleRatio->SetKeys( _T("S") );
+			pEditScaleRatio->SetEditText( _T("1.0") );
+			pPanelRotate4->Add(pEditScaleRatio);
 
 ////////////////////////////
 // 직접 추가 메뉴 부분 끝 //
@@ -327,7 +383,6 @@ void CMainFrame::InitializeRibbon()
 	lstQATCmds.AddTail(ID_FILE_NEW);
 	lstQATCmds.AddTail(ID_FILE_OPEN);
 	lstQATCmds.AddTail(ID_FILE_SAVE);
-	lstQATCmds.AddTail(ID_FILE_PRINT_DIRECT);
 
 	m_wndRibbonBar.SetQuickAccessCommands(lstQATCmds);
 	m_wndRibbonBar.AddToTabs(new CMFCRibbonButton(ID_APP_ABOUT, _T("About\na"), m_PanelImages.ExtractIcon(0)));
@@ -430,8 +485,10 @@ void CMainFrame::OnUpdateFilePrintPreview(CCmdUI* pCmdUI)
 // 형상을 이동(translation)하는 크기를 변경한 경우 이를 적용하는 부분
 void CMainFrame::OnDirSize()
 {
+	// FindById 메소드로 해당 에디트 컨트롤의 포인터를 받아옴
 	CMFCRibbonEdit* pEdit = (CMFCRibbonEdit*)(m_wndRibbonBar.FindByID(ID_DIR_SIZE));
 	CString size = pEdit->GetEditText();
+	
 	int count = size.GetLength();
 	int i;
 
@@ -458,11 +515,137 @@ void CMainFrame::OnDirSize()
 		// 활성화된 현재 CView 객체에 접근
 		CMy2DTransView *pView = (CMy2DTransView *)( this->GetActiveView() );
 		
-		// DirSize를 전달
-		pView->SetDirSize( _wtoi(size) );
+		// DirSize를 전달 ( 
+		pView->SetDirSize( _tstoi(size) );
 	}
 	// 그렇지 않다면 오류 메시지 표시
 	else {
 		AfxMessageBox( _T("이동 크기는 반드시 정수이어야 합니다.") );
+	}	
+}
+
+// 회전 중심의 X좌표를 입력하는 콘트롤 Edit의 이벤트 핸들러
+void CMainFrame::OnRotOriginX()
+{
+	// FindById 메소드로 해당 에디트 컨트롤의 포인터를 받아옴
+	CMFCRibbonEdit* pEdit = (CMFCRibbonEdit*)(m_wndRibbonBar.FindByID(ID_ROT_ORIGIN_X));
+	CString size = pEdit->GetEditText();
+	
+	int count = size.GetLength();
+	int i;
+
+	// 형식 검사 int로 변경한 후 같지 않으면 오류 메시지 표시
+	for(i = 0; i < count; i++) {
+		TCHAR temp = size.GetAt(i);
+
+		// 음수 및 소수점 처리 
+		if( i == 0 && (temp == '-' || temp == '.') ) {
+			continue;
+		}
+
+		// 입력된 키가 0 ~ 9 사이인가를 체크. 
+		if( temp >= '0' && temp <= '9' ) {
+			continue;
+		}
+		else{
+			break;
+		}
+	} 
+
+	// 만약 모두 수가 맞다면 해당 값을 전달
+	if(i == count) {
+		// 활성화된 현재 CView 객체에 접근
+		CMy2DTransView *pView = (CMy2DTransView *)( this->GetActiveView() );
+		
+		// DirSize를 전달
+		pView->SetDirSize( _tstof(size) );
+	}
+	// 그렇지 않다면 오류 메시지 표시
+	else {
+		AfxMessageBox( _T("입력 값이 잘못되었습니다.") );
+	}	
+}
+
+// 회전 중심의 Y좌표를 입력하는 콘트롤 Edit의 이벤트 핸들러
+void CMainFrame::OnRotOriginY()
+{
+	// FindById 메소드로 해당 에디트 컨트롤의 포인터를 받아옴
+	CMFCRibbonEdit* pEdit = (CMFCRibbonEdit*)(m_wndRibbonBar.FindByID(ID_ROT_ORIGIN_Y));
+	CString size = pEdit->GetEditText();
+	
+	int count = size.GetLength();
+	int i;
+
+	// 형식 검사 int로 변경한 후 같지 않으면 오류 메시지 표시
+	for(i = 0; i < count; i++) {
+		TCHAR temp = size.GetAt(i);
+
+		// 음수 및 소수점 처리
+		if( i == 0 && (temp == '-' || temp == '.') ) {
+			continue;
+		}
+
+		// 입력된 키가 0 ~ 9 사이인가를 체크. 
+		if( temp >= '0' && temp <= '9' ) {
+			continue;
+		}
+		else{
+			break;
+		}
+	} 
+
+	// 만약 모두 수가 맞다면 해당 값을 전달
+	if(i == count) {
+		// 활성화된 현재 CView 객체에 접근
+		CMy2DTransView *pView = (CMy2DTransView *)( this->GetActiveView() );
+		
+		// DirSize를 전달
+		pView->SetDirSize( _tstof(size) );
+	}
+	// 그렇지 않다면 오류 메시지 표시
+	else {
+		AfxMessageBox( _T("입력 값이 잘못되었습니다.") );
+	}	
+}
+
+// 회전 각도를 입력하는 Edit 컨트롤 이벤트 핸들러
+void CMainFrame::OnRotAngle()
+{
+	// FindById 메소드로 해당 에디트 컨트롤의 포인터를 받아옴
+	CMFCRibbonEdit* pEdit = (CMFCRibbonEdit*)(m_wndRibbonBar.FindByID(ID_ROT_ANGLE));
+	CString size = pEdit->GetEditText();
+	
+	int count = size.GetLength();
+	int i;
+
+	// 형식 검사 int로 변경한 후 같지 않으면 오류 메시지 표시
+	for(i = 0; i < count; i++) {
+		TCHAR temp = size.GetAt(i);
+
+		// 음수 및 소수점 처리
+		if( i == 0 && (temp == '-' || temp == '.') ) {
+			continue;
+		}
+
+		// 입력된 키가 0 ~ 9 사이인가를 체크. 
+		if( temp >= '0' && temp <= '9' ) {
+			continue;
+		}
+		else{
+			break;
+		}
+	} 
+
+	// 만약 모두 수가 맞다면 해당 값을 전달
+	if(i == count) {
+		// 활성화된 현재 CView 객체에 접근
+		CMy2DTransView *pView = (CMy2DTransView *)( this->GetActiveView() );
+		
+		// DirSize를 전달
+		pView->SetDirSize( _tstof(size) );
+	}
+	// 그렇지 않다면 오류 메시지 표시
+	else {
+		AfxMessageBox( _T("입력 값이 잘못되었습니다.") );
 	}	
 }

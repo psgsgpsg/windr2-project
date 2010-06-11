@@ -20,6 +20,7 @@ protected: // serialization에서만 만들어집니다.
 // 특성입니다.
 public:
 	CMFCRibbonStatusBar  m_wndStatusBar;
+	CMFCRibbonBar     m_wndRibbonBar;
 
 // 작업입니다.
 public:
@@ -36,8 +37,7 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
-protected:  // 컨트롤 모음이 포함된 멤버입니다.
-	CMFCRibbonBar     m_wndRibbonBar;
+protected:  // 컨트롤 모음이 포함된 멤버입니다.	
 	CMFCRibbonApplicationButton m_MainButton;
 	CMFCToolBarImages m_PanelImages;
 	COutlookBar       m_wndNavigationBar;
@@ -53,15 +53,15 @@ protected:
 
 	void InitializeRibbon();
 	BOOL CreateOutlookBar(CMFCOutlookBar& bar, UINT uiID, CMFCShellTreeCtrl& tree, int nInitialWidth);
-
 	int FindFocusedOutlookWnd(CMFCOutlookBarTabCtrl** ppOutlookWnd);
-
 	CMFCOutlookBarTabCtrl* FindOutlookParent(CWnd* pWnd);
 	CMFCOutlookBarTabCtrl* m_pCurrOutlookWnd;
 	CMFCOutlookBarPane*    m_pCurrOutlookPage;
 public:
 	afx_msg void OnDirSize();
-	afx_msg void OnUpdateDirSize(CCmdUI *pCmdUI);
+	afx_msg void OnRotOriginX();
+	afx_msg void OnRotOriginY();
+	afx_msg void OnRotAngle();
 };
 
 

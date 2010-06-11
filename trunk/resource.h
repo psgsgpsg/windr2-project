@@ -35,6 +35,7 @@
 #define ID_DIR_SIZE                     120
 #define ID_STATUSBAR_PANE2              121
 #define IDS_RIBBON_PANEL_ROTATE         121
+#define IDS_RIBBON_PANEL_ROTATE1        121
 #define IDS_STATUS_PANE1                122
 #define IDS_RIBBON_DIR_SIZE             123
 #define ID_RIBBON_DIR_SIZE              124
@@ -44,7 +45,18 @@
 #define ID_ROT_RIGHT                    127
 #define IDR_MAINFRAME                   128
 #define IDR_MAINFRAME_256               129
+#define ID_ROT_ORIGIN_X                 129
 #define IDR_My2DTransTYPE               130
+#define ID_ROT_ORIGIN_Y                 130
+#define IDS_RIBBON_PANEL_ROTATE2        131
+#define ID_ROT_ANGLE                    132
+#define IDS_RIBBON_PANEL_ROTATE3        133
+#define IDS_RIBBON_MAGNIFY              134
+#define IDS_RIBBON_SHRINK               135
+#define ID_SCALE_MAGNIFY                136
+#define ID_SCALE_SHRINK                 137
+#define IDS_RIBBON_PANEL_ROTATE4        138
+#define ID_SCALE_RATIO                  139
 #define IDR_PASTE_MENU                  151
 #define IDR_WINDOWS_MENU                152
 #define ID_VIEW_NAVIGATION              185
