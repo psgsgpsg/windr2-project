@@ -19,10 +19,9 @@ public:
 	double Scale, delScale;						// 스케일 및 스케일 증분 변수
 	int DirSize;								// 형상 변경시 사용되는 변수
 	vector<DisplayList> DList, tempList;		// 점 데이터 저장을 위한 구조체를 선언함
-	CBrush jbrBack;								// 바탕 배경 칠하기용 브러시
+	//CBrush jbrBack;								// 바탕 배경 칠하기용 브러시
 	CRect rcClient;								// 클라이언트 영역 저장용 구조체
-	CBitmap m_Bitmap;							// Double-Buffering을 위한 비트맵
-	COLORREF crBack;							// 배경 색을 저장하기 위한 구조체
+	//COLORREF crBack;							// 배경 색을 저장하기 위한 구조체
 	CPoint anchor, curPoint;					// Mouse location points
 	CString status;								// 상태 표시줄용 CString 객체
 	int cen_x, cen_y;							// 뷰 영역의 중심점 좌표
