@@ -32,6 +32,9 @@ CMy2DTransApp::CMy2DTransApp()
 
 	// 여기에 생성 코드를 추가합니다.
 	// InitInstance에 모든 중요한 초기화 작업을 배치합니다.
+
+	// 오류 복구시 향상된 DW2.0의 기능을 사용할 수 있도록 지원함
+	m_dwRestartManagerSupportFlags = AFX_RESTART_MANAGER_SUPPORT_RECOVERY_ASPECTS;
 }
 
 // 유일한 CMy2DTransApp 개체입니다.

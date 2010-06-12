@@ -46,6 +46,8 @@ BEGIN_MESSAGE_MAP(CMy2DTransView, CView)
 	// 회전 및 크기 변경 메뉴 메시지
 	ON_COMMAND(ID_ROT_LEFT, &CMy2DTransView::OnRotateLeft)
 	ON_COMMAND(ID_ROT_RIGHT, &CMy2DTransView::OnRotateRight)
+	ON_COMMAND(ID_SCALE_MAGNIFY, &CMy2DTransView::OnScaleMagnify)
+	ON_COMMAND(ID_SCALE_SHRINK, &CMy2DTransView::OnScaleShrink)
 END_MESSAGE_MAP()
 
 // CMy2DTransView 생성/소멸
@@ -341,6 +343,8 @@ void CMy2DTransView::recalcScale() {
 	// Status Bar에 현재 Scale을 반영
 	status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %8.6lf"), curPoint.x, curPoint.y, Scale);
 	GetMainFrm()->m_wndStatusBar.GetElement(0)->SetText(status);
+	GetMainFrm()->m_wndStatusBar.RecalcLayout();	
+	GetMainFrm()->m_wndStatusBar.RedrawWindow();
 }
 
 // 펜으로 그리는 동작 구현 부분
@@ -424,8 +428,8 @@ BOOL CMy2DTransView::OnMouseWheel(UINT nFlags, short zDelta, CPoint point)
 		status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %8.6lf"), point.x, point.y, Scale);
 
 		GetMainFrm()->m_wndStatusBar.GetElement(0)->SetText(status);
-		//pmf->m_wndStatusBar.RecalcLayout();	
-		//pmf->m_wndStatusBar.RedrawWindow();
+		GetMainFrm()->m_wndStatusBar.RecalcLayout();	
+		GetMainFrm()->m_wndStatusBar.RedrawWindow();
 
 		// view에 내용을 반영
 		GetMainFrm()->RedrawWindow();
@@ -467,8 +471,8 @@ void CMy2DTransView::OnMouseMove(UINT nFlags, CPoint point) {
 	// 상태 표시줄 업데이트
 	status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %8.6lf"), point.x, point.y, Scale);
 	GetMainFrm()->m_wndStatusBar.GetElement(0)->SetText(status);
-	//GetMainFrm()->m_wndStatusBar.RecalcLayout();	
-	//GetMainFrm()->m_wndStatusBar.RedrawWindow();
+	GetMainFrm()->m_wndStatusBar.RecalcLayout();	
+	GetMainFrm()->m_wndStatusBar.RedrawWindow();
 }
 
 void CMy2DTransView::OnLButtonDown(UINT nFlags, CPoint point)
@@ -487,15 +491,14 @@ void CMy2DTransView::OnLButtonUp(UINT nFlags, CPoint point)
 	CView::OnLButtonUp(nFlags, point);
 }
 
-// 위로가기 버튼을 누른 경우
-void CMy2DTransView::OnDirUp()
+void CMy2DTransView::OnDirUp() // 상단으로 형상을 이동하는 함수
 {
 	// tempList의 사이즈가 0이 아닐 경우에만
 	if ( tempList.size() > 0 ) {
 		// 모든 DisplayList의 좌표를 Size만큼 위로 이동시킴 (방향이 반대이므로 y를 감소시킴)
 		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
 			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
-				i->Translate( 0.0, DirSize );
+				i->Translate( 0.0, -DirSize );
 			}
 		}
 
@@ -508,7 +511,7 @@ void CMy2DTransView::OnDirUp()
 	}
 }
 
-void CMy2DTransView::OnDirDown()
+void CMy2DTransView::OnDirDown() // 하단으로 형상을 이동하는 함수
 {
 	// tempList의 사이즈가 0이 아닐 경우에만
 	if ( tempList.size() > 0 ) {
@@ -528,7 +531,7 @@ void CMy2DTransView::OnDirDown()
 	}
 }
 
-void CMy2DTransView::OnDirLeft()
+void CMy2DTransView::OnDirLeft() // 좌측으로 형상을 이동하는 함수
 {
 	// tempList의 사이즈가 0이 아닐 경우에만
 	if ( tempList.size() > 0 ) {
@@ -548,7 +551,7 @@ void CMy2DTransView::OnDirLeft()
 	}
 }
 
-void CMy2DTransView::OnDirRight()
+void CMy2DTransView::OnDirRight() // 우측으로 형상을 이동하는 함수
 {
 	// tempList의 사이즈가 0이 아닐 경우에만
 	if ( tempList.size() > 0 ) {
@@ -560,7 +563,7 @@ void CMy2DTransView::OnDirRight()
 		}
 
 		// 이동 변량을 더해준다.
-		moveY += DirSize;
+		moveX += DirSize;
 
 		SetCapture();
 		RedrawWindow();
@@ -568,7 +571,7 @@ void CMy2DTransView::OnDirRight()
 	}
 }
 
-void CMy2DTransView::OnDirLup()
+void CMy2DTransView::OnDirLup() // 좌측 상단으로 형상을 이동하는 함수
 {
 	// tempList의 사이즈가 0이 아닐 경우에만
 	if ( tempList.size() > 0 ) {
@@ -589,7 +592,7 @@ void CMy2DTransView::OnDirLup()
 	}
 }
 
-void CMy2DTransView::OnDirLdown()
+void CMy2DTransView::OnDirLdown() // 좌측 하단으로 형상을 이동하는 함수
 {
 	// tempList의 사이즈가 0이 아닐 경우에만
 	if ( tempList.size() > 0 ) {
@@ -610,7 +613,7 @@ void CMy2DTransView::OnDirLdown()
 	}
 }
 
-void CMy2DTransView::OnDirRdown()
+void CMy2DTransView::OnDirRdown() // 우측 하단으로 형상을 이동하는 함수
 {
 	// tempList의 사이즈가 0이 아닐 경우에만
 	if ( tempList.size() > 0 ) {
@@ -631,7 +634,7 @@ void CMy2DTransView::OnDirRdown()
 	}
 }
 
-void CMy2DTransView::OnDirRup()
+void CMy2DTransView::OnDirRup() // 우측 상단으로 형상을 이동하는 함수
 {
 	// tempList의 사이즈가 0이 아닐 경우에만
 	if ( tempList.size() > 0 ) {
@@ -652,23 +655,47 @@ void CMy2DTransView::OnDirRup()
 	}
 }
 
-void CMy2DTransView::OnRotateLeft()
+void CMy2DTransView::OnRotateLeft() // 모든 DisplayList의 좌표를 정해진 각도만큼 반시계방향으로 회전시킴
 {
-	tempList.begin()->rot(45, originX, originY);
-	// 모든 DisplayList의 좌표를 정해진 각도만큼 반시계방향으로 회전시킴
+	// tempList의 사이즈가 0이 아닐 경우에만
+	if ( tempList.size() > 0 ) {
+		// 모든 DisplayList의 좌표를 Size만큼 우측 위로 이동시킴 (x를 증가, y를 감소)
+		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
+			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
+				i->rot(-rotAngle, originX + moveX, originY + moveY);
+			}
+		}
+	}
+
 	SetCapture();
 	RedrawWindow();
 	ReleaseCapture();
-
-
 }
 
-void CMy2DTransView::OnRotateRight()
+void CMy2DTransView::OnRotateRight() // 모든 DisplayList의 좌표를 정해진 각도만큼 시계방향으로 회전시킴
 {
-	tempList.begin()->rot(-45, originX, originY);
-	// 모든 DisplayList의 좌표를 정해진 각도만큼 반시계방향으로 회전시킴
+	// tempList의 사이즈가 0이 아닐 경우에만
+	if ( tempList.size() > 0 ) {
+		// 모든 DisplayList의 좌표를 Size만큼 우측 위로 이동시킴 (x를 증가, y를 감소)
+		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
+			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
+				i->rot(rotAngle, originX + moveX, originY + moveY);
+			}
+		}
+	}
+
 	SetCapture();
 	RedrawWindow();
 	ReleaseCapture();
+}
 
+void CMy2DTransView::OnScaleMagnify() // 확대 버튼을 누를 경우 메시지 처리
+{
+	// TODO: Add your command handler code here
+}
+
+
+void CMy2DTransView::OnScaleShrink() // 축소 버튼을 누를 경우 메시지 처리
+{
+	// TODO: Add your command handler code here
 }

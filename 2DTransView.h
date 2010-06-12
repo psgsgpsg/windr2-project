@@ -84,6 +84,8 @@ public:
 	afx_msg void OnDirRup();
 	afx_msg void OnRotateLeft();
 	afx_msg void OnRotateRight();
+	afx_msg void OnScaleMagnify();
+	afx_msg void OnScaleShrink();
 	DECLARE_MESSAGE_MAP()
 };
 
