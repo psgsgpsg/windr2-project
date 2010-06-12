@@ -21,7 +21,6 @@ protected: // serialization에서만 만들어집니다.
 public:
 	CMFCRibbonStatusBar  m_wndStatusBar;
 	CMFCRibbonBar     m_wndRibbonBar;
-	CJumpList m_wndJumpList;
 
 // 작업입니다.
 public:

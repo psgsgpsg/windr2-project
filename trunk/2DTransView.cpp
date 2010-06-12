@@ -61,8 +61,8 @@ CMy2DTransView::CMy2DTransView()
 	moveY = 0.0;
 	delScale = 0.1;
 
-	jbrBack.CreateSolidBrush(crBack);		// 지정된 색으로 브러시 생성.
-	crBack = RGB(255, 255, 255);			// 배경 색을 흰색으로 설정.
+//	jbrBack.CreateSolidBrush(crBack);		// 지정된 색으로 브러시 생성.
+//	crBack = RGB(255, 255, 255);			// 배경 색을 흰색으로 설정.
 }
 
 CMy2DTransView::~CMy2DTransView()
@@ -174,12 +174,12 @@ void CMy2DTransView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 void CMy2DTransView::AddToRecentFileList(LPCTSTR lpszPathName) // 최근 파일 열기 목록에 추가하는 명령입니다.
 {
-    ((CMy2DTransApp*)AfxGetApp())->AddToRecentFileList(lpszPathName);
+    dynamic_cast<CMy2DTransApp*>(AfxGetApp())->AddToRecentFileList(lpszPathName);
 }
 
 CMainFrame* CMy2DTransView::GetMainFrm() // 주 윈도우 주소창의 주소를 반환합니다.
 {
-	return ( (CMainFrame*)AfxGetMainWnd() );
+	return ( dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd()) );
 }
 
 // CMy2DTransView 진단
@@ -216,7 +216,7 @@ void CMy2DTransView::OnFileOpen() {
 
 	if( m_FileOpenDialog.DoModal() == IDOK ) {
 		AddToRecentFileList( (LPCTSTR)m_FileOpenDialog.GetPathName() ); // MRU 목록에 해당 파일을 추가
-		
+
 		if( !FileRead( m_FileOpenDialog.GetPathName() ) ) {
 			AfxMessageBox( _T("파일 읽기가 제대로 수행되지 않았습니다.") );
 			return;
@@ -379,12 +379,6 @@ void CMy2DTransView::OnFileNew() {
 	CClientDC dc(this);						// 클라이언트 영역의 dc를 읽어옴
 	CString str;
 	str.Format( _T("제목 없음 - 2DTrans") );
-
-	GetClientRect(rcClient);
-
-	jbrBack.CreateSolidBrush(crBack) ;		// 지정된 색으로 영역을 채움
-	dc.FillRect(rcClient, &jbrBack) ;
-	dc.SetBkColor(crBack) ;
 
 	nElements = 0;							// Element 갯수를 0으로 리셋하여 draw 방지
 	tempList.clear();						// DisplayList 데이터를 모두 초기화함
