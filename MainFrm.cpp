@@ -26,6 +26,9 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_ROT_ORIGIN_X, &CMainFrame::OnRotOriginX)
 	ON_COMMAND(ID_ROT_ORIGIN_Y, &CMainFrame::OnRotOriginY)
 	ON_COMMAND(ID_ROT_ANGLE, &CMainFrame::OnRotAngle)
+	ON_COMMAND(ID_SCALE_RATIO, &CMainFrame::OnScaleRatio)
+	ON_COMMAND(ID_SCALE_ORIGINAL, &CMainFrame::OnScaleOriginal)
+	ON_COMMAND(ID_SCALE_DELTA, &CMainFrame::OnScaleDelta)
 END_MESSAGE_MAP()
 
 // CMainFrame 생성/소멸
@@ -355,6 +358,13 @@ void CMainFrame::InitializeRibbon()
 			pBtnMagnify->SetKeys( _T("A") );
 			pPanelRotate3->Add(pBtnMagnify);
 
+			// 원래 대로
+			bNameValid = strTemp.LoadString(IDS_RIBBON_ORIGINAL);
+			ASSERT(bNameValid);
+			CMFCRibbonButton* pBtnOriginal = new CMFCRibbonButton(ID_SCALE_ORIGINAL, strTemp, -1, 0);
+			pBtnOriginal->SetKeys( _T("S") );
+			pPanelRotate3->Add(pBtnOriginal);
+
 			// 축소
 			bNameValid = strTemp.LoadString(IDS_RIBBON_SHRINK);
 			ASSERT(bNameValid);
@@ -368,6 +378,12 @@ void CMainFrame::InitializeRibbon()
 		CMFCRibbonPanel* pPanelRotate4 = pCategoryRotScale->AddPanel(strTemp, m_PanelImages.ExtractIcon(28));
 
 			// 확대 및 축소 비율을 지정할 수 있는 에디트 콘트롤 추가
+			CMFCRibbonEdit* pEditScaleDelta = new CMFCRibbonEdit(ID_SCALE_DELTA, 65,  _T("Ratio"), 6);
+			pEditScaleDelta->SetKeys( _T("P") );
+			pEditScaleDelta->SetEditText( _T("0.1") );
+			pPanelRotate4->Add(pEditScaleDelta);
+
+			// 확대 및 축소 비율을 증가할 값을 설정
 			CMFCRibbonEdit* pEditScaleRatio = new CMFCRibbonEdit(ID_SCALE_RATIO, 65,  _T("Ratio"), 6);
 			pEditScaleRatio->SetKeys( _T("S") );
 			pEditScaleRatio->SetEditText( _T("1.0") );
@@ -488,6 +504,7 @@ void CMainFrame::OnDirSize()
 	// FindById 메소드로 해당 에디트 컨트롤의 포인터를 받아옴
 	CMFCRibbonEdit* pEdit = (CMFCRibbonEdit*)(m_wndRibbonBar.FindByID(ID_DIR_SIZE));
 	CString size = pEdit->GetEditText();
+	size.Replace( _T(" "), _T("");
 	
 	int count = size.GetLength();
 	int i;
@@ -497,12 +514,12 @@ void CMainFrame::OnDirSize()
 		TCHAR temp = size.GetAt(i);
 
 		// 음수 처리. 
-		if( i == 0 && temp == '-' ) {
+		if( i == 0 && temp == L'-' ) {
 			continue;
 		}
 
 		// 입력된 키가 0 ~ 9 사이인가를 체크. 
-		if( temp >= '0' && temp <= '9' ) {
+		if( temp >= L'0' && temp <= L'9' ) {
 			continue;
 		}
 		else{
@@ -515,8 +532,9 @@ void CMainFrame::OnDirSize()
 		// 활성화된 현재 CView 객체에 접근
 		CMy2DTransView *pView = (CMy2DTransView *)( this->GetActiveView() );
 		
-		// DirSize를 전달 ( 
-		pView->SetDirSize( _tstoi(size) );
+		// DirSize를 전달
+		pView->DirSize = _tstoi(size);
+		//pView->SetDirSize( _tstoi(size) );
 	}
 	// 그렇지 않다면 오류 메시지 표시
 	else {
@@ -530,6 +548,7 @@ void CMainFrame::OnRotOriginX()
 	// FindById 메소드로 해당 에디트 컨트롤의 포인터를 받아옴
 	CMFCRibbonEdit* pEdit = (CMFCRibbonEdit*)(m_wndRibbonBar.FindByID(ID_ROT_ORIGIN_X));
 	CString size = pEdit->GetEditText();
+	size.Replace( _T(" "), _T("");
 	
 	int count = size.GetLength();
 	int i;
@@ -539,12 +558,12 @@ void CMainFrame::OnRotOriginX()
 		TCHAR temp = size.GetAt(i);
 
 		// 음수 및 소수점 처리 
-		if( i == 0 && (temp == '-' || temp == '.') ) {
+		if( i == 0 && (temp == L'-' && temp == L'.') ) {
 			continue;
 		}
 
 		// 입력된 키가 0 ~ 9 사이인가를 체크. 
-		if( temp >= '0' && temp <= '9' ) {
+		if( temp >= L'0' && temp <= L'9' ) {
 			continue;
 		}
 		else{
@@ -557,8 +576,8 @@ void CMainFrame::OnRotOriginX()
 		// 활성화된 현재 CView 객체에 접근
 		CMy2DTransView *pView = (CMy2DTransView *)( this->GetActiveView() );
 		
-		// DirSize를 전달
-		pView->SetDirSize( _tstof(size) );
+		// 회전 중심의 X좌표를 전달
+		pView->rotCenterX = _tstof(size);
 	}
 	// 그렇지 않다면 오류 메시지 표시
 	else {
@@ -572,6 +591,7 @@ void CMainFrame::OnRotOriginY()
 	// FindById 메소드로 해당 에디트 컨트롤의 포인터를 받아옴
 	CMFCRibbonEdit* pEdit = (CMFCRibbonEdit*)(m_wndRibbonBar.FindByID(ID_ROT_ORIGIN_Y));
 	CString size = pEdit->GetEditText();
+	size.Replace( _T(" "), _T("");
 	
 	int count = size.GetLength();
 	int i;
@@ -581,12 +601,12 @@ void CMainFrame::OnRotOriginY()
 		TCHAR temp = size.GetAt(i);
 
 		// 음수 및 소수점 처리
-		if( i == 0 && (temp == '-' || temp == '.') ) {
+		if( i == 0 && (temp == L'-' && temp == L'.') ) {
 			continue;
 		}
 
-		// 입력된 키가 0 ~ 9 사이인가를 체크. 
-		if( temp >= '0' && temp <= '9' ) {
+		// 입력된 키L가 0 ~ 9 사이인가를 체크. 
+		if( temp >= '0' && temp <= L'9' ) {
 			continue;
 		}
 		else{
@@ -599,8 +619,8 @@ void CMainFrame::OnRotOriginY()
 		// 활성화된 현재 CView 객체에 접근
 		CMy2DTransView *pView = (CMy2DTransView *)( this->GetActiveView() );
 		
-		// DirSize를 전달
-		pView->SetDirSize( _tstof(size) );
+		// 회전 중심의 Y좌표를 전달
+		pView->rotCenterY = _tstof(size);
 	}
 	// 그렇지 않다면 오류 메시지 표시
 	else {
@@ -614,6 +634,7 @@ void CMainFrame::OnRotAngle()
 	// FindById 메소드로 해당 에디트 컨트롤의 포인터를 받아옴
 	CMFCRibbonEdit* pEdit = (CMFCRibbonEdit*)(m_wndRibbonBar.FindByID(ID_ROT_ANGLE));
 	CString size = pEdit->GetEditText();
+	size.Replace( _T(" "), _T("");
 	
 	int count = size.GetLength();
 	int i;
@@ -623,12 +644,12 @@ void CMainFrame::OnRotAngle()
 		TCHAR temp = size.GetAt(i);
 
 		// 음수 및 소수점 처리
-		if( i == 0 && (temp == '-' || temp == '.') ) {
+		if( i == 0 && (temp == L'-' && temp == L'.') ) {
 			continue;
 		}
 
 		// 입력된 키가 0 ~ 9 사이인가를 체크. 
-		if( temp >= '0' && temp <= '9' ) {
+		if( temp >= L'0' && temp <= L'9' ) {
 			continue;
 		}
 		else{
@@ -641,11 +662,109 @@ void CMainFrame::OnRotAngle()
 		// 활성화된 현재 CView 객체에 접근
 		CMy2DTransView *pView = (CMy2DTransView *)( this->GetActiveView() );
 		
-		// DirSize를 전달
-		pView->SetDirSize( _tstof(size) );
+		// 회전 각도를 전달
+		pView->rotAngle = _tstof(size);
 	}
 	// 그렇지 않다면 오류 메시지 표시
 	else {
 		AfxMessageBox( _T("입력 값이 잘못되었습니다.") );
 	}	
+}
+
+
+void CMainFrame::OnScaleRatio()
+{
+	// FindById 메소드로 해당 에디트 컨트롤의 포인터를 받아옴
+	CMFCRibbonEdit* pEdit = (CMFCRibbonEdit*)(m_wndRibbonBar.FindByID(ID_SCALE_RATIO));
+	CString size = pEdit->GetEditText();
+	size.Replace( _T(" "), _T("");
+	
+	int count = size.GetLength();
+	int i;
+
+	// 형식 검사 int로 변경한 후 같지 않으면 오류 메시지 표시
+	for(i = 0; i < count; i++) {
+		TCHAR temp = size.GetAt(i);
+
+		// 음수 및 소수점 처리
+		if( i == 0 && (temp == L'-' && temp ==L '.') ) {
+			continue;
+		}
+
+		// 입력된 키가 0 ~ 9 사이인가를 체크. 
+		if( temp >= L'0' && temp <= L'9' ) {
+			continue;
+		}
+		else{
+			break;
+		}
+	} 
+
+	// 만약 모두 수가 맞다면 해당 값을 전달
+	if(i == count) {
+		// 활성화된 현재 CView 객체에 접근
+		CMy2DTransView *pView = (CMy2DTransView *)( this->GetActiveView() );
+		
+		// 축척 비율을 전달
+		pView->rotCenterX = _tstof(size);
+		// 스케일이 변경되었음 플래그를 설정
+		pView->isScaleRatioCustomized = true;
+	}
+	// 그렇지 않다면 오류 메시지 표시
+	else {
+		AfxMessageBox( _T("입력 값이 잘못되었습니다.") );
+	}
+}
+
+
+void CMainFrame::OnScaleOriginal()
+{
+	// 활성화된 현재 CView 객체에 접근
+	CMy2DTransView *pView = (CMy2DTransView *)( this->GetActiveView() );
+
+	// 리셋 함수 호출
+	pView->recalcScale();
+}
+
+
+void CMainFrame::OnScaleDelta()
+{
+	// FindById 메소드로 해당 에디트 컨트롤의 포인터를 받아옴
+	CMFCRibbonEdit* pEdit = (CMFCRibbonEdit*)(m_wndRibbonBar.FindByID(ID_SCALE_DELTA));
+	CString size = pEdit->GetEditText();
+	size.Replace( _T(" "), _T("");
+
+	int count = size.GetLength();
+	int i;
+
+	// 형식 검사 int로 변경한 후 같지 않으면 오류 메시지 표시
+	for(i = 0; i < count; i++) {
+		TCHAR temp = size.GetAt(i);
+
+		// 음수 및 소수점 처리
+		if( i == 0 && (temp == L'-' && temp == L'.') ) {
+			continue;
+		}
+
+		// 입력된 키가 0 ~ 9 사이인가를 체크. 
+		if( (temp >= L'0' && temp <= L'9') || (temp == L'.') ) {
+			continue;
+		}
+		else{
+			break;
+		}
+	} 
+
+	// 만약 모두 수가 맞다면 해당 값을 전달
+	if(i == count) {
+		// 활성화된 현재 CView 객체에 접근
+		CMy2DTransView *pView = (CMy2DTransView *)( this->GetActiveView() );
+		
+		// 축척 비율을 전달
+		pView->delScale = _tstof(size);
+	}
+	// 그렇지 않다면 오류 메시지 표시
+	else {
+		AfxMessageBox( _T("입력 값이 잘못되었습니다.") );
+	}
 }

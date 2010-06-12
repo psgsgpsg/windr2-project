@@ -57,6 +57,8 @@
 #define ID_SCALE_SHRINK                 137
 #define IDS_RIBBON_PANEL_ROTATE4        138
 #define ID_SCALE_RATIO                  139
+#define IDS_RIBBON_ORIGINAL             140
+#define ID_SCALE_DELTA                  141
 #define IDR_PASTE_MENU                  151
 #define IDR_WINDOWS_MENU                152
 #define ID_VIEW_NAVIGATION              185
@@ -109,6 +111,7 @@
 #define ID_STT_TEXT_VER                 1000
 #define IDC_NETADDRESS1                 1001
 #define ID_WRITE_PASTEASHYPERLINK       32770
+#define ID_SCALE_ORIGINAL               32799
 #define IDS_RIBBON_CATEGORY_TRANSLATE   57346
 #define IDS_RIBBON_CATEGORY_ROTATE      57347
 
@@ -117,7 +120,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        317
-#define _APS_NEXT_COMMAND_VALUE         32799
+#define _APS_NEXT_COMMAND_VALUE         32800
 #define _APS_NEXT_CONTROL_VALUE         1002
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

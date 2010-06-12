@@ -223,6 +223,7 @@ BEGIN
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
     VK_LEFT,        ID_ROT_LEFT,            VIRTKEY, ALT, NOINVERT
     VK_RIGHT,       ID_ROT_RIGHT,           VIRTKEY, ALT, NOINVERT
+    "R",            ID_SCALE_ORIGINAL,      VIRTKEY, CONTROL, NOINVERT
 END
 
 
@@ -337,6 +338,8 @@ BEGIN
     ID_SCALE_SHRINK         "지정된 비율만큼 축소합니다.\n축소하기"
     IDS_RIBBON_PANEL_ROTATE4 "확대 / 축소 파라미터"
     ID_SCALE_RATIO          "확대/축소 비율을 지정합니다.\n확대/축소 비율"
+    IDS_RIBBON_ORIGINAL     "원래 크기로"
+    ID_SCALE_DELTA          "축소 / 확대 비율 변화량을 변경합니다.\n축척 변화량"
 END
 
 STRINGTABLE
@@ -516,6 +519,11 @@ STRINGTABLE
 BEGIN
     IDS_RIBBON_STATUSBAR    "상태 표시줄"
     IDS_RIBBON_VIEW         "보기"
+END
+
+STRINGTABLE
+BEGIN
+    ID_SCALE_ORIGINAL       "화면에 맞추어 축척을 다시 재설정 합니다.\n원래 크기로"
 END
 
 #endif    // Korean (Korea) resources

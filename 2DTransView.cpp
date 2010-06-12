@@ -5,34 +5,13 @@
 #include "MainFrm.h"
 #include "2DTransDoc.h"
 #include "2DTransView.h"
-#include "windows.h"
-
-// 표준 STL vector 컨테이너와, DisplayList 클래스
-#include <vector>
-#include "DisplayList.h"
+//#include "windows.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 using namespace std;
-
-vector<DisplayList> DList, tempList;		// 점 데이터 저장을 위한 구조체를 선언함
-
-COLORREF crBack = RGB(255, 255, 255);		// 바탕 화면의 색 지정.
-CBrush jbrBack;								// 바탕 배경 칠하기용 브러시
-CRect rcClient;								// 클라이언트 영역 저장용 구조체
-
-int cen_x, cen_y;							// 뷰 영역의 중심점 좌표
-double MaxX, MaxY, MinX, MinY;				// 데이터로부터 최대 최소값을 읽어들임
-double ScaleX, ScaleY;						// X, Y 방향으로의 scale factor
-int nElements;								// 전체 도형의 갯수
-int nflag, m_option;
-CPoint anchor, last;						// Mouse location points
-double Scale, wsx, wsy, CenX, CenY;
-double moveSize, scaleSize;					// UI로부터의 입력 변수 저장용
-double originX, originY;					// 데이터의 원점이 View상의 좌표로 변환된 좌표
-double moveX = 0.0, moveY = 0.0;			// 마우스로 드래그시 이동한 총 변량을 저장하는 데이터
 
 // CMy2DTransView
 
@@ -73,12 +52,15 @@ END_MESSAGE_MAP()
 CMy2DTransView::CMy2DTransView()
 {
 	// 여기에 생성 코드를 추가합니다.
-	nflag = 0;
 	nElements = 0;
-	SetDirSize(10);
+	DirSize = 10;
 	Scale = 1.0;
+	moveX = 0.0;
+	moveY = 0.0;
+	delScale = 0.1;
 
 	jbrBack.CreateSolidBrush(crBack);		// 지정된 색으로 브러시 생성.
+	crBack = RGB(255, 255, 255);			// 배경 색을 흰색으로 설정.
 }
 
 CMy2DTransView::~CMy2DTransView()
@@ -97,14 +79,16 @@ BOOL CMy2DTransView::PreCreateWindow(CREATESTRUCT& cs)
 
 void CMy2DTransView::OnDraw(CDC* pDC)
 {
-	CMy2DTransDoc* pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	if (!pDoc)
-		return;
+	// 2DTransDoc 클래스의 구현에 문제를 확인하는 부분으로
+	// 이 부분은 특별한 문제가 없을 경우 삭제해도 무방함
+	// 예외처리가 필요한 경우에는 반드시 이 부분이 존재해야 함
+	// CMy2DTransDoc* pDoc = GetDocument();
+	// ASSERT_VALID(pDoc);
+	// if (!pDoc) return;
 
 	GetClientRect(rcClient);				// client 영역 설정 
-	pDC->FillRect(rcClient, &jbrBack);		// 브러시로 클라이언트 영역을 채움.
-    pDC->SetBkColor(crBack);				// 지정된 바탕화면 색으로 덮음.
+	//pDC->FillRect(rcClient, &jbrBack);		// 브러시로 클라이언트 영역을 채움.
+    //pDC->SetBkColor(crBack);					// 지정된 바탕화면 색으로 덮음.
 	
 	/* 점 데이터의 최대 최소값을 읽어들여 스케일링을 하는 부분
 	 1. 마우스 조작이 가해진 경우 GetCapture()로 플래그를 읽어 들여 동작 여부를 확인함
@@ -112,8 +96,8 @@ void CMy2DTransView::OnDraw(CDC* pDC)
 
 	// nElements가 0이 아닐 경우에만
 	if (nElements != 0) {
-       	int WIDTH = rcClient.Width();				// 클라이언트 영역의 폭을 읽어옴
-	    int HEIGHT = rcClient.Height();				// 클라이언트 영역의 높이를 읽어옴
+       	WIDTH = rcClient.Width();					// 클라이언트 영역의 폭을 읽어옴
+	    HEIGHT = rcClient.Height();					// 클라이언트 영역의 높이를 읽어옴
 	    cen_x = (int)(WIDTH/2);						// 클라이언트 영역의 중앙점 x 좌표
 	    cen_y = (int)(HEIGHT/2);					// 클라이언트 영역의 중앙점 y 좌표
 
@@ -124,11 +108,11 @@ void CMy2DTransView::OnDraw(CDC* pDC)
 		CenY = MinY + wsy;
 
 		// 스케일을 계산함. 작은쪽을 취해준다 min(x, y)를 사용함
-		// 이미 파일을 열어놓은 상태라면 스케일을 다시 계산하지 않음
-		if( nflag != 1) {
+		// 마우스 휠 조작으로 스케일이 변경된 경우에는 계산하지 않음
+		if ( !isScaleRatioCustomized ) {
 			Scale = (double)(0.9 * min(WIDTH/(wsx*2), HEIGHT/(wsy*2)));
 		}
-
+		
 		/* 계산한 중심점을 스케일에 맞추어 변환하고, 클라이언트 영역의 중심점과의 차이를 저장 */
 		CenX = cen_x - Scale * ( CenX - MinX );
 		CenY = cen_y - ( HEIGHT - ( Scale * ( CenY - MinY) ) );
@@ -136,11 +120,6 @@ void CMy2DTransView::OnDraw(CDC* pDC)
 		/* 데이터의 원점을 스케일에 맞추어 변환하고, 클라이언트 영역의 중심점과의 차이를 저장 */
 		originX = ( Scale * -MinX ) + CenX + moveX;
 		originY = ( HEIGHT + (Scale * MinY) ) + CenY + moveY;
-
-		//**************************************************************************//
-        // DList를 tempList로 복사하는 부분
-    	//**************************************************************************//
-		// tempList를 초기화하고 DList로부터 데이터를 복사함
 
 		// 계산된 스케일로 점 데이터를 다시 계산
 		if ( GetCapture() != this ) {		// 마우스 조작이 걸려있는 경우, 이 부분은 넘어감
@@ -154,7 +133,7 @@ void CMy2DTransView::OnDraw(CDC* pDC)
 				++k;
 			}
 		}
-		DrawLines();		// 계산된 tempList를 화면에 그리는 함수
+		DrawLines();		// 계산된 tempList를 비트맵으로 저장
 	}
 }
 
@@ -255,7 +234,6 @@ bool CMy2DTransView::FileRead(CString FileName) {
     double x = 0., y = 0.;
 	int red, green, blue;
 	unsigned int nNodes;
-	CString title;
 
     // DList 원소의 갯수가 0이 아닐 경우 모든 원소를 삭제하도록 해야함
     if( !DList.empty() ) { DList.clear(); }
@@ -265,7 +243,10 @@ bool CMy2DTransView::FileRead(CString FileName) {
 	moveX = 0;
 	moveY = 0;
 
-    // 파일 포인터를 연다
+	// 휠을 통한 스케일 변경 플래그를 초기화
+	isScaleRatioCustomized = false;
+
+    // 파일 포인터를 설정/
     FILE *fp;
 
     // 파일에 대한 읽기 모드가 실패할 경우 메세지 출력
@@ -342,22 +323,24 @@ bool CMy2DTransView::FileRead(CString FileName) {
 
 	// 읽어들인 데이터로부터 document의 내용을 반영
 	GetMainFrm()->RedrawWindow();
-	title.Format( _T("%s - 2DTrans"), FileName );
-	GetMainFrm()->SetWindowText( title ); // 윈도우 제목창을 다시 설정함
-
+	status.Format( _T("%s - 2DTrans"), FileName );
+	GetMainFrm()->SetWindowText( status ); // 윈도우 제목창을 다시 설정함
 
 	// 파일 읽기 성공 여부 반환
 	return true;
 }
 
-// 변경된 이동(translation) 크기 변수를 적용하는 부분
-void CMy2DTransView::SetDirSize(int size) {
-	this->DirSize = size;
-}
+// 스케일을 다시 계산하고, 다시 그리는 함수
+void CMy2DTransView::recalcScale() {
+	// 스케일 변경 플래그를 해제
+	isScaleRatioCustomized = false;
 
-// 설정된 이동(translatrion) 크기 변수를 얻어내는 부분 (double 형으로 반환한다)
-double CMy2DTransView::GetDirSize() {
-	return (double)(this->DirSize);
+	// 다시 그리기
+	GetMainFrm()->RedrawWindow();
+
+	// Status Bar에 현재 Scale을 반영
+	status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %8.6lf"), curPoint.x, curPoint.y, Scale);
+	GetMainFrm()->m_wndStatusBar.GetElement(0)->SetText(status);
 }
 
 // 펜으로 그리는 동작 구현 부분
@@ -365,11 +348,6 @@ void CMy2DTransView::DrawLines() {
 	// nElements가 0이 아닐 경우에만
 	if (nElements != 0) {
 		CClientDC dc(this);
-
-		// dc.SetMapMode(MM_TEXT | MM_ISOTROPIC);
-		// pDC->SetWindowExt(rcClient.Width(), rcClient.Height());
-		// pDC->SetViewportExt(rcClient.Width(), rcClient.Height());
-		// dc.SetViewportOrg( -int(MinX * Scale), -int(MinY * Scale) );
 
 		for(vector<DisplayList>::iterator iterPos = tempList.begin(); iterPos != tempList.end(); ++iterPos) {
 			// 펜의 속성 및 색상 설정
@@ -398,12 +376,7 @@ void CMy2DTransView::OnFileNew() {
 	CString str;
 	str.Format( _T("제목 없음 - 2DTrans") );
 
-	CRect rcClient;							// 클라이언트 영역을 읽어옴 
 	GetClientRect(rcClient);
-
-	COLORREF crBack;						// 바탕화면의 색 지정 (white)
-	CBrush jbrBack; 
-	crBack = RGB(255, 255, 255) ;
 
 	jbrBack.CreateSolidBrush(crBack) ;		// 지정된 색으로 영역을 채움
 	dc.FillRect(rcClient, &jbrBack) ;
@@ -413,7 +386,10 @@ void CMy2DTransView::OnFileNew() {
 	tempList.clear();						// DisplayList 데이터를 모두 초기화함
 	DList.clear();
 
-	Scale = 0.0;													// Scale을 0.0으로 리셋하고
+	Scale = 0.0;							// Scale을 0.0으로 리셋하고
+	moveX = 0.0;  moveY = 0.0;				// 이동 변량 변수 모두 리셋	
+	isScaleRatioCustomized = false;					// 스케일 변경 여부 리셋
+
 	GetMainFrm()->m_wndStatusBar.GetElement(0)->SetText( _T("준비됨") );	// 상태 표시줄의 메시지를 초기화
 	GetMainFrm()->SetWindowText( str );										// 제목 표시줄을 초기화
 	GetMainFrm()->RedrawWindow();											// 내용을 다시 그리도록 함 (OnDraw 호출)
@@ -423,7 +399,8 @@ BOOL CMy2DTransView::OnMouseWheel(UINT nFlags, short zDelta, CPoint point)
 {
 	// tempList의 사이즈가 0이 아닐 경우에만
 	if ( tempList.size() > 0 ) {
-		nflag = 1;
+		// 마우스 조작이 가해졌음을 플래그에 설정
+		isScaleRatioCustomized = true;
 		
 		if( (nFlags & MK_CONTROL) != MK_CONTROL ) {
 			return CView::OnMouseWheel(nFlags, zDelta, point);
@@ -444,31 +421,27 @@ BOOL CMy2DTransView::OnMouseWheel(UINT nFlags, short zDelta, CPoint point)
 			}
 		}
 			
-		// view에 내용을 반영
-		GetMainFrm()->RedrawWindow();
-
-		CString status;
-
 		status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %8.6lf"), point.x, point.y, Scale);
+
 		GetMainFrm()->m_wndStatusBar.GetElement(0)->SetText(status);
 		//pmf->m_wndStatusBar.RecalcLayout();	
 		//pmf->m_wndStatusBar.RedrawWindow();
+
+		// view에 내용을 반영
+		GetMainFrm()->RedrawWindow();
 	}
 
 	return CView::OnMouseWheel(nFlags, zDelta, point);
 }
 
 void CMy2DTransView::OnMouseMove(UINT nFlags, CPoint point) {
-	CString status;
+	// 마우스 이동시 상태 표시줄에 좌표를 출력합니다.
+	// 만약 드래그를 한다면 점을 이동합니다.
+	CPoint realPos(0, 0);
 
-	// tempList의 사이즈가 0이 아닐 경우에만
-	if ( tempList.size() > 0 ) {
-
-		// 마우스 이동시 상태 표시줄에 좌표를 출력합니다.
-		// 만약 드래그를 한다면 점을 이동합니다.
-		CPoint realPos(0, 0);
-
-		if( GetCapture() == this ) {
+	if( GetCapture() == this ) {
+		// tempList의 사이즈가 0이 아닐 경우에만
+		if ( tempList.size() > 0 ) {
 			realPos += (point - anchor);
 			anchor = point;
 
@@ -488,10 +461,14 @@ void CMy2DTransView::OnMouseMove(UINT nFlags, CPoint point) {
 		}
 	}
 
+	// 위치를 변수에 저장
+	curPoint = point;
+
+	// 상태 표시줄 업데이트
 	status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %8.6lf"), point.x, point.y, Scale);
 	GetMainFrm()->m_wndStatusBar.GetElement(0)->SetText(status);
-	GetMainFrm()->m_wndStatusBar.RecalcLayout();	
-	GetMainFrm()->m_wndStatusBar.RedrawWindow();
+	//GetMainFrm()->m_wndStatusBar.RecalcLayout();	
+	//GetMainFrm()->m_wndStatusBar.RedrawWindow();
 }
 
 void CMy2DTransView::OnLButtonDown(UINT nFlags, CPoint point)
@@ -500,7 +477,7 @@ void CMy2DTransView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	anchor = point;
 
-	//CView::OnLButtonDown(nFlags, point);
+	CView::OnLButtonDown(nFlags, point);
 }
 
 void CMy2DTransView::OnLButtonUp(UINT nFlags, CPoint point)
@@ -518,9 +495,12 @@ void CMy2DTransView::OnDirUp()
 		// 모든 DisplayList의 좌표를 Size만큼 위로 이동시킴 (방향이 반대이므로 y를 감소시킴)
 		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
 			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
-				i->Translate( 0.0, -GetDirSize() );
+				i->Translate( 0.0, DirSize );
 			}
 		}
+
+		// 이동 변량을 더해준다.
+		moveY -= DirSize;
 
 		SetCapture();
 		RedrawWindow();
@@ -535,9 +515,12 @@ void CMy2DTransView::OnDirDown()
 		// 모든 DisplayList의 좌표를 Size만큼 아래로 이동시킴 (방향이 반대이므로 y를 증가시킴)
 		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
 			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
-				i->Translate( 0.0, GetDirSize() );
+				i->Translate( 0.0, DirSize );
 			}
 		}
+
+		// 이동 변량을 더해준다.
+		moveY += DirSize;
 
 		SetCapture();
 		RedrawWindow();
@@ -552,9 +535,12 @@ void CMy2DTransView::OnDirLeft()
 		// 모든 DisplayList의 좌표를 Size만큼 좌로로 이동시킴 (x를 감소시킴)
 		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
 			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
-				i->Translate( -GetDirSize(), 0.0 );
+				i->Translate( -DirSize, 0.0 );
 			}
 		}
+
+		// 이동 변량을 더해준다.
+		moveX -= DirSize;
 
 		SetCapture();
 		RedrawWindow();
@@ -569,9 +555,12 @@ void CMy2DTransView::OnDirRight()
 		// 모든 DisplayList의 좌표를 Size만큼 우측으로 이동시킴 (x를 증가)
 		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
 			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
-				i->Translate( GetDirSize(), 0.0 );
+				i->Translate( DirSize, 0.0 );
 			}
 		}
+
+		// 이동 변량을 더해준다.
+		moveY += DirSize;
 
 		SetCapture();
 		RedrawWindow();
@@ -586,9 +575,13 @@ void CMy2DTransView::OnDirLup()
 		// 모든 DisplayList의 좌표를 Size만큼 좌측위로 이동 (x를 감소, y를 감소)
 		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
 			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
-				i->Translate( -GetDirSize(), -GetDirSize() );
+				i->Translate( -DirSize, -DirSize );
 			}
 		}
+
+		// 이동 변량을 더해준다.
+		moveX -= DirSize;
+		moveY -= DirSize;
 
 		SetCapture();
 		RedrawWindow();
@@ -603,9 +596,13 @@ void CMy2DTransView::OnDirLdown()
 		// 모든 DisplayList의 좌표를 Size만큼 좌측 아래로 이동 (x를 감소, y를 증가)
 		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
 			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
-				i->Translate( -GetDirSize(), GetDirSize() );
+				i->Translate( -DirSize, DirSize );
 			}
 		}
+
+		// 이동 변량을 더해준다.
+		moveX -= DirSize;
+		moveY += DirSize;
 
 		SetCapture();
 		RedrawWindow();
@@ -620,9 +617,13 @@ void CMy2DTransView::OnDirRdown()
 		// 모든 DisplayList의 좌표를 Size만큼 우측 아래로 이동시킴 (x를 증가, y를 증가)
 		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
 			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
-				i->Translate( GetDirSize(), GetDirSize() );
+				i->Translate( DirSize, DirSize );
 			}
 		}
+
+		// 이동 변량을 더해준다.
+		moveX += DirSize;
+		moveY += DirSize;
 
 		SetCapture();
 		RedrawWindow();
@@ -637,9 +638,13 @@ void CMy2DTransView::OnDirRup()
 		// 모든 DisplayList의 좌표를 Size만큼 우측 위로 이동시킴 (x를 증가, y를 감소)
 		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
 			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
-				i->Translate( GetDirSize(), -GetDirSize() );
+				i->Translate( DirSize, -DirSize );
 			}
 		}
+
+		// 이동 변량을 더해준다.
+		moveX += DirSize;
+		moveY -= DirSize;
 
 		SetCapture();
 		RedrawWindow();

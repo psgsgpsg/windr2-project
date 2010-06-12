@@ -62,6 +62,9 @@ public:
 	afx_msg void OnRotOriginX();
 	afx_msg void OnRotOriginY();
 	afx_msg void OnRotAngle();
+	afx_msg void OnScaleRatio();
+	afx_msg void OnScaleOriginal();
+	afx_msg void OnScaleDelta();
 };
 
 
