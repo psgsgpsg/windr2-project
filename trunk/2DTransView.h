@@ -2,6 +2,9 @@
 //
 
 #pragma once
+// 표준 STL vector 컨테이너와, DisplayList 클래스
+#include <vector>
+#include "DisplayList.h"
 
 class CMy2DTransView : public CView
 {
@@ -10,19 +13,37 @@ protected: // serialization에서만 만들어집니다.
 	DECLARE_DYNCREATE(CMy2DTransView)
 
 // 특성입니다.
+// 직접 추가한 멤버 변수 리스트
 public:
 	CMy2DTransDoc* GetDocument() const;
+	double Scale, delScale;						// 스케일 및 스케일 증분 변수
+	int DirSize;								// 형상 변경시 사용되는 변수
+	vector<DisplayList> DList, tempList;		// 점 데이터 저장을 위한 구조체를 선언함
+	CBrush jbrBack;								// 바탕 배경 칠하기용 브러시
+	CRect rcClient;								// 클라이언트 영역 저장용 구조체
+	CBitmap m_Bitmap;							// Double-Buffering을 위한 비트맵
+	COLORREF crBack;							// 배경 색을 저장하기 위한 구조체
+	CPoint anchor, curPoint;					// Mouse location points
+	CString status;								// 상태 표시줄용 CString 객체
+	int cen_x, cen_y;							// 뷰 영역의 중심점 좌표
+	double MaxX, MaxY, MinX, MinY;				// 데이터로부터 최대 최소값을 읽어들임
+	double ScaleX, ScaleY;						// X, Y 방향으로의 scale factor
+	int nElements;								// 전체 도형의 갯수
+	bool isScaleRatioCustomized;				// 마우스 휠을 통해 스케일이 변경되었는지 여부를 저장
+	double wsx, wsy, CenX, CenY;
+	double moveSize, scaleSize;					// UI로부터의 입력 변수 저장용
+	double originX, originY;					// 데이터의 원점이 View상의 좌표로 변환된 좌표
+	double moveX, moveY;						// 마우스로 드래그시 이동한 총 변량을 저장하는 데이터
+	int WIDTH, HEIGHT;							// View 영역의 폭과 높이를 저정하는 변수
+	double rotCenterX, rotCenterY;				// 회전 중심 좌표점
+	double rotAngle;							// 회전 각도 저장 변수
 
-// 직접 추가한 멤버 함수 및 변수 리스트
-public:
-	bool FileRead(CString);				// 파일 parsing을 위한 처리
-	void DrawLines();					// 선을 그리는 함수
-	
-	int DirSize;						// 형상 변경시 사용되는 변수
-	void SetDirSize(int);				// 이동 크기 변경시 적용하는 함수
-	double GetDirSize();				// 이동 크기를 얻어내는 함수
+// 직접 추가한 멤버 함수 리스트
+	bool FileRead(CString);						// 파일 parsing을 위한 처리
+	void DrawLines();							// 선을 그리는 함수
+	void recalcScale();							// 스케일을 원래대로 설정하고, 다시 그리는 함수
 
-// 재정의입니다.
+	// 재정의입니다.
 public:
 	virtual void OnDraw(CDC* pDC);  // 이 뷰를 그리기 위해 재정의되었습니다.
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
@@ -40,8 +61,6 @@ public:
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
-
-protected:
 
 // 생성된 메시지 맵 함수
 protected:

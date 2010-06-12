@@ -24,24 +24,24 @@ void DisplayList::reset()  // 모든 속성을 0으로 초기화합니다.
 	this->YPos.clear();
 }
 
-void DisplayList::SetRGB(int Red, int Green, int Blue) // 색상을 R, G, B 순서로 지정합니다. 색상 범위는 0-255입니다.
+void DisplayList::SetRGB(short Red, short Green, short Blue) // 색상을 R, G, B 순서로 지정합니다. 색상 범위는 0-255입니다.
 {
 	this->R = Red;
 	this->G = Green;
 	this->B = Blue;
 }
 
-int DisplayList::getR() // R 색상 데이터를 반환합니다.
+short DisplayList::getR() // R 색상 데이터를 반환합니다.
 {
 	return this->R;
 }
 
-int DisplayList::getG() // G 색상 데이터를 반환합니다.
+short DisplayList::getG() // G 색상 데이터를 반환합니다.
 {
 	return this->G;
 }
 
-int DisplayList::getB() // B 색상 데이터를 반환합니다.
+short DisplayList::getB() // B 색상 데이터를 반환합니다.
 {
 	return this->B;
 }

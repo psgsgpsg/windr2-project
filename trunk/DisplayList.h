@@ -10,9 +10,9 @@ using namespace std;
 
 class DisplayList
 {
-	int R; // Red 색상 데이터 (0-255 사이의 정수입니다)
-	int G; // Green 색상 데이터 (0-255 사이의 정수입니다)
-	int B; // Blue 색상 데이터 (0-255 사이의 정수입니다)
+	short R; // Red 색상 데이터 (0-255 사이의 정수입니다)
+	short G; // Green 색상 데이터 (0-255 사이의 정수입니다)
+	short B; // Blue 색상 데이터 (0-255 사이의 정수입니다)
 	unsigned int nNodes; // 노드 갯수
 	vector<double> XPos; // X 노드 좌표 벡터
 	vector<double> YPos; // Y 노드 좌표 벡터
@@ -25,10 +25,10 @@ public:
 	void reset(); // 모든 속성을 0으로 초기화합니다.
 
 	// 색상 관련 함수 정의
-	void SetRGB(int Red = 0, int Green = 0, int Blue = 0); // 색상을 R, G, B 순서로 지정합니다. 색상 범위는 0-255입니다.
-	int getR(); // R 색상 데이터를 반환합니다.
-	int getG(); // G 색상 데이터를 반환합니다.
-	int getB(); // B 색상 데이터를 반환합니다.
+	void SetRGB(short Red = 0, short Green = 0, short Blue = 0); // 색상을 R, G, B 순서로 지정합니다. 색상 범위는 0-255입니다.
+	short getR(); // R 색상 데이터를 반환합니다.
+	short getG(); // G 색상 데이터를 반환합니다.
+	short getB(); // B 색상 데이터를 반환합니다.
 
 	// 노드 수 관련 함수 정의
 	unsigned int GetNodes(); // 노드 갯수를 반환합니다.
