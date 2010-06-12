@@ -36,6 +36,10 @@ END_MESSAGE_MAP()
 CMainFrame::CMainFrame()
 {
 	// TODO: 여기에 멤버 초기화 코드를 추가합니다.
+	m_wndJumpList.InitializeList();
+	m_wndJumpList.AddKnownCategory(KDC_FREQUENT);
+	m_wndJumpList.AddKnownCategory(KDC_RECENT);
+	m_wndJumpList.CommitList();
 }
 
 CMainFrame::~CMainFrame()
@@ -504,7 +508,7 @@ void CMainFrame::OnDirSize()
 	// FindById 메소드로 해당 에디트 컨트롤의 포인터를 받아옴
 	CMFCRibbonEdit* pEdit = (CMFCRibbonEdit*)(m_wndRibbonBar.FindByID(ID_DIR_SIZE));
 	CString size = pEdit->GetEditText();
-	size.Replace( _T(" "), _T("");
+	size.Replace( _T(" "), _T("") );
 	
 	int count = size.GetLength();
 	int i;
@@ -548,7 +552,7 @@ void CMainFrame::OnRotOriginX()
 	// FindById 메소드로 해당 에디트 컨트롤의 포인터를 받아옴
 	CMFCRibbonEdit* pEdit = (CMFCRibbonEdit*)(m_wndRibbonBar.FindByID(ID_ROT_ORIGIN_X));
 	CString size = pEdit->GetEditText();
-	size.Replace( _T(" "), _T("");
+	size.Replace( _T(" "), _T("") );
 	
 	int count = size.GetLength();
 	int i;
@@ -591,7 +595,7 @@ void CMainFrame::OnRotOriginY()
 	// FindById 메소드로 해당 에디트 컨트롤의 포인터를 받아옴
 	CMFCRibbonEdit* pEdit = (CMFCRibbonEdit*)(m_wndRibbonBar.FindByID(ID_ROT_ORIGIN_Y));
 	CString size = pEdit->GetEditText();
-	size.Replace( _T(" "), _T("");
+	size.Replace( _T(" "), _T("") );
 	
 	int count = size.GetLength();
 	int i;
@@ -634,7 +638,7 @@ void CMainFrame::OnRotAngle()
 	// FindById 메소드로 해당 에디트 컨트롤의 포인터를 받아옴
 	CMFCRibbonEdit* pEdit = (CMFCRibbonEdit*)(m_wndRibbonBar.FindByID(ID_ROT_ANGLE));
 	CString size = pEdit->GetEditText();
-	size.Replace( _T(" "), _T("");
+	size.Replace( _T(" "), _T("") );
 	
 	int count = size.GetLength();
 	int i;
@@ -677,7 +681,7 @@ void CMainFrame::OnScaleRatio()
 	// FindById 메소드로 해당 에디트 컨트롤의 포인터를 받아옴
 	CMFCRibbonEdit* pEdit = (CMFCRibbonEdit*)(m_wndRibbonBar.FindByID(ID_SCALE_RATIO));
 	CString size = pEdit->GetEditText();
-	size.Replace( _T(" "), _T("");
+	size.Replace( _T(" "), _T("") );
 	
 	int count = size.GetLength();
 	int i;
@@ -687,7 +691,7 @@ void CMainFrame::OnScaleRatio()
 		TCHAR temp = size.GetAt(i);
 
 		// 음수 및 소수점 처리
-		if( i == 0 && (temp == L'-' && temp ==L '.') ) {
+		if( i == 0 && (temp == L'-' && temp == L'.') ) {
 			continue;
 		}
 
@@ -732,7 +736,7 @@ void CMainFrame::OnScaleDelta()
 	// FindById 메소드로 해당 에디트 컨트롤의 포인터를 받아옴
 	CMFCRibbonEdit* pEdit = (CMFCRibbonEdit*)(m_wndRibbonBar.FindByID(ID_SCALE_DELTA));
 	CString size = pEdit->GetEditText();
-	size.Replace( _T(" "), _T("");
+	size.Replace( _T(" "), _T("") );
 
 	int count = size.GetLength();
 	int i;
