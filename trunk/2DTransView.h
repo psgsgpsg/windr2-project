@@ -39,7 +39,6 @@ public:
 // 직접 추가한 멤버 함수 리스트
 	bool FileRead(CString);						// 파일 parsing을 위한 처리
 	void DrawLines();							// 선을 그리는 함수
-	void recalcScale();							// 스케일을 원래대로 설정하고, 다시 그리는 함수
 
 	// 재정의입니다.
 public:
@@ -84,7 +83,7 @@ public:
 	afx_msg void OnRotateLeft();
 	afx_msg void OnRotateRight();
 	afx_msg void OnScaleMagnify();
-	afx_msg void OnScaleOriginal();
+	afx_msg void recalcScale();			// 스케일을 원래대로 설정하고, 다시 그리는 함수
 	afx_msg void OnScaleShrink();
 	DECLARE_MESSAGE_MAP()
 };
