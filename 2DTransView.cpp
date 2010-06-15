@@ -5,7 +5,6 @@
 #include "MainFrm.h"
 #include "2DTransDoc.h"
 #include "2DTransView.h"
-//#include "windows.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -47,6 +46,7 @@ BEGIN_MESSAGE_MAP(CMy2DTransView, CView)
 	ON_COMMAND(ID_ROT_LEFT, &CMy2DTransView::OnRotateLeft)
 	ON_COMMAND(ID_ROT_RIGHT, &CMy2DTransView::OnRotateRight)
 	ON_COMMAND(ID_SCALE_MAGNIFY, &CMy2DTransView::OnScaleMagnify)
+	ON_COMMAND(ID_SCALE_ORIGINAL, &CMy2DTransView::OnScaleOriginal)
 	ON_COMMAND(ID_SCALE_SHRINK, &CMy2DTransView::OnScaleShrink)
 END_MESSAGE_MAP()
 
@@ -60,6 +60,7 @@ CMy2DTransView::CMy2DTransView()
 	moveX = 0.0;
 	moveY = 0.0;
 	delScale = 0.1;
+	rotAngle = 10.0;
 
 //	jbrBack.CreateSolidBrush(crBack);		// 지정된 색으로 브러시 생성.
 //	crBack = RGB(255, 255, 255);			// 배경 색을 흰색으로 설정.
@@ -88,7 +89,7 @@ void CMy2DTransView::OnDraw(CDC* pDC)
 	// ASSERT_VALID(pDoc);
 	// if (!pDoc) return;
 
-	GetClientRect(rcClient);				// client 영역 설정 
+	GetClientRect(rcClient);					// client 영역 설정 
 	//pDC->FillRect(rcClient, &jbrBack);		// 브러시로 클라이언트 영역을 채움.
     //pDC->SetBkColor(crBack);					// 지정된 바탕화면 색으로 덮음.
 	
@@ -112,7 +113,8 @@ void CMy2DTransView::OnDraw(CDC* pDC)
 		// 스케일을 계산함. 작은쪽을 취해준다 min(x, y)를 사용함
 		// 마우스 휠 조작으로 스케일이 변경된 경우에는 계산하지 않음
 		if ( !isScaleRatioCustomized ) {
-			Scale = (double)(0.9 * min(WIDTH/(wsx*2), HEIGHT/(wsy*2)));
+			Scale = (double)(0.9 * min( WIDTH/(wsx*2), HEIGHT/(wsy*2) ));
+			realScale = (double)( min( WIDTH/(wsx*2), HEIGHT/(wsy*2) ) );
 		}
 		
 		/* 계산한 중심점을 스케일에 맞추어 변환하고, 클라이언트 영역의 중심점과의 차이를 저장 */
@@ -124,7 +126,7 @@ void CMy2DTransView::OnDraw(CDC* pDC)
 		originY = ( HEIGHT + (Scale * MinY) ) + CenY + moveY;
 
 		// 계산된 스케일로 점 데이터를 다시 계산
-		if ( GetCapture() != this ) {		// 마우스 조작이 걸려있는 경우, 이 부분은 넘어감
+		if ( GetCapture() != this ) {		// 마우스 혹은 키보드 조작이 걸려있는 경우, 이 부분은 넘어감
 			int k = 0;
 
 			for(vector<DisplayList>::iterator j = tempList.begin(); j != tempList.end(); ++j) {
@@ -135,7 +137,7 @@ void CMy2DTransView::OnDraw(CDC* pDC)
 				++k;
 			}
 		}
-		DrawLines();		// 계산된 tempList를 비트맵으로 저장
+		DrawLines();
 	}
 }
 
@@ -215,8 +217,6 @@ void CMy2DTransView::OnFileOpen() {
 	m_FileOpenDialog.m_ofn.lpstrInitialDir = (LPCTSTR)currentPath;
 
 	if( m_FileOpenDialog.DoModal() == IDOK ) {
-		AddToRecentFileList( (LPCTSTR)m_FileOpenDialog.GetPathName() ); // MRU 목록에 해당 파일을 추가
-
 		if( !FileRead( m_FileOpenDialog.GetPathName() ) ) {
 			AfxMessageBox( _T("파일 읽기가 제대로 수행되지 않았습니다.") );
 			return;
@@ -299,8 +299,8 @@ bool CMy2DTransView::FileRead(CString FileName) {
 			// 점 데이터를 읽어들이는 부분
 			for (unsigned int i = 0; i < nNodes; ++i) {
 				_ftscanf_s(fp, _T("%lf %lf"), &x, &y);
-				tmp.addXPos(x);
-				tmp.addYPos(y);
+				tmp.setXPos(i, x);
+				tmp.setYPos(i, y);
 
 				if (x < MinX) MinX = x;
 				if (y < MinY) MinY = y;
@@ -323,6 +323,9 @@ bool CMy2DTransView::FileRead(CString FileName) {
 	// 파일을 닫음
 	fclose(fp);
 
+	// MRU 목록에 해당 파일을 추가하거나 랭크를 상위로 올림
+	AddToRecentFileList( (LPCTSTR)FileName );
+
 	// 읽어들인 데이터로부터 document의 내용을 반영
 	GetMainFrm()->RedrawWindow();
 	status.Format( _T("%s - 2DTrans"), FileName );
@@ -343,7 +346,7 @@ void CMy2DTransView::recalcScale() {
 	// Status Bar에 현재 Scale을 반영
 	status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %8.6lf"), curPoint.x, curPoint.y, Scale);
 	GetMainFrm()->m_wndStatusBar.GetElement(0)->SetText(status);
-	GetMainFrm()->m_wndStatusBar.RecalcLayout();	
+	GetMainFrm()->m_wndStatusBar.RecalcLayout();
 	GetMainFrm()->m_wndStatusBar.RedrawWindow();
 }
 
@@ -357,18 +360,19 @@ void CMy2DTransView::DrawLines() {
 			// 펜의 속성 및 색상 설정
 			CPen NewPen( PS_SOLID, 1, RGB( iterPos->getR(), iterPos->getG(), iterPos->getB() ) );
 			dc.SelectObject(&NewPen);
+			
 
 			// i번째 element의 점 데이터를 이용해서 선을 그림
 			for(unsigned int i = 0; i < iterPos->GetNodes() - 1; i++) {
-				dc.MoveTo( (int)iterPos->getXPos(i)  , (int)iterPos->getYPos(i)   );
-				dc.LineTo( (int)iterPos->getXPos(i+1), (int)iterPos->getYPos(i+1) );
+				dc.MoveTo( (int)round(iterPos->getXPos(i))  , (int)round(iterPos->getYPos(i))   );
+				dc.LineTo( (int)round(iterPos->getXPos(i+1)), (int)round(iterPos->getYPos(i+1)) );
 			}
 
 			// 마지막 노드와 처음 노드를 잇는 부분
 			// 노드 갯수가 2개인 경우에는 이 동작이 필요하지 않음
 			if (iterPos->GetNodes() != 2) {
-				dc.MoveTo( (int)iterPos->getXPos(iterPos->GetNodes() - 1), (int)iterPos->getYPos(iterPos->GetNodes() - 1) );
-				dc.LineTo( (int)iterPos->getXPos(0)                      , (int)iterPos->getYPos(0) );
+				dc.MoveTo( (int)round(iterPos->getXPos(iterPos->GetNodes() - 1)), (int)round(iterPos->getYPos(iterPos->GetNodes() - 1)) );
+				dc.LineTo( (int)round(iterPos->getXPos(0))                      , (int)round(iterPos->getYPos(0)) );
 			}
 		}
 	}
@@ -491,9 +495,7 @@ void CMy2DTransView::OnDirUp() // 상단으로 형상을 이동하는 함수
 	if ( tempList.size() > 0 ) {
 		// 모든 DisplayList의 좌표를 Size만큼 위로 이동시킴 (방향이 반대이므로 y를 감소시킴)
 		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
-			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
 				i->Translate( 0.0, -DirSize );
-			}
 		}
 
 		// 이동 변량을 더해준다.
@@ -511,9 +513,7 @@ void CMy2DTransView::OnDirDown() // 하단으로 형상을 이동하는 함수
 	if ( tempList.size() > 0 ) {
 		// 모든 DisplayList의 좌표를 Size만큼 아래로 이동시킴 (방향이 반대이므로 y를 증가시킴)
 		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
-			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
 				i->Translate( 0.0, DirSize );
-			}
 		}
 
 		// 이동 변량을 더해준다.
@@ -531,9 +531,7 @@ void CMy2DTransView::OnDirLeft() // 좌측으로 형상을 이동하는 함수
 	if ( tempList.size() > 0 ) {
 		// 모든 DisplayList의 좌표를 Size만큼 좌로로 이동시킴 (x를 감소시킴)
 		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
-			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
 				i->Translate( -DirSize, 0.0 );
-			}
 		}
 
 		// 이동 변량을 더해준다.
@@ -551,9 +549,7 @@ void CMy2DTransView::OnDirRight() // 우측으로 형상을 이동하는 함수
 	if ( tempList.size() > 0 ) {
 		// 모든 DisplayList의 좌표를 Size만큼 우측으로 이동시킴 (x를 증가)
 		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
-			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
 				i->Translate( DirSize, 0.0 );
-			}
 		}
 
 		// 이동 변량을 더해준다.
@@ -571,9 +567,7 @@ void CMy2DTransView::OnDirLup() // 좌측 상단으로 형상을 이동하는 �
 	if ( tempList.size() > 0 ) {
 		// 모든 DisplayList의 좌표를 Size만큼 좌측위로 이동 (x를 감소, y를 감소)
 		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
-			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
 				i->Translate( -DirSize, -DirSize );
-			}
 		}
 
 		// 이동 변량을 더해준다.
@@ -592,9 +586,7 @@ void CMy2DTransView::OnDirLdown() // 좌측 하단으로 형상을 이동하는 
 	if ( tempList.size() > 0 ) {
 		// 모든 DisplayList의 좌표를 Size만큼 좌측 아래로 이동 (x를 감소, y를 증가)
 		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
-			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
 				i->Translate( -DirSize, DirSize );
-			}
 		}
 
 		// 이동 변량을 더해준다.
@@ -613,9 +605,7 @@ void CMy2DTransView::OnDirRdown() // 우측 하단으로 형상을 이동하는 
 	if ( tempList.size() > 0 ) {
 		// 모든 DisplayList의 좌표를 Size만큼 우측 아래로 이동시킴 (x를 증가, y를 증가)
 		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
-			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
 				i->Translate( DirSize, DirSize );
-			}
 		}
 
 		// 이동 변량을 더해준다.
@@ -634,9 +624,7 @@ void CMy2DTransView::OnDirRup() // 우측 상단으로 형상을 이동하는 �
 	if ( tempList.size() > 0 ) {
 		// 모든 DisplayList의 좌표를 Size만큼 우측 위로 이동시킴 (x를 증가, y를 감소)
 		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
-			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
 				i->Translate( DirSize, -DirSize );
-			}
 		}
 
 		// 이동 변량을 더해준다.
@@ -653,11 +641,9 @@ void CMy2DTransView::OnRotateLeft() // 모든 DisplayList의 좌표를 정해진
 {
 	// tempList의 사이즈가 0이 아닐 경우에만
 	if ( tempList.size() > 0 ) {
-		// 모든 DisplayList의 좌표를 Size만큼 우측 위로 이동시킴 (x를 증가, y를 감소)
+		// 모든 DisplayList의 
 		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
-			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
-				i->rot(-rotAngle, originX + moveX, originY + moveY);
-			}
+				i->rot(-rotAngle, originX, originY);
 		}
 	}
 
@@ -672,9 +658,7 @@ void CMy2DTransView::OnRotateRight() // 모든 DisplayList의 좌표를 정해�
 	if ( tempList.size() > 0 ) {
 		// 모든 DisplayList의 좌표를 Size만큼 우측 위로 이동시킴 (x를 증가, y를 감소)
 		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
-			for( unsigned int j = 0; j < i->GetNodes(); ++j ) {
-				i->rot(rotAngle, originX + moveX, originY + moveY);
-			}
+				i->rot(rotAngle, originX, originY);
 		}
 	}
 
@@ -685,11 +669,42 @@ void CMy2DTransView::OnRotateRight() // 모든 DisplayList의 좌표를 정해�
 
 void CMy2DTransView::OnScaleMagnify() // 확대 버튼을 누를 경우 메시지 처리
 {
-	// TODO: Add your command handler code here
+	// 프로그램이 자동 계산한 스케일을 사용하지 않도록 플래그 설정
+	isScaleRatioCustomized = true;
+
+	// 스케일을 증가시킴
+	Scale += delScale;
+
+	// Capture 설정을 하고 redraw
+	SetCapture();
+	RedrawWindow();
+	ReleaseCapture();
 }
 
+void CMy2DTransView::OnScaleOriginal()
+{
+	// 활성화된 현재 CView 객체에 접근
+	CMy2DTransView *pView = (CMy2DTransView *)( this->GetActiveView() );
+
+	// 리셋 함수 호출
+	pView->recalcScale();
+}
 
 void CMy2DTransView::OnScaleShrink() // 축소 버튼을 누를 경우 메시지 처리
 {
-	// TODO: Add your command handler code here
+	// 프로그램이 자동 계산한 스케일을 사용하지 않도록 플래그 설정
+	isScaleRatioCustomized = true;
+
+	// 스케일을 감소시킴
+	Scale -= delScale;
+
+	// Capture 설정을 하고 redraw
+	SetCapture();
+	RedrawWindow();
+	ReleaseCapture();
+}
+
+size_t CMy2DTransView::round( double d ) // 반올림을 수행하는 함수
+{
+	return (size_t)floor( d + 0.5 );
 }

@@ -16,7 +16,7 @@ protected: // serialization에서만 만들어집니다.
 // 직접 추가한 멤버 변수 리스트
 public:
 	CMy2DTransDoc* GetDocument() const;
-	double Scale, delScale;						// 스케일 및 스케일 증분 변수
+	double Scale, delScale, realScale;			// 스케일 및 스케일 증분 변수
 	int DirSize;								// 형상 변경시 사용되는 변수
 	vector<DisplayList> DList, tempList;		// 점 데이터 저장을 위한 구조체를 선언함
 	//CBrush jbrBack;								// 바탕 배경 칠하기용 브러시
@@ -26,7 +26,6 @@ public:
 	CString status;								// 상태 표시줄용 CString 객체
 	int cen_x, cen_y;							// 뷰 영역의 중심점 좌표
 	double MaxX, MaxY, MinX, MinY;				// 데이터로부터 최대 최소값을 읽어들임
-	double ScaleX, ScaleY;						// X, Y 방향으로의 scale factor
 	int nElements;								// 전체 도형의 갯수
 	bool isScaleRatioCustomized;				// 마우스 휠을 통해 스케일이 변경되었는지 여부를 저장
 	double wsx, wsy, CenX, CenY;
@@ -50,8 +49,9 @@ protected:
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
 	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
 	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
-	virtual void AddToRecentFileList(LPCTSTR lpszPathName); // 파일을 MRU 목록에 추가합니다.
-	virtual CMainFrame* GetMainFrm(); // 주 윈도우 주소창의 주소를 반환합니다.	
+	void AddToRecentFileList(LPCTSTR lpszPathName); // 파일을 MRU 목록에 추가합니다.
+	CMainFrame* GetMainFrm(); // 주 윈도우 주소창의 주소를 반환합니다.
+	static size_t round( double d ); // 반올림값을 반환합니다.
 
 // 구현입니다.
 public:
@@ -84,6 +84,7 @@ public:
 	afx_msg void OnRotateLeft();
 	afx_msg void OnRotateRight();
 	afx_msg void OnScaleMagnify();
+	afx_msg void OnScaleOriginal();
 	afx_msg void OnScaleShrink();
 	DECLARE_MESSAGE_MAP()
 };
