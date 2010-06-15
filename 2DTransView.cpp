@@ -46,7 +46,7 @@ BEGIN_MESSAGE_MAP(CMy2DTransView, CView)
 	ON_COMMAND(ID_ROT_LEFT, &CMy2DTransView::OnRotateLeft)
 	ON_COMMAND(ID_ROT_RIGHT, &CMy2DTransView::OnRotateRight)
 	ON_COMMAND(ID_SCALE_MAGNIFY, &CMy2DTransView::OnScaleMagnify)
-	ON_COMMAND(ID_SCALE_ORIGINAL, &CMy2DTransView::OnScaleOriginal)
+	ON_COMMAND(ID_SCALE_ORIGINAL, &CMy2DTransView::recalcScale)
 	ON_COMMAND(ID_SCALE_SHRINK, &CMy2DTransView::OnScaleShrink)
 END_MESSAGE_MAP()
 
@@ -333,21 +333,6 @@ bool CMy2DTransView::FileRead(CString FileName) {
 
 	// 파일 읽기 성공 여부 반환
 	return true;
-}
-
-// 스케일을 다시 계산하고, 다시 그리는 함수
-void CMy2DTransView::recalcScale() {
-	// 스케일 변경 플래그를 해제
-	isScaleRatioCustomized = false;
-
-	// 다시 그리기
-	GetMainFrm()->RedrawWindow();
-
-	// Status Bar에 현재 Scale을 반영
-	status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %8.6lf"), curPoint.x, curPoint.y, Scale);
-	GetMainFrm()->m_wndStatusBar.GetElement(0)->SetText(status);
-	GetMainFrm()->m_wndStatusBar.RecalcLayout();
-	GetMainFrm()->m_wndStatusBar.RedrawWindow();
 }
 
 // 펜으로 그리는 동작 구현 부분
@@ -681,13 +666,19 @@ void CMy2DTransView::OnScaleMagnify() // 확대 버튼을 누를 경우 메시�
 	ReleaseCapture();
 }
 
-void CMy2DTransView::OnScaleOriginal()
-{
-	// 활성화된 현재 CView 객체에 접근
-	CMy2DTransView *pView = (CMy2DTransView *)( this->GetActiveView() );
+// 원래 스케일대로 계산하기. 스케일을 재계산하고, 다시 그립니다.
+void CMy2DTransView::recalcScale() {
+	// 스케일 변경 플래그를 해제
+	isScaleRatioCustomized = false;
 
-	// 리셋 함수 호출
-	pView->recalcScale();
+	// 다시 그리기
+	GetMainFrm()->RedrawWindow();
+
+	// Status Bar에 현재 Scale을 반영
+	status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %8.6lf"), curPoint.x, curPoint.y, Scale);
+	GetMainFrm()->m_wndStatusBar.GetElement(0)->SetText(status);
+	GetMainFrm()->m_wndStatusBar.RecalcLayout();
+	GetMainFrm()->m_wndStatusBar.RedrawWindow();
 }
 
 void CMy2DTransView::OnScaleShrink() // 축소 버튼을 누를 경우 메시지 처리
