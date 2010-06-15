@@ -27,7 +27,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_ROT_ORIGIN_Y, &CMainFrame::OnRotOriginY)
 	ON_COMMAND(ID_ROT_ANGLE, &CMainFrame::OnRotAngle)
 	ON_COMMAND(ID_SCALE_RATIO, &CMainFrame::OnScaleRatio)
-	ON_COMMAND(ID_SCALE_ORIGINAL, &CMainFrame::OnScaleOriginal)
 	ON_COMMAND(ID_SCALE_DELTA, &CMainFrame::OnScaleDelta)
 END_MESSAGE_MAP()
 
@@ -343,7 +342,7 @@ void CMainFrame::InitializeRibbon()
 			// 회전할 각도를 설정할 수 있는 에디트 콘트롤을 생성함
 			CMFCRibbonEdit* pEditAngle = new CMFCRibbonEdit(ID_ROT_ANGLE, 65,  _T("Angle(degree)"), 6);
 			pEditAngle->SetKeys( _T("R") );
-			pEditAngle->SetEditText( _T("0") );
+			pEditAngle->SetEditText( _T("10") );
 			pPanelRotate2->Add(pEditAngle);
 
 		// "확대 축소" 패널 추가
@@ -715,17 +714,6 @@ void CMainFrame::OnScaleRatio()
 		AfxMessageBox( _T("입력 값이 잘못되었습니다.") );
 	}
 }
-
-
-void CMainFrame::OnScaleOriginal()
-{
-	// 활성화된 현재 CView 객체에 접근
-	CMy2DTransView *pView = (CMy2DTransView *)( this->GetActiveView() );
-
-	// 리셋 함수 호출
-	pView->recalcScale();
-}
-
 
 void CMainFrame::OnScaleDelta()
 {
