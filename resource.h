@@ -108,10 +108,27 @@
 #define IDS_EDIT_MENU                   306
 #define IDB_TRANLARGE                   314
 #define IDB_ROT_SCALE_LARGE             316
+#define IDB_TRANSMALL                   317
+#define IDB_ROT_SCALE_SMALL             318
 #define ID_STT_TEXT_VER                 1000
 #define IDC_NETADDRESS1                 1001
 #define ID_WRITE_PASTEASHYPERLINK       32770
 #define ID_SCALE_ORIGINAL               32799
+#define ID_32800                        32800
+#define ID_32801                        32801
+#define ID_ROT                          32802
+#define ID_ROT_                         32803
+#define ID_SCALE_                       32804
+#define ID_32805                        32805
+#define ID_32806                        32806
+#define ID_32807                        32807
+#define ID_32808                        32808
+#define ID_32809                        32809
+#define ID_32810                        32810
+#define ID_32811                        32811
+#define ID_32812                        32812
+#define ID_32813                        32813
+#define ID_Menu                         32817
 #define IDS_RIBBON_CATEGORY_TRANSLATE   57346
 #define IDS_RIBBON_CATEGORY_ROTATE      57347
 
@@ -119,8 +136,8 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        317
-#define _APS_NEXT_COMMAND_VALUE         32800
+#define _APS_NEXT_RESOURCE_VALUE        319
+#define _APS_NEXT_COMMAND_VALUE         32818
 #define _APS_NEXT_CONTROL_VALUE         1002
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
