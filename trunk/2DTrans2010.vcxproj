@@ -154,9 +154,11 @@
     <None Include="res\pages_small.bmp" />
     <None Include="res\pages_small_hc.bmp" />
     <None Include="res\rot_scale_large.bmp" />
+    <None Include="res\rot_scale_small.bmp" />
     <None Include="res\Toolbar.bmp" />
     <None Include="res\Toolbar256.bmp" />
     <None Include="res\translate_large.bmp" />
+    <None Include="res\translate_small.bmp" />
     <None Include="res\writelarge.bmp" />
     <None Include="res\writesmall.bmp" />
   </ItemGroup>

@@ -49,7 +49,6 @@ protected:
 	afx_msg void OnFilePrint();
 	afx_msg void OnFilePrintPreview();
 	afx_msg void OnUpdateFilePrintPreview(CCmdUI* pCmdUI);
-	DECLARE_MESSAGE_MAP()
 
 	void InitializeRibbon();
 	BOOL CreateOutlookBar(CMFCOutlookBar& bar, UINT uiID, CMFCShellTreeCtrl& tree, int nInitialWidth);
@@ -64,6 +63,7 @@ public:
 	afx_msg void OnRotAngle();
 	afx_msg void OnScaleRatio();
 	afx_msg void OnScaleDelta();
+	DECLARE_MESSAGE_MAP()
 };
 
 

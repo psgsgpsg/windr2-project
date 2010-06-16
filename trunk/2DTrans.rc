@@ -96,6 +96,8 @@ IDB_PAGES_SMALL_HC      BITMAP                  "res\\pages_small_hc.bmp"
 IDB_INFO                BITMAP                  "res\\info.bmp"
 IDB_TRANLARGE           BITMAP                  "res\\translate_large.bmp"
 IDB_ROT_SCALE_LARGE     BITMAP                  "res\\rot_scale_large.bmp"
+IDB_TRANSMALL           BITMAP                  "res\\translate_small.bmp"
+IDB_ROT_SCALE_SMALL     BITMAP                  "res\\rot_scale_small.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -186,11 +188,31 @@ END
 
 IDR_POPUP_EDIT MENU
 BEGIN
-    POPUP "편집"
+    POPUP "이동 기능(&T)"
     BEGIN
-        MENUITEM "잘라내기(&T)\tCtrl+X",            ID_EDIT_CUT
-        MENUITEM "복사(&C)\tCtrl+C",              ID_EDIT_COPY
-        MENUITEM "붙여넣기(&P)\tCtrl+V",            ID_EDIT_PASTE
+        POPUP "이동 기능(&T)"
+        BEGIN
+            MENUITEM "위로 이동(&W)\tUp",               ID_DIR_UP
+            MENUITEM "아래로 이동(&X)\tDown",            ID_DIR_DOWN
+            MENUITEM "왼쪽으로 이동(&A)\tLeft",           ID_DIR_LEFT
+            MENUITEM "오른쪽으로 이동(&D)\tRight",         ID_DIR_RIGHT
+            MENUITEM SEPARATOR
+            MENUITEM "왼쪽 위로 이동(&Q)\tHome",          ID_DIR_LUP
+            MENUITEM "오른쪽 위로 이동(&W)\tPageUp",       ID_DIR_RUP
+            MENUITEM "왼쪽 아래로 이동(&Z)\tEnd",          ID_DIR_LDOWN
+            MENUITEM "오른쪽 아래로 이동(&C)\tPageDown",    ID_DIR_RDOWN
+        END
+        POPUP "회전 기능(&R)"
+        BEGIN
+            MENUITEM "시계 방향 회전(&E)\tAlt+Right",     ID_ROT_RIGHT
+            MENUITEM "반시계 방향 회전(&Q)\tAlt+Left",     ID_ROT_LEFT
+        END
+        POPUP "축척 기능(&S)"
+        BEGIN
+            MENUITEM "확대하기(&A)\tCtrl+Up",           ID_SCALE_MAGNIFY
+            MENUITEM "원래크기(&S)\tCtrl+Home",         ID_SCALE_ORIGINAL
+            MENUITEM "축소하기(&D)\tCtrl+Down",         ID_SCALE_SHRINK
+        END
     END
 END
 
@@ -223,7 +245,9 @@ BEGIN
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
     VK_LEFT,        ID_ROT_LEFT,            VIRTKEY, ALT, NOINVERT
     VK_RIGHT,       ID_ROT_RIGHT,           VIRTKEY, ALT, NOINVERT
-    "R",            ID_SCALE_ORIGINAL,      VIRTKEY, CONTROL, NOINVERT
+    VK_HOME,        ID_SCALE_ORIGINAL,      VIRTKEY, CONTROL, NOINVERT
+    VK_UP,          ID_SCALE_MAGNIFY,       VIRTKEY, CONTROL, NOINVERT
+    VK_DOWN,        ID_SCALE_SHRINK,        VIRTKEY, CONTROL, NOINVERT
 END
 
 

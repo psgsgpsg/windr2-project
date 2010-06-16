@@ -16,10 +16,10 @@ protected: // serialization에서만 만들어집니다.
 // 직접 추가한 멤버 변수 리스트
 public:
 	CMy2DTransDoc* GetDocument() const;
-	double Scale, delScale, realScale;			// 스케일 및 스케일 증분 변수
+	double Scale, delScale;						// 스케일 및 스케일 증분 변수
 	int DirSize;								// 형상 변경시 사용되는 변수
 	vector<DisplayList> DList, tempList;		// 점 데이터 저장을 위한 구조체를 선언함
-	//CBrush jbrBack;								// 바탕 배경 칠하기용 브러시
+	//CBrush jbrBack;							// 바탕 배경 칠하기용 브러시
 	CRect rcClient;								// 클라이언트 영역 저장용 구조체
 	//COLORREF crBack;							// 배경 색을 저장하기 위한 구조체
 	CPoint anchor, curPoint;					// Mouse location points
@@ -27,20 +27,23 @@ public:
 	int cen_x, cen_y;							// 뷰 영역의 중심점 좌표
 	double MaxX, MaxY, MinX, MinY;				// 데이터로부터 최대 최소값을 읽어들임
 	int nElements;								// 전체 도형의 갯수
-	bool isScaleRatioCustomized;				// 마우스 휠을 통해 스케일이 변경되었는지 여부를 저장
 	double wsx, wsy, CenX, CenY;
 	double moveSize, scaleSize;					// UI로부터의 입력 변수 저장용
 	double originX, originY;					// 데이터의 원점이 View상의 좌표로 변환된 좌표
 	double moveX, moveY;						// 마우스로 드래그시 이동한 총 변량을 저장하는 데이터
 	int WIDTH, HEIGHT;							// View 영역의 폭과 높이를 저정하는 변수
-	double rotCenterX, rotCenterY;				// 회전 중심 좌표점
+	double rotCenterX, rotCenterY;				// 회전 중심 좌표점 (데이터 좌표)
+	double rotCenterX_view, rotCenterY_view;	// 회전 중심 좌표점 (view에 매핑된 좌표)
 	double rotAngle;							// 회전 각도 저장 변수
-
+	double totalRot;							// 전체 회전 각도 저장 변수
+// 플래그 관련
+	bool isScaleRatioCustomized;				// 마우스 휠을 통해 스케일이 변경되었는지 여부를 저장
 // 직접 추가한 멤버 함수 리스트
 	bool FileRead(CString);						// 파일 parsing을 위한 처리
 	void DrawLines();							// 선을 그리는 함수
+	void DrawAxes(); // 좌표축을 그립니다.
 
-	// 재정의입니다.
+// 재정의입니다.
 public:
 	virtual void OnDraw(CDC* pDC);  // 이 뷰를 그리기 위해 재정의되었습니다.
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);

@@ -12,6 +12,10 @@
 
 using namespace std;
 
+// 좌표축을 그리기 위한 펜의 속성 및 색상 설정 (전역)
+CPen Circle( PS_SOLID, 3, RGB( 255, 0, 0 ) );
+CPen CoorLine( PS_DASH, 1, RGB( 0, 0, 0 ) );
+
 // CMy2DTransView
 
 IMPLEMENT_DYNCREATE(CMy2DTransView, CView)
@@ -61,6 +65,9 @@ CMy2DTransView::CMy2DTransView()
 	moveY = 0.0;
 	delScale = 0.1;
 	rotAngle = 10.0;
+	rotCenterX = 0.0;
+	rotCenterY = 0.0;
+	totalRot = 0.0;
 
 //	jbrBack.CreateSolidBrush(crBack);		// 지정된 색으로 브러시 생성.
 //	crBack = RGB(255, 255, 255);			// 배경 색을 흰색으로 설정.
@@ -114,7 +121,6 @@ void CMy2DTransView::OnDraw(CDC* pDC)
 		// 마우스 휠 조작으로 스케일이 변경된 경우에는 계산하지 않음
 		if ( !isScaleRatioCustomized ) {
 			Scale = (double)(0.9 * min( WIDTH/(wsx*2), HEIGHT/(wsy*2) ));
-			realScale = (double)( min( WIDTH/(wsx*2), HEIGHT/(wsy*2) ) );
 		}
 		
 		/* 계산한 중심점을 스케일에 맞추어 변환하고, 클라이언트 영역의 중심점과의 차이를 저장 */
@@ -125,18 +131,29 @@ void CMy2DTransView::OnDraw(CDC* pDC)
 		originX = ( Scale * -MinX ) + CenX + moveX;
 		originY = ( HEIGHT + (Scale * MinY) ) + CenY + moveY;
 
+		/* 회전 중심점을 화면 좌표로 재계산하여 저장 */
+		rotCenterX_view = Scale * (rotCenterX - MinX) + CenX + moveX;
+		rotCenterY_view = HEIGHT - (Scale * (rotCenterY - MinY)) + CenY + moveY;
+
+		/* 좌표축을 화면에 뿌려줌 */
+		DrawAxes();
+
 		// 계산된 스케일로 점 데이터를 다시 계산
-		if ( GetCapture() != this ) {		// 마우스 혹은 키보드 조작이 걸려있는 경우, 이 부분은 넘어감
+		if ( GetCapture() != this ) {	// 특정 조작의 경우, SetCapture를 통해 아래 연산을 하지 않도록 할 수 있음
 			int k = 0;
 
 			for(vector<DisplayList>::iterator j = tempList.begin(); j != tempList.end(); ++j) {
 				for(unsigned int i = 0; i < j->GetNodes(); ++i) {
+					// viewport mapping을 수행
 					j->setXPos( i, Scale * ( DList[k].getXPos(i) - MinX ) + CenX + moveX);
-					j->setYPos( i, (HEIGHT - ( Scale * ( DList[k].getYPos(i) - MinY ) )) + CenY + moveY);
+					j->setYPos( i, (HEIGHT - ( Scale * ( DList[k].getYPos(i) - MinY ) )) + CenY + moveY);					
 				}
+				// 회전 변환을 수행
+				j->rot(totalRot, rotCenterX_view, rotCenterY_view);
 				++k;
 			}
-		}
+		}		
+		// 계산된 tempList 데이터를 화면에 그려줌
 		DrawLines();
 	}
 }
@@ -171,7 +188,7 @@ void CMy2DTransView::OnRButtonUp(UINT nFlags, CPoint point)
 
 void CMy2DTransView::OnContextMenu(CWnd* pWnd, CPoint point)
 {
-	theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EDIT, point.x, point.y, this, TRUE);
+	theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EDIT, point.x, point.y, this, FALSE);
 }
 
 void CMy2DTransView::AddToRecentFileList(LPCTSTR lpszPathName) // 최근 파일 열기 목록에 추가하는 명령입니다.
@@ -236,6 +253,7 @@ bool CMy2DTransView::FileRead(CString FileName) {
     double x = 0., y = 0.;
 	int red, green, blue;
 	unsigned int nNodes;
+	DisplayList tmp;                        // 임시 리스트
 
     // DList 원소의 갯수가 0이 아닐 경우 모든 원소를 삭제하도록 해야함
     if( !DList.empty() ) { DList.clear(); }
@@ -244,8 +262,11 @@ bool CMy2DTransView::FileRead(CString FileName) {
 	// 마우스 움직임 변량값을 초기화
 	moveX = 0;
 	moveY = 0;
+	
+	// 전체 회전값 초기화
+	totalRot = 0.0;
 
-	// 휠을 통한 스케일 변경 플래그를 초기화
+	// 플래그 초기화 수행
 	isScaleRatioCustomized = false;
 
     // 파일 포인터를 설정/
@@ -256,8 +277,6 @@ bool CMy2DTransView::FileRead(CString FileName) {
         AfxMessageBox(_T("선택한 파일을 읽기 모드로 열수 없습니다.\n다른 프로그램에서 사용중이지 않은지 확인하시기 바랍니다."));
 		return false;
     }
-
-	DisplayList tmp;                        // 임시 리스트
 
 	// 파일 구조를 parsing 하는 부분
 	while (_fgetts(str, 100, fp) != NULL) {
@@ -335,7 +354,28 @@ bool CMy2DTransView::FileRead(CString FileName) {
 	return true;
 }
 
-// 펜으로 그리는 동작 구현 부분
+// 좌표축을 그리는 동작 구현 부분
+void CMy2DTransView::DrawAxes() {
+	CClientDC dc(this);
+
+	// 데이터의 원점에 해당되는 곳에 원을 그려주고, 십자 표시를 그려줌
+	// 원은 회전 중심점을 의미함
+	dc.SelectObject(&Circle);
+	dc.Ellipse( (int)round(rotCenterX_view) - 2, (int)round(rotCenterY_view) - 2,
+		(int)round(rotCenterX_view) + 2, (int)round(rotCenterY_view) + 2 );
+
+	dc.SelectObject(&CoorLine);
+	dc.MoveTo( -5, (int)round(originY) );
+	dc.LineTo( WIDTH + 5, (int)round(originY) );
+	dc.MoveTo( (int)round(originX), -5 );
+	dc.LineTo( (int)round(originX), HEIGHT + 5);
+
+	// x, y 좌표임을 알려주는 문자를 표시
+	dc.TextOutW( WIDTH - 10, (int)round(originY) + 10, L"x");
+	dc.TextOutW( (int)round(originX) + 10, 10, L"y");
+}
+
+// 데이터를 그리는 동작 구현 부분
 void CMy2DTransView::DrawLines() {
 	// nElements가 0이 아닐 경우에만
 	if (nElements != 0) {
@@ -344,8 +384,7 @@ void CMy2DTransView::DrawLines() {
 		for(vector<DisplayList>::iterator iterPos = tempList.begin(); iterPos != tempList.end(); ++iterPos) {
 			// 펜의 속성 및 색상 설정
 			CPen NewPen( PS_SOLID, 1, RGB( iterPos->getR(), iterPos->getG(), iterPos->getB() ) );
-			dc.SelectObject(&NewPen);
-			
+			dc.SelectObject(&NewPen);			
 
 			// i번째 element의 점 데이터를 이용해서 선을 그림
 			for(unsigned int i = 0; i < iterPos->GetNodes() - 1; i++) {
@@ -375,7 +414,8 @@ void CMy2DTransView::OnFileNew() {
 
 	Scale = 0.0;							// Scale을 0.0으로 리셋하고
 	moveX = 0.0;  moveY = 0.0;				// 이동 변량 변수 모두 리셋	
-	isScaleRatioCustomized = false;					// 스케일 변경 여부 리셋
+	isScaleRatioCustomized = false;			// 스케일 변경 여부 리셋
+	totalRot = 0.0;							// 전체 회전 각도 리셋
 
 	GetMainFrm()->m_wndStatusBar.GetElement(0)->SetText( _T("준비됨") );	// 상태 표시줄의 메시지를 초기화
 	GetMainFrm()->SetWindowText( str );										// 제목 표시줄을 초기화
@@ -386,22 +426,24 @@ BOOL CMy2DTransView::OnMouseWheel(UINT nFlags, short zDelta, CPoint point)
 {
 	// tempList의 사이즈가 0이 아닐 경우에만
 	if ( tempList.size() > 0 ) {
-		// 마우스 조작이 가해졌음을 플래그에 설정
-		isScaleRatioCustomized = true;
-		
+		// Control 키와 함께 누르지 않은 경우에는, 종료
 		if( (nFlags & MK_CONTROL) != MK_CONTROL ) {
 			return CView::OnMouseWheel(nFlags, zDelta, point);
 		}
-		
+
+		// 마우스 조작이 가해졌음을 플래그에 설정
+		isScaleRatioCustomized = true;
+
+		// 휠이 위 아래로 움직이는지 여부에 따라 스케일 수치를 변경함
 		if ( zDelta > 0 ) {
-			Scale += 0.1;
+			Scale += delScale;
 
 			if ( Scale > 100 ) {
 				Scale = 100;
 			}
 		}
 		else {
-			Scale -= 0.1;
+			Scale -= delScale;
 			
 			if (Scale < 1E-6) {
 				Scale = 1E-6;
@@ -460,8 +502,10 @@ void CMy2DTransView::OnMouseMove(UINT nFlags, CPoint point) {
 
 void CMy2DTransView::OnLButtonDown(UINT nFlags, CPoint point)
 {
+	// 마우스 클릭 상태 플래그 설정
 	SetCapture();
 
+	// 클릭한 위치를 저장해둠
 	anchor = point;
 
 	CView::OnLButtonDown(nFlags, point);
@@ -469,6 +513,7 @@ void CMy2DTransView::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CMy2DTransView::OnLButtonUp(UINT nFlags, CPoint point)
 {
+	// 마우스 클릭 상태 플래그 해제
 	ReleaseCapture();
 
 	CView::OnLButtonUp(nFlags, point);
@@ -487,7 +532,7 @@ void CMy2DTransView::OnDirUp() // 상단으로 형상을 이동하는 함수
 		moveY -= DirSize;
 
 		SetCapture();
-		RedrawWindow();
+		GetMainFrm()->RedrawWindow();
 		ReleaseCapture();
 	}
 }
@@ -505,7 +550,7 @@ void CMy2DTransView::OnDirDown() // 하단으로 형상을 이동하는 함수
 		moveY += DirSize;
 
 		SetCapture();
-		RedrawWindow();
+		GetMainFrm()->RedrawWindow();
 		ReleaseCapture();
 	}
 }
@@ -523,7 +568,7 @@ void CMy2DTransView::OnDirLeft() // 좌측으로 형상을 이동하는 함수
 		moveX -= DirSize;
 
 		SetCapture();
-		RedrawWindow();
+		GetMainFrm()->RedrawWindow();
 		ReleaseCapture();
 	}
 }
@@ -541,7 +586,7 @@ void CMy2DTransView::OnDirRight() // 우측으로 형상을 이동하는 함수
 		moveX += DirSize;
 
 		SetCapture();
-		RedrawWindow();
+		GetMainFrm()->RedrawWindow();
 		ReleaseCapture();
 	}
 }
@@ -560,7 +605,7 @@ void CMy2DTransView::OnDirLup() // 좌측 상단으로 형상을 이동하는 �
 		moveY -= DirSize;
 
 		SetCapture();
-		RedrawWindow();
+		GetMainFrm()->RedrawWindow();
 		ReleaseCapture();
 	}
 }
@@ -579,7 +624,7 @@ void CMy2DTransView::OnDirLdown() // 좌측 하단으로 형상을 이동하는 
 		moveY += DirSize;
 
 		SetCapture();
-		RedrawWindow();
+		GetMainFrm()->RedrawWindow();
 		ReleaseCapture();
 	}
 }
@@ -598,7 +643,7 @@ void CMy2DTransView::OnDirRdown() // 우측 하단으로 형상을 이동하는 
 		moveY += DirSize;
 
 		SetCapture();
-		RedrawWindow();
+		GetMainFrm()->RedrawWindow();
 		ReleaseCapture();
 	}
 }
@@ -617,7 +662,7 @@ void CMy2DTransView::OnDirRup() // 우측 상단으로 형상을 이동하는 �
 		moveY -= DirSize;
 
 		SetCapture();
-		RedrawWindow();
+		GetMainFrm()->RedrawWindow();
 		ReleaseCapture();
 	}
 }
@@ -625,31 +670,37 @@ void CMy2DTransView::OnDirRup() // 우측 상단으로 형상을 이동하는 �
 void CMy2DTransView::OnRotateLeft() // 모든 DisplayList의 좌표를 정해진 각도만큼 반시계방향으로 회전시킴
 {
 	// tempList의 사이즈가 0이 아닐 경우에만
-	if ( tempList.size() > 0 ) {
-		// 모든 DisplayList의 
-		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
-				i->rot(-rotAngle, originX, originY);
-		}
-	}
+	//if ( tempList.size() > 0 ) {
+	//	// 모든 DisplayList의 좌표를 회전하여 표현함
+	//	for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
+	//			i->rot(-rotAngle, rotCenterX_view, rotCenterY_view);
+	//	}
+	//}
 
-	SetCapture();
-	RedrawWindow();
-	ReleaseCapture();
+	// 전체 회전 각도를 감소 시킴
+	totalRot -= rotAngle;
+
+	//SetCapture();
+	GetMainFrm()->RedrawWindow();
+	//ReleaseCapture();
 }
 
 void CMy2DTransView::OnRotateRight() // 모든 DisplayList의 좌표를 정해진 각도만큼 시계방향으로 회전시킴
 {
 	// tempList의 사이즈가 0이 아닐 경우에만
-	if ( tempList.size() > 0 ) {
-		// 모든 DisplayList의 좌표를 Size만큼 우측 위로 이동시킴 (x를 증가, y를 감소)
-		for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
-				i->rot(rotAngle, originX, originY);
-		}
-	}
+	//if ( tempList.size() > 0 ) {
+	//	// 모든 DisplayList의 좌표를 Size만큼 우측 위로 이동시킴 (x를 증가, y를 감소)
+	//	for( vector<DisplayList>::iterator i = tempList.begin(); i != tempList.end(); ++i ) {
+	//			i->rot(rotAngle, rotCenterX_view, rotCenterY_view);
+	//	}
+	//}
 
-	SetCapture();
-	RedrawWindow();
-	ReleaseCapture();
+	// 전체 회전 각도를 증가시킴
+	totalRot += rotAngle;
+
+	//SetCapture();
+	GetMainFrm()->RedrawWindow();
+	//ReleaseCapture();
 }
 
 void CMy2DTransView::OnScaleMagnify() // 확대 버튼을 누를 경우 메시지 처리
@@ -661,9 +712,13 @@ void CMy2DTransView::OnScaleMagnify() // 확대 버튼을 누를 경우 메시�
 	Scale += delScale;
 
 	// Capture 설정을 하고 redraw
-	SetCapture();
-	RedrawWindow();
-	ReleaseCapture();
+	GetMainFrm()->RedrawWindow();
+
+	// Status Bar에 현재 Scale을 반영
+	status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %8.6lf"), curPoint.x, curPoint.y, Scale);
+	GetMainFrm()->m_wndStatusBar.GetElement(0)->SetText(status);
+	GetMainFrm()->m_wndStatusBar.RecalcLayout();
+	GetMainFrm()->m_wndStatusBar.RedrawWindow();
 }
 
 // 원래 스케일대로 계산하기. 스케일을 재계산하고, 다시 그립니다.
@@ -690,9 +745,13 @@ void CMy2DTransView::OnScaleShrink() // 축소 버튼을 누를 경우 메시지
 	Scale -= delScale;
 
 	// Capture 설정을 하고 redraw
-	SetCapture();
-	RedrawWindow();
-	ReleaseCapture();
+	GetMainFrm()->RedrawWindow();
+
+	// Status Bar에 현재 Scale을 반영
+	status.Format(_T("X 좌표 : %ld / Y 좌표 : %ld / 현재 배율 : %8.6lf"), curPoint.x, curPoint.y, Scale);
+	GetMainFrm()->m_wndStatusBar.GetElement(0)->SetText(status);
+	GetMainFrm()->m_wndStatusBar.RecalcLayout();
+	GetMainFrm()->m_wndStatusBar.RedrawWindow();
 }
 
 size_t CMy2DTransView::round( double d ) // 반올림을 수행하는 함수
